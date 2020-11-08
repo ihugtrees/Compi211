@@ -1,5 +1,6 @@
 
 #use "pc.ml";;
+open PC;;
 
 exception X_not_yet_implemented;;
 exception X_this_should_not_happen;;
@@ -39,7 +40,6 @@ let normalize_scheme_symbol str =
 	(fun ch -> (ch = (lowercase_ascii ch)))
 	s) then str
   else Printf.sprintf "|%s|" str;;
-
 
 let read_sexprs string = raise X_not_yet_implemented;;
   
