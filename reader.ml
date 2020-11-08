@@ -90,7 +90,23 @@ let float_nt =
 let number_nt =   
   pack (disj_list [fraction_nt;float_nt;integer_nt]) (fun (num)->Number(num));;
 
-let nt_spaces = pack (star nt_whitespace) (fun (n)->());;
+(* let nt_spaces = pack (star nt_whitespace) (fun (_,else)->else);; *)
+
+let char_perfix_nt = word "#\\";;
+
+let named_char_nt = 
+  let nul_nt = word_ci "nul" in
+  let newline_nt = word_ci "newline" in
+  let return_nt = word_ci "return" in
+  let tab_nt = word_ci "tab" in
+  let page_nt = word_ci "page" in
+  let space_nt = word_ci "space" in
+  disj_list [nul_nt; newline_nt; return_nt; tab_nt; page_nt; space_nt];;
+
+let visible_char_nt = const (fun c->c>' ');;
+let char_nt =
+  
+  pack (caten (char_perfix_nt) visible_char_nt) (fun (_,c)->Char(c));;
 
 test_string number_nt "-8/4";;
 test_string number_nt "1.0";;
@@ -99,3 +115,4 @@ test_string number_nt "501.100000000000000000000";;
 test_string number_nt "999.12349999999";;
 test_string number_nt "-102.000000000000001";;
 test_string number_nt "1234";;
+test_string char_nt "#\\f";;
