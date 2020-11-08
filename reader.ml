@@ -40,7 +40,6 @@ let normalize_scheme_symbol str =
 	s) then str
   else Printf.sprintf "|%s|" str;;
 
-
 let read_sexprs string = raise X_not_yet_implemented;;
 end;; (* struct Reader *)
 
