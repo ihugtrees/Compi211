@@ -43,6 +43,14 @@ let normalize_scheme_symbol str =
 let read_sexprs string = raise X_not_yet_implemented;;
 end;; (* struct Reader *)
 
+
+let sci_number_nt = 
+  let sci_e = char_ci 'e' in
+  let int_num = pack int_nt (fun e -> (float_of_int e)) in
+  let num = disj float_nt int_num in
+  let remove_e = pack num (fun (n,_)->n) in
+  pack (caten remove_e num) (fun (num,pow)-> num *. (10. ** pow))
+
 let bool_nt = 
   let hash = char '#' in
   let t = char_ci 't' in
@@ -86,9 +94,12 @@ let float_nt =
   let num = pack float_lst ((function (a,(b, c)) -> float_of_string ((list_to_string a) ^ "." ^ (list_to_string c)))) in
   let nt_signed = pack (caten sign_nt num) 
     (function (op,num) -> if (op = '-') then (-1.0)*.(num) else num) in
-  pack (disj nt_signed num) (fun (n)->Float n);;
+  disj nt_signed num;;
+
+let float_nt_obj =
+  pack float_nt (fun (n)->Float n)
 let number_nt =   
-  pack (disj_list [fraction_nt;float_nt;integer_nt]) (fun (num)->Number(num));;
+  pack (disj_list [fraction_nt;float_nt_obj;integer_nt]) (fun (num)->Number(num));;
 
 (* let nt_spaces = pack (star nt_whitespace) (fun (_,else)->else);; *)
 
