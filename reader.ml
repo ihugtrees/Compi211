@@ -93,19 +93,18 @@ let number_nt =
 (* let nt_spaces = pack (star nt_whitespace) (fun (_,else)->else);; *)
 
 let char_perfix_nt = word "#\\";;
-
-let named_char_nt = 
-  let nul_nt = word_ci "nul" in
-  let newline_nt = word_ci "newline" in
-  let return_nt = word_ci "return" in
-  let tab_nt = word_ci "tab" in
-  let page_nt = word_ci "page" in
-  let space_nt = word_ci "space" in
-  disj_list [nul_nt; newline_nt; return_nt; tab_nt; page_nt; space_nt];;
-
 let visible_char_nt = const (fun c->c>' ');;
-let char_nt =
-  
+
+let named_char_nt =
+  disj_list
+  [pack (word_ci "#\\nul") (fun _ -> (char_of_int 0));
+   pack (word_ci "#\\newline") (fun _ -> (char_of_int 10));
+   pack (word_ci "#\\return") (fun _ -> (char_of_int 13));
+   pack (word_ci "#\\tab") (fun _ -> (char_of_int 9));
+   pack (word_ci "#\\page") (fun _ -> (char_of_int 12));
+   pack (word_ci "#\\space") (fun _ -> (char_of_int 32))];;
+
+let char_nt =  
   pack (caten (char_perfix_nt) visible_char_nt) (fun (_,c)->Char(c));;
 
 test_string number_nt "-8/4";;
