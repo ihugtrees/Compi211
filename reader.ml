@@ -44,12 +44,16 @@ let read_sexprs string = raise X_not_yet_implemented;;
 end;; (* struct Reader *)
 
 
-let sci_number_nt = 
-  let sci_e = char_ci 'e' in
-  let int_num = pack int_nt (fun e -> (float_of_int e)) in
-  let num = disj float_nt int_num in
-  let remove_e = pack num (fun (n,_)->n) in
-  pack (caten remove_e num) (fun (num,pow)-> num *. (10. ** pow))
+let make_paired nt_left nt_right nt=
+  let nt = caten nt_left nt in
+  let nt = pack nt (function(_, e) -> e) in 
+  let nt = caten nt nt_right in
+  let nt = pack nt (function(e, _) -> e) in
+  nt;;
+
+let make_spaced nt=
+  make_paired (star nt_whitespace) (star nt_whitespace) nt;;
+
 
 let bool_nt = 
   let hash = char '#' in
@@ -70,7 +74,7 @@ let sign_nt =
   let p = char '+' in
   disj m p;;
 
-  let int_nt =
+let int_nt =
   let num_nt = pack (plus digit_nt) (fun (str)-> ((int_of_string(list_to_string str)))) in 
   
   let signed = pack (caten sign_nt num_nt) 
@@ -98,10 +102,28 @@ let float_nt =
 
 let float_nt_obj =
   pack float_nt (fun (n)->Float n)
-let number_nt =   
-  pack (disj_list [fraction_nt;float_nt_obj;integer_nt]) (fun (num)->Number(num));;
 
-(* let nt_spaces = pack (star nt_whitespace) (fun (_,else)->else);; *)
+  let sci_number_nt = 
+    let sci_e = char_ci 'e' in
+    let int_num = pack int_nt (fun e -> (float_of_int e)) in
+    let num = disj float_nt int_num in
+    let remove_e = pack (caten (caten num sci_e) int_nt) (fun ((n,_),m)->n,m) in
+    pack remove_e (fun (num,pow)->Float (num *. (10. ** (float_of_int pow))))
+  
+let number_nt =   
+  pack (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (fun (num)->Number(num));;
+
+(* let nt_spaces = pack (star nt_whitespa
+test_string number_nt "-8/4";;
+test_string number_nt "1.0";;
+test_string number_nt "0005.0129";;
+test_string number_nt "501.100000000000000000000";;
+test_string number_nt "999.12349999999";;
+test_string number_nt "-102.000000000000001";;
+test_string number_nt "1234";;
+test_string char_nt "#\\f";;ce) (fun (_,else)->else);; *)
+
+
 
 let char_perfix_nt = word "#\\";;
 
@@ -118,7 +140,7 @@ let visible_char_nt = const (fun c->c>' ');;
 let char_nt =
   
   pack (caten (char_perfix_nt) visible_char_nt) (fun (_,c)->Char(c));;
-
+(* 
 test_string number_nt "-8/4";;
 test_string number_nt "1.0";;
 test_string number_nt "0005.0129";;
@@ -126,4 +148,5 @@ test_string number_nt "501.100000000000000000000";;
 test_string number_nt "999.12349999999";;
 test_string number_nt "-102.000000000000001";;
 test_string number_nt "1234";;
-test_string char_nt "#\\f";;
+test_string char_nt "#\\f";; *)
+test_string (make_spaced number_nt) "   2.2E5   ";;
