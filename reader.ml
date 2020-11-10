@@ -43,9 +43,7 @@ let normalize_scheme_symbol str =
 	s) then str
   else Printf.sprintf "|%s|" str;;
 
-let read_sexprs string = raise X_not_yet_implemented;;
 
-end;;
 
 let make_paired nt_left nt_right nt =
   let nt = caten nt_left nt in
@@ -145,17 +143,111 @@ test_string number_nt "-102.000000000000001";;
 test_string number_nt "1234";;
 test_string char_nt "#\\f";; 
 *)
+
+let nt_string_meta_char =
+  disj_list 
+  [pack (word "\\\\") (fun _ -> '\092');
+  pack (word "\\\"") (fun _ -> '\034');
+  pack (word "\\t") (fun _ -> '\009');
+  pack (word "\\f") (fun _ -> '\012');
+  pack (word "\\n") (fun _ -> '\010');
+  pack (word "\\r") (fun _ -> '\013');];;
+
+let nt_string_literal_char =
+  diff (diff nt_any (char '\"')) (char '\\');;
+
+let nt_string_char =
+  disj nt_string_meta_char nt_string_literal_char ;;
+
+let nt_string =
+   pack (caten (caten (char '\"') (star nt_string_char)) (char '\"'))
+  (fun ((_,chars),_)-> (list_to_string chars));;
+let nt_symbol_char_no_dot =
+  disj_list [char '!';  char '$';  char '^';  char '*';  char '-';  char '_';  char '=';
+  char '+'; char '<';  char '>';  char '?';  char '/';  char ':';
+  (range 'a' 'z');
+  (range 'A' 'Z');
+  (range '0' '9')];;
+
+let nt_dot = char '.';;
+
+let nt_symbol_char = disj nt_symbol_char_no_dot nt_dot;;
+
+let nt_symbol =
+  let symb = pack (caten nt_symbol_char (plus nt_symbol_char)) (fun(s,lst)->s::lst) in
+  let doted = pack symb (fun (chars)->list_to_string chars) in
+  let not_doted = pack (plus nt_symbol_char_no_dot) (fun (chars)->list_to_string chars) in
+  disj doted not_doted;;
+
+
 let char_obj = 
   pack char_nt (fun (c)->Char c);;
 let symbol_obj = 
   pack nt_symbol (fun(str)->Symbol(str))
 let string_obj = 
   pack nt_string (fun(str)->String(str));;
-let read_sexpr =
-  make_spaced (disj_list [nt_line_comment; bool_nt;number_nt;string_obj;symbol_obj;char_obj]);;
-  
-test_string read_sexpr "  ;ssdf\n  \"sdad\"";;
+
+
+let rec parse_sexpr str=
+  (make_spaced 
+    (disj_list 
+          [nt_line_comment;
+            bool_nt;
+            number_nt;
+            char_obj;
+            string_obj;
+            symbol_obj;
+            parse_list;
+            parse_dot_list;
+            parse_quote;
+            parse_qquote;
+            parse_unquote_splice;
+            parse_unquote
+            ]
+      )) str
+
+and parse_list str= 
+  (pack (caten (char '(') (caten (star parse_sexpr) (char ')')))
+  (fun (left,(lst,right))-> match lst with
+          | []-> Nil
+          | _-> (List.fold_right (fun a b -> Pair (a,b)) lst Nil))) str
+and parse_dot_list str = 
+  let start = caten (char '(') (caten (plus parse_sexpr) (char '.')) in
+  let pend = caten parse_sexpr (char ')') in
+
+  (pack (caten start pend) 
+  (fun ((l,(s,dot)),(e,r))-> 
+    (List.fold_right (fun a b -> Pair (a,b)) s e)
+  ))
+  str
+and parse_quote str =
+  (pack (caten (char '\'') parse_sexpr)
+  (fun (q,s)->Pair(Symbol("quote"),s)))
+  str
+and parse_qquote str =
+  (pack (caten (char '`') parse_sexpr)
+  (fun (q,s)->Pair(Symbol("quasiquote"),s)))
+  str
+and parse_unquote_splice str =
+  (pack (caten (word ",@") parse_sexpr)
+  (fun (q,s)->Pair(Symbol("unquote-splicing"),s)))
+  str
+and parse_unquote str =
+  (pack (caten (char ',') parse_sexpr)
+  (fun (q,s)->Pair(Symbol("unquote"),s)))
+  str
+  ;;
+
+let parser s=
+  let (res, rest) = (star parse_sexpr) s in
+  res;;
+
+test_string (star string_obj) "\"sasdasdas\"";;
+test_string (star parse_sexpr) "  ;ssdf\n  \"sdad\"(x+2 +3.2 #\\e)";;
 (* test_string (make_spaced number_nt) "   2.2E5   ";;
 test_string nt_line_comment "  ; 1234  ";; *)
 
+let read_sexprs string = parser (string_to_list string);;
+
+end;;
  (* struct Reader *)

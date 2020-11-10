@@ -23,4 +23,4 @@ let nt_string =
    pack (caten (caten (char '\"') (star nt_string_char)) (char '\"'))
   (fun ((_,chars),_)-> (list_to_string chars));;
 
-test_string nt_string "\"sasdasdas\"";;
+test_string (star nt_string) "\"sasdasdas\"\"sdfsf knknknk\"";;
