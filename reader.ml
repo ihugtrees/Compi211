@@ -36,6 +36,7 @@ module Reader: sig
   val read_sexprs : string -> sexpr list
 end
 = struct
+
 (* let read_sexprs string = parser (string_to_list string);; *)
 
 let normalize_scheme_symbol str =
@@ -93,7 +94,6 @@ let char_nt =
   let any_char = (disj named_char_nt visible_simple_char_nt) in 
   pack (caten char_perfix_nt any_char) (fun (_,c)->(c));;
 
-  
 
 (*                             Numberssssssss                        *)
 
@@ -291,10 +291,13 @@ and comment_and_space str =
      disj_list[nt_whitespaces; nt_line_comment; nt_inline_comment] str;;
 
 let parser s =
-  let (res, rest) = (star parse_sexpr) s in
+  let (res, rest) = (plus parse_sexpr) s in
   res;;
 
 parser (string_to_list "(+ 1 2) 1 \"only one\"");;
+
+
 let read_sexprs string = parser (string_to_list string);;
+(*  *)
 end;;
  (* struct Reader *) 
