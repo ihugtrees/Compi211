@@ -64,9 +64,6 @@ let nt_line_comment =
   let nt_whole_comment = caten (caten nt_semi_colon nt_comment) nt_end in
   pack (make_spaced nt_whole_comment) (fun (_) -> Nil);;
 
-
-
-(*Numberssssssss *)
 let bool_nt =
   let hash = char '#' in
   let t = char_ci 't' in
@@ -75,6 +72,9 @@ let bool_nt =
   let nt = caten hash t_f in
   let nt = pack nt (fun (_,n)-> Bool ((lowercase_ascii n)='t')) in
   nt;;
+
+
+(*                             Numberssssssss                        *)
 
 let rec gcd a b =
     if b = 0 then a else gcd b (a mod b);;
@@ -144,6 +144,10 @@ test_string number_nt "1234";;
 test_string char_nt "#\\f";; 
 *)
 
+
+(*                             String                        *)
+
+
 let nt_string_meta_char =
   disj_list 
   [pack (word "\\\\") (fun _ -> '\092');
@@ -162,6 +166,11 @@ let nt_string_char =
 let nt_string =
    pack (caten (caten (char '\"') (star nt_string_char)) (char '\"'))
   (fun ((_,chars),_)-> (list_to_string chars));;
+
+
+(*                             Chars                        *)
+
+
 let nt_symbol_char_no_dot =
   disj_list [char '!';  char '$';  char '^';  char '*';  char '-';  char '_';  char '=';
   char '+'; char '<';  char '>';  char '?';  char '/';  char ':';
@@ -182,16 +191,20 @@ let nt_symbol =
 
 let char_obj = 
   pack char_nt (fun (c)->Char c);;
+
 let symbol_obj = 
-  pack nt_symbol (fun(str)->Symbol(str))
+  pack nt_symbol (fun(str)->Symbol(str));;
+
 let string_obj = 
   pack nt_string (fun(str)->String(str));;
 
 
+(*                             List                        *)
+
 let rec parse_sexpr str=
   (make_spaced 
     (disj_list 
-          [nt_line_comment;
+          [ nt_line_comment;
             bool_nt;
             number_nt;
             char_obj;
@@ -238,14 +251,16 @@ and parse_unquote str =
   str
   ;;
 
-let parser s=
+let parser s =
   let (res, rest) = (star parse_sexpr) s in
   res;;
 
+(*
 test_string (star string_obj) "\"sasdasdas\"";;
 test_string (star parse_sexpr) "  ;ssdf\n  \"sdad\"(x+2 +3.2 #\\e)";;
-(* test_string (make_spaced number_nt) "   2.2E5   ";;
-test_string nt_line_comment "  ; 1234  ";; *)
+ test_string (make_spaced number_nt) "   2.2E5   ";;
+test_string nt_line_comment "  ; 1234  ";; 
+*)
 
 let read_sexprs string = parser (string_to_list string);;
 
