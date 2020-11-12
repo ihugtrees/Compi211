@@ -1,9 +1,7 @@
 
 #use "pc.ml";;
-#use "string.ml";;
-#use "symbol.ml";;
-#use "char.ml";;
 open PC;;
+
 exception X_not_yet_implemented;;
 exception X_this_should_not_happen;;
 
@@ -47,14 +45,12 @@ let normalize_scheme_symbol str =
   else Printf.sprintf "|%s|" str;;
 
 
-
 let make_paired nt_left nt_right nt =
   let nt = caten nt_left nt in
   let nt = pack nt (function(_, e) -> e) in
   let nt = caten nt nt_right in
   let nt = pack nt (function(e, _) -> e) in
   nt;;
-
   
 
 let digit_nt = range '0' '9';;
@@ -140,30 +136,6 @@ let sci_number_nt =
 
 let number_nt =
   pack (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (fun (num)->Number(num));;
-
-(* let nt_spaces = pack (star nt_whitespa
-test_string number_nt "-8/4";;
-test_string number_nt "1.0";;
-test_string number_nt "0005.0129";;
-test_string number_nt "501.100000000000000000000";;
-test_string number_nt "999.12349999999";;
-test_string number_nt "-102.000000000000001";;
-test_string number_nt "1234";;
-test_string char_nt "#\\f";;ce) (fun (_,else)->else);; 
-*)
-
-
-
-(*
-test_string number_nt "-8/4";;
-test_string number_nt "1.0";;
-test_string number_nt "0005.0129";;
-test_string number_nt "501.100000000000000000000";;
-test_string number_nt "999.12349999999";;
-test_string number_nt "-102.000000000000001";;
-test_string number_nt "1234";;
-test_string char_nt "#\\f";; 
-*)
 
 
 (*                             String                        *)
@@ -294,10 +266,8 @@ let parser s =
   let (res, rest) = (plus parse_sexpr) s in
   res;;
 
-parser (string_to_list "(+ 1 2) 1 \"only one\"");;
-
-
 let read_sexprs string = parser (string_to_list string);;
 (*  *)
 end;;
+
  (* struct Reader *) 
