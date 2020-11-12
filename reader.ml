@@ -36,6 +36,9 @@ module Reader: sig
   val read_sexprs : string -> sexpr list
 end
 = struct
+(* let read_sexprs string = parser (string_to_list string);; *)
+let read_sexprs string = raise X_not_yet_implemented;;
+end;;
 let normalize_scheme_symbol str =
   let s = string_to_list str in
   if (andmap
@@ -247,7 +250,5 @@ test_string (star parse_sexpr) "  ;ssdf\n  \"sdad\"(x+2 +3.2 #\\e)";;
 (* test_string (make_spaced number_nt) "   2.2E5   ";;
 test_string nt_line_comment "  ; 1234  ";; *)
 
-let read_sexprs string = parser (string_to_list string);;
 
-end;;
  (* struct Reader *)
