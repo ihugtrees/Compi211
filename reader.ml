@@ -236,22 +236,22 @@ and parse_dot_list str =
   
 and parse_quote str =
   (pack (caten (char '\'') parse_sexpr)
-  (fun (q,s)->Pair(Symbol("quote"),s)))
+  (fun (q,s)->Pair(Symbol("quote"),Pair(s,Nil))))
   str
 
 and parse_qquote str =
   (pack (caten (char '`') parse_sexpr)
-  (fun (q,s)->Pair(Symbol("quasiquote"),s)))
+  (fun (q,s)->Pair(Symbol("quasiquote"),Pair(s,Nil))))
   str
   
 and parse_unquote_splice str =
   (pack (caten (word ",@") parse_sexpr)
-  (fun (q,s)->Pair(Symbol("unquote-splicing"),s)))
+  (fun (q,s)->Pair(Symbol("unquote-splicing"),Pair(s,Nil))))
   str
   
 and parse_unquote str =
   (pack (caten (char ',') parse_sexpr)
-  (fun (q,s)->Pair(Symbol("unquote"),s)))
+  (fun (q,s)->Pair(Symbol("unquote"),Pair(s,Nil))))
   str
   
 and nt_inline_comment str =
