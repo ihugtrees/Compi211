@@ -51,7 +51,7 @@ let make_paired nt_left nt_right nt =
   let nt = caten nt nt_right in
   let nt = pack nt (function(e, _) -> e) in
   nt;;
-  
+
 
 let digit_nt = range '0' '9';;
 let nt_semi_colon = char ';';;
@@ -87,7 +87,7 @@ let named_char_nt =
 let visible_simple_char_nt = const (fun c-> c > ' ');;
 
 let char_nt =
-  let any_char = (disj named_char_nt visible_simple_char_nt) in 
+  let any_char = (disj named_char_nt visible_simple_char_nt) in
   pack (caten char_perfix_nt any_char) (fun (_,c)->(c));;
 
 
@@ -142,7 +142,7 @@ let number_nt =
 
 
 let nt_string_meta_char =
-  disj_list 
+  disj_list
   [pack (word_ci "\\\\") (fun _ -> '\092');
   pack (word_ci "\\\"") (fun _ -> '\034');
   pack (word_ci "\\t") (fun _ -> '\009');
@@ -171,7 +171,7 @@ let nt_symbol_char_no_dot =
   pack (range 'A' 'Z') (fun ch -> lowercase_ascii ch);
   (range '0' '9')];;
 
-let nt_symbol_char = 
+let nt_symbol_char =
   let nt_dot = char '.' in
   disj nt_symbol_char_no_dot nt_dot;;
 
@@ -181,13 +181,13 @@ let nt_symbol =
   let not_doted = pack (plus nt_symbol_char_no_dot) (fun (chars)->list_to_string chars) in
   disj doted not_doted;;
 
-let char_obj = 
+let char_obj =
   pack char_nt (fun (c)->Char c);;
 
-let symbol_obj = 
+let symbol_obj =
   pack nt_symbol (fun(str)->Symbol(str));;
 
-let string_obj = 
+let string_obj =
   pack nt_string (fun(str)->String(str));;
 
 (*                             List                        *)
@@ -197,13 +197,13 @@ let nt_whitespaces = pack (plus nt_whitespace) (fun (a)->' ');;
 let nt_line_comment =
   let nt_end = disj nt_end_of_line nt_end_of_file in
   let nt_comment = star (diff nt_any nt_end) in
-  let nt_whole_comment = (caten (caten nt_semi_colon nt_comment) nt_end) in 
+  let nt_whole_comment = (caten (caten nt_semi_colon nt_comment) nt_end) in
   pack nt_whole_comment (fun (a)->' ');;
 
 let rec parse_sexpr str =
-  (make_paired (star comment_and_space) (star comment_and_space) 
-    (disj_list 
-          [ 
+  (make_paired (star comment_and_space) (star comment_and_space)
+    (disj_list
+          [
             bool_nt;
             number_nt;
             char_obj;
@@ -218,22 +218,22 @@ let rec parse_sexpr str =
             ]
       )) str
 
-and parse_list str = 
+and parse_list str =
   (pack (caten (char '(') (caten (star parse_sexpr) (char ')')))
   (fun (left,(lst,right))-> match lst with
           | []-> Nil
           | _-> (List.fold_right (fun a b -> Pair (a,b)) lst Nil))) str
-          
-and parse_dot_list str = 
+
+and parse_dot_list str =
   let start = caten (char '(') (caten (plus parse_sexpr) (char '.')) in
   let pend = caten parse_sexpr (char ')') in
 
-  (pack (caten start pend) 
-  (fun ((l,(s,dot)),(e,r))-> 
+  (pack (caten start pend)
+  (fun ((l,(s,dot)),(e,r))->
     (List.fold_right (fun a b -> Pair (a,b)) s e)
   ))
   str
-  
+
 and parse_quote str =
   (pack (caten (char '\'') parse_sexpr)
   (fun (q,s)->Pair(Symbol("quote"),Pair(s,Nil))))
@@ -243,20 +243,20 @@ and parse_qquote str =
   (pack (caten (char '`') parse_sexpr)
   (fun (q,s)->Pair(Symbol("quasiquote"),Pair(s,Nil))))
   str
-  
+
 and parse_unquote_splice str =
   (pack (caten (word ",@") parse_sexpr)
   (fun (q,s)->Pair(Symbol("unquote-splicing"),Pair(s,Nil))))
   str
-  
+
 and parse_unquote str =
   (pack (caten (char ',') parse_sexpr)
   (fun (q,s)->Pair(Symbol("unquote"),Pair(s,Nil))))
   str
-  
+
 and nt_inline_comment str =
   let perfix = word "#;" in
-  let comment_sepr = caten perfix parse_sexpr in 
+  let comment_sepr = caten perfix parse_sexpr in
   (pack comment_sepr (fun (_) -> ' ')) str
 
 and comment_and_space str =
@@ -270,6 +270,4 @@ let read_sexprs string = parser (string_to_list string);;
 (*  *)
 end;;
 
- (* struct Reader *) 
-
- 
+ (* struct Reader *)
