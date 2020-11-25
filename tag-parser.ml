@@ -61,10 +61,52 @@ let reserved_word_list =
 
 let rec tag_parse_sexpr sexpr =
   match sexpr with 
-  | Bool(bool) -> 
+  | Bool(bool) -> Const(Sexpr(sexpr))
+  | Number(num) -> Const(Sexpr(sexpr))
+  | Char(char) -> Const(Sexpr(sexpr))
+  | String(str) -> Const(Sexpr(sexpr))
+  | Nil -> Const(Void)
+  | Symbol(symbol) -> if List.mem symbol reserved_word_list then raise X_syntax_error else Var(sexpr)
+  | Pair(Symbol("if"), Pair(test, Pair(dit, Pair(dif, Nil))))->If(tag_parse_sexpr test, tag_parse_sexpr dit, tag_parse_sexpr dif)
+  | Pair(Symbol("if"), Pair(test, Pair(dit, Nil))) ->If(tag_parse_sexpr test, tag_parse_sexpr dit, Const(Void))
+  | Pair(Symbol("quote"), Pair(x, Nil)) -> Const(Sexpr(x))
+  | Pair(Symbol("lambda"), Pair(vars, Pair(body, Nil))) -> LambdaSimple()
+  | Pair(Symbol("lambda"), Pair(Nil, Pair(body, Nil))) -> LambdaSimple([],tag_parse_sexpr(Pair(Symbol("begin",body))))
+  | Pair(op, vars) -> Applic(tag_parse_sexpr op, )
+  | Pair(Symbol("or"), vars) -> Or(tag_or vars)
+  | Pair(Symbol("define"), Pair(Symbol(name), Pair(expr, Nil))) -> Def(Var(name), tag_parse_sexpr expr)
+  | Pair(Symbol("define"), Pair(Pair(Symbol (name), argl), Pair(expr, Nil))) -> 
+  | Pair(Symbol("set!"), Pair(Symbol(var), Pair(expr, Nil))) -> Set(Var(var) tag_parse_sexpr expr)
+  | Pair(Symbol("pset!"), Pair(ribs, Nil)) ->
+  | Pair(Symbol("begin"), Nil) -> Const(Sexpr(Void))
+  | Pair(Symbol("begin"), Pair(Symbol(a), Nil)) -> Var(a)
+  | Pair(Symbol("begin"), exprs) -> Seq(tag_begin exprs)
+  | Pair(Symbol("quasiquote"), Pair(sexpr, Nil)) ->
+  | Pair(Symbol("cond"), ribs) -> 
+  | Pair(Symbol("let"), Pair(Nil, Pair(body, Nil))) -> tag_parse_sexpr Pair(Symbol("lambda"), Pair(Nil, Pair(body, Nil)))
+  | Pair(Symbol("let"), Pair(Pair(rib, ribs), Pair(body, Nil))) -> 
+  | Pair(Symbol("let*"), Pair(bindings, Pair(body, Nil))) -> 
+  | Pair(Symbol("letrec"), expr) -> 
+  | Pair(Symbol("and"), expr) -> 
+  | _ -> raise X_syntax_error
 
-let tag_parse_expressions sexpr = 
-List.map tag_parse_sexpr sexpr;;
+  and tag_or vars =
+  match vars with
+  | Nil -> Const(Sexpr(Bool(false)))
+  | Pair(var, Nil) -> [tag_parse_sexpr var]
+  | Pair(var, rest) -> [tag_parse_sexpr var] @ [tag_parse_sexpr rest]
+  | _ -> raise X_syntax_error
+
+  and tag_begin exprs =
+  match exprs with
+  | Pair(expr, Nil) -> [tag_parse_sexpr expr]
+  | Pair(expr, rest) -> [tag_parse_sexpr expr] @ tag_begin rest
+  | _ -> raise X_syntax_error
+
+  and 
+
+
+let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
   
 end;; (* struct Tag_Parser *)
