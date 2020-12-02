@@ -47,7 +47,9 @@ exception X_syntax_error;;
 exception Testing_err;;
 module type TAG_PARSER = sig
   val tag_parse_expressions : sexpr list -> expr list
-  val tag_begin: sexpr->expr list
+  val tag_parse_sexpr: sexpr ->expr
+  val tag_letrec: sexpr -> sexpr -> sexpr -> sexpr
+  val tag_let:  sexpr -> sexpr -> sexpr -> expr
 end;; (* signature TAG_PARSER *)
 
 module Tag_Parser : TAG_PARSER = struct
@@ -65,21 +67,21 @@ let rec check_vars vars =
   | Nil -> true
   | Symbol(var) -> not (List.mem var reserved_word_list)
   | Pair(Symbol(var) , rest) -> not (List.mem var reserved_word_list) && check_unique_var var rest  && check_vars rest
-  | _ -> raise Testing_err
+  | _ -> raise X_syntax_error
 
 and check_unique_var var vars =
   match vars with
   | Nil -> true
   | Symbol(toCheck) -> not (String.equal var toCheck)
   | Pair(Symbol(toCheck) , rest) -> if String.equal var toCheck then false else check_unique_var var rest
-  | _ -> raise Testing_err
+  | _ -> raise X_syntax_error
 
 let rec get_last_var vars =
- match vars with
- | Pair(var, Nil) -> Nil
- | Pair(var, Pair(var1, var2)) -> (get_last_var (Pair(var1, var2)))
- | Pair(var, var1) -> var1
- | _ -> raise X_syntax_error
+  match vars with
+  | Pair(var, Nil) -> Nil
+  | Pair(var, Pair(var1, var2)) -> (get_last_var (Pair(var1, var2)))
+  | Pair(var, var1) -> var1
+  | _ -> raise X_syntax_error
 
 let rec get_let_vars rib ribs =
   match rib, ribs with
@@ -87,10 +89,10 @@ let rec get_let_vars rib ribs =
   | Pair(Symbol(symbol), expr), Pair(rib, ribs) -> if List.mem symbol reserved_word_list then raise X_syntax_error else Pair(Symbol(symbol), (get_let_vars rib ribs))
   | _ -> raise X_syntax_error
 
-let rec get_sexprs rib ribs =
-  match rib , ribs with
-  | Pair(Symbol(symbol) , Pair(expr , Nil)) , Nil -> [expr]
-  | Pair(Symbol(symbol) , Pair(expr , Nil)) , Pair(rib , ribs) -> [expr]@(get_sexprs rib ribs)
+let rec get_let_sexprs rib ribs =
+  match rib, ribs with
+  | Pair(Symbol(symbol), Pair(expr, Nil)), Nil -> [expr]
+  | Pair(Symbol(symbol), Pair(expr, Nil)), Pair(rib, rest) -> [expr] @ (get_let_sexprs rib rest)
   | _ -> raise X_syntax_error
 
 let rec get_lambda_vars vars =
@@ -106,15 +108,15 @@ let rec get_optional_lambda_vars vars =
   | _ -> raise X_syntax_error
 
 let rec letrec_vars rib ribs =
-  match rib,ribs with
-  | Pair(Symbol(symbol) , _) , Nil -> Pair (Pair (Symbol(symbol), Pair (Pair (Symbol "quote", Pair (Symbol "whatever", Nil)), Nil)),Nil)
-  | Pair(Symbol(symbol) , _) , Pair(rib , ribs) -> Pair(Pair (Symbol(symbol), Pair (Pair (Symbol "quote", Pair (Symbol "whatever", Nil)), Nil)), (letrec_vars rib ribs))
+  match rib, ribs with
+  | Pair(Symbol(symbol), _), Nil -> Pair(Pair(Symbol(symbol), Pair(Pair(Symbol("quote"), Pair(Symbol("whatever"), Nil)), Nil)), Nil)
+  | Pair(Symbol(symbol), _), Pair(rib, ribs) -> Pair(Pair(Symbol(symbol), Pair(Pair(Symbol("quote"), Pair(Symbol("whatever"), Nil)), Nil)), (letrec_vars rib ribs))
   | _-> raise X_syntax_error
 
 let rec letrec_body rib ribs body =
-  match rib , ribs with
-  | Pair(Symbol(symbol), expr) , Nil -> Pair (Pair (Symbol "set!", Pair (Symbol (symbol), expr)) ,body)
-  | Pair(Symbol(symbol) , expr) , Pair(rib , ribs) -> Pair (Pair (Symbol "set!", Pair (Symbol (symbol), expr)),(letrec_body rib ribs body))
+  match rib, ribs with
+  | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), expr)) ,Pair(Pair(Symbol("let"), Pair(Nil, body)),Nil))
+  | Pair(Symbol(symbol), expr), Pair(rib, ribs) -> Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), expr)), (letrec_body rib ribs body))
   | _ -> raise X_syntax_error
 
 let rec tag_parse_sexpr sexpr =
@@ -133,22 +135,29 @@ let rec tag_parse_sexpr sexpr =
   | Pair(Symbol("or"), Pair(expr, Nil)) -> tag_parse_sexpr expr
   | Pair(Symbol("or"), vars) -> Or(tag_or vars)
   | Pair(Symbol("define"), Pair(Symbol(name), Pair(expr, Nil))) -> Def(Var(name), tag_parse_sexpr expr)
-  (* | Pair(Symbol("define"), Pair(Pair(Symbol (name), argl), Pair(expr, Nil))) ->  *)
+  | Pair(Symbol("define"), Pair(Pair(Symbol(name), argl), expr)) -> tag_parse_sexpr (Pair(Symbol("define"), Pair(Symbol(name), Pair(Pair(Symbol("lambda"), Pair(argl, expr)), Nil))))
   | Pair(Symbol("set!"), Pair(Symbol(var), Pair(expr, Nil))) -> Set(Var(var), tag_parse_sexpr expr)
   (* | Pair(Symbol("pset!"), Pair(ribs, Nil)) -> *)
   | Pair(Symbol("begin"), Nil) -> Const(Void)
   | Pair(Symbol("begin"), Pair(a, Nil)) -> tag_parse_sexpr a
-  | Pair(Symbol("begin"), exprs) -> Seq(tag_begin exprs)
+  | Pair(Symbol("begin"), Pair(exprs, rest)) -> Seq(tag_begin exprs rest)
   | Pair(Symbol("quasiquote"), Pair(sexpr, Nil)) -> tag_parse_sexpr (tag_qquote sexpr)
-  (* | Pair(Symbol("cond"), ribs) ->  *)
-  | Pair(Symbol("let"), Pair(Nil, Pair(body, Nil))) -> Applic(tag_parse_sexpr (Pair(Symbol("lambda"), Pair(Nil, Pair(body, Nil)))),[])
-  | Pair(Symbol("let"), Pair(Pair(rib, ribs), Pair(body, Nil))) -> tag_let rib ribs body
+  | Pair(Symbol("cond"), ribs) -> tag_parse_sexpr (tag_cond ribs)
+  | Pair(Symbol("let"), Pair(Nil, body)) -> Applic(tag_parse_sexpr (Pair(Symbol("lambda"), Pair(Nil, body))), [])
+  | Pair(Symbol("let"), Pair(Pair(rib, ribs), body)) -> (tag_let rib ribs body)
   | Pair(Symbol("let*"), Pair(bindings, body)) -> tag_parse_sexpr (tag_let_star bindings body)
-  | Pair(Symbol("letrec"), Pair(Nil , body)) -> tag_parse_sexpr (Pair (Symbol "let",Pair (Nil,Pair(Pair (Symbol "let",Pair (Nil,body)),Nil))))
-  | Pair(Symbol("letrec"), Pair(Pair(rib , ribs) , body)) ->  (tag_letrec rib ribs body)
+  | Pair(Symbol("letrec"), Pair(Nil, body)) -> tag_parse_sexpr (Pair (Symbol "let",Pair (Nil,Pair(Pair (Symbol "let",Pair (Nil,body)),Nil))))
+  | Pair(Symbol("letrec"), Pair(Pair(rib , ribs) , body)) -> tag_parse_sexpr (tag_letrec rib ribs body)
   | Pair(Symbol("and"), expr) -> tag_and expr
   | Pair(op, vars) -> Applic(tag_parse_sexpr op, tag_applic vars)
 
+  and tag_letrec rib ribs body =
+    Pair(Symbol("let"), Pair((letrec_vars rib ribs), (letrec_body rib ribs body)))
+
+  and tag_let rib ribs body =
+    Applic((tag_parse_sexpr (Pair(Symbol("lambda"), Pair(get_let_vars rib ribs, body)))),
+      (List.map tag_parse_sexpr (get_let_sexprs rib ribs)))
+    
   and tag_applic sexpr =
     match sexpr with
     | Pair(a, Nil) -> [tag_parse_sexpr a]
@@ -158,73 +167,74 @@ let rec tag_parse_sexpr sexpr =
 
   and tag_qquote sexpr =
     match sexpr with
+    | Nil -> Pair(Symbol("quote"), Pair(Nil, Nil))
     | Pair(Symbol("unquote"),Pair(x,Nil))-> x
     | Pair(Symbol("unqute-splicing"),Pair(x,Nil))-> raise X_syntax_error
+    | Symbol(x) -> Pair(Symbol("quote"), Pair(Symbol(x), Nil))
     | Pair(Pair(Symbol("unquote-splicing"), Pair(a, Nil)), b) -> Pair(Symbol("append"), Pair(a, Pair(tag_qquote b, Nil)))
     | Pair(a, Pair(Symbol("unquote-splicing"), Pair(b, Nil))) -> Pair(Symbol("cons"), Pair(tag_qquote a, Pair(b, Nil)))
-    | Pair(a,b)->  (Pair(Symbol("cons"),Pair((tag_qquote a),Pair(Symbol("cons"),Pair(tag_qquote b,Nil)))))
+    | Pair(a,b)->  (Pair(Symbol("cons"),Pair((tag_qquote a),Pair(tag_qquote b,Nil))))
     | _ -> raise X_syntax_error
 
-  and tag_letrec rib ribs body =
-  tag_parse_sexpr (Pair(Symbol("let"), Pair((letrec_vars rib rib),(letrec_body rib ribs body))))
-
   and tag_lambda vars body =
-  if check_vars vars then (
-  let body_expr = (tag_parse_sexpr (Pair(Symbol("begin"), body))) in
-    match vars with
-    | Nil -> LambdaSimple([], body_expr)
-    | Symbol(optional) -> LambdaOpt([], optional, body_expr)
-    | Pair(var, rest) -> (let last_var = get_last_var vars in
-      match last_var with
-      | Nil -> LambdaSimple(get_lambda_vars vars,body_expr)
-      | Symbol(optional) -> LambdaOpt(get_optional_lambda_vars vars, optional, body_expr)
-      | _ -> raise Testing_err)
-    |_ -> raise Testing_err
-  )
-  else raise Testing_err
-
-  and tag_let rib ribs body =
-    Applic(
-      (tag_parse_sexpr (Pair(Symbol("lambda"), Pair(get_let_vars rib ribs, Pair(body, Nil))))),
-      (List.map tag_parse_sexpr (get_sexprs rib ribs))
+    if check_vars vars then (
+    let body_expr = (tag_parse_sexpr (Pair(Symbol("begin"), body))) in
+      match vars with
+      | Nil -> LambdaSimple([], body_expr)
+      | Symbol(optional) -> LambdaOpt([], optional, body_expr)
+      | Pair(var, rest) -> (let last_var = get_last_var vars in
+        match last_var with
+        | Nil -> LambdaSimple(get_lambda_vars vars, body_expr)
+        | Symbol(optional) -> LambdaOpt(get_optional_lambda_vars vars, optional, body_expr)
+        | _ -> raise X_syntax_error)
+      |_ -> raise X_syntax_error
     )
+    else raise X_syntax_error
 
   and tag_let_star binds body =
-  match binds with
-  | Nil -> Pair(Symbol("let"), Pair(Nil, body))
-  | Pair(bind, Nil) ->  Pair(Symbol("let"), Pair(Pair(bind, Nil), body))
-  | Pair(bind, binds) ->  Pair(Symbol("let"), Pair(Pair(bind, Nil), Pair(tag_let_star binds body, Nil)))
-  | _ -> raise Testing_err
+    match binds with
+    | Nil -> Pair(Symbol("let"), Pair(Nil, body))
+    | Pair(bind, Nil) ->  Pair(Symbol("let"), Pair(Pair(bind, Nil), body))
+    | Pair(bind, binds) ->  Pair(Symbol("let"), Pair(Pair(bind, Nil), Pair(tag_let_star binds body, Nil)))
+    | _ -> raise X_syntax_error
 
   and tag_or vars =
-  match vars with
-  | Pair(var, Nil) -> [tag_parse_sexpr var]
-  | Pair(var, rest) -> [tag_parse_sexpr var] @ (tag_or rest)
-  | _ -> raise X_syntax_error
+    match vars with
+    | Pair(var, Nil) -> [tag_parse_sexpr var]
+    | Pair(var, rest) -> [tag_parse_sexpr var] @ (tag_or rest)
+    | _ -> raise X_syntax_error
 
-  and tag_begin exprs =
-  match exprs with
-  | Pair(expr, Nil) -> [tag_parse_sexpr expr]
-  | Pair(expr, rest) -> [tag_parse_sexpr expr] @ (tag_begin rest)
-  | _ -> raise X_syntax_error
+  and tag_begin sexpr rest =
+    match rest with
+    | Nil -> [tag_parse_sexpr sexpr]
+    | Pair(expr, rest) -> [tag_parse_sexpr sexpr] @ (tag_begin expr rest)
+    | _ -> raise X_syntax_error
   
   and tag_and expr =
-  match expr with
-  | Nil -> Const(Sexpr(Bool(true)))
-  | Pair(expr, Nil) -> tag_parse_sexpr expr
-  | Pair(expr, rest) -> If(tag_parse_sexpr expr, tag_parse_sexpr (Pair(Symbol("and"), rest)), Const(Sexpr(Bool(false))))
-  | _ -> raise X_syntax_error
+    match expr with
+    | Nil -> Const(Sexpr(Bool(true)))
+    | Pair(expr, Nil) -> tag_parse_sexpr expr
+    | Pair(expr, rest) -> If(tag_parse_sexpr expr, tag_parse_sexpr (Pair(Symbol("and"), rest)), Const(Sexpr(Bool(false))))
+    | _ -> raise X_syntax_error
   
-  (* and tag_cond ribs =
-  match ribs with
-  (* r_parser (Pair(Symbol("begin"), else_rib))
-  | Pair(Pair(test,Pair(Symbol("=>"),Pair(dit,Nil))),Nil) *)
-  | Pair(Pair(Symbol("else"),else_rib), rest_ribs) -> If(tag_parse_sexpr test,tag_parse_sexpr dit,Const(Void))
-  | Pair(Pair(test,Pair(Symbol("=>"),Pair(dit,Nil))),rest) -> If(tag_parse_sexpr test,tag_parse_sexpr dit,tag_parse_sexpr Pair(Symbol("cond"),rest))
-  | Pair(Symbol("cond"), Pair(Pair(test,dit), Nil)) -> If(tag_parse_sexpr test,tag_parse_sexpr dit,Const(Void))
-  | Pair(Symbol("cond"), Pair(Pair(test,dit), rest)) -> If(tag_parse_sexpr test,tag_parse_sexpr dit,tag_parse_sexpr Pair(Symbol("cond"),rest)) *)
+  and tag_cond ribs =
+    match ribs with
+    | Nil -> Nil
+    | Pair(Pair(Symbol("else"), dit), rest) -> Pair(Symbol("begin"), dit)
+    | Pair(Pair(test, Pair(Symbol("=>"), dit)), Nil) -> Pair(Symbol("let"),
+                                                        Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
+                                                        Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)), Nil)),
+                                                        Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Nil))), Nil)))
+    
+    | Pair(Pair(test, Pair(Symbol("=>"), dit)), rest) -> Pair(Symbol("let"),
+                                                        Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
+                                                        Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)),
+                                                        Pair(Pair(Symbol("rest"), Pair(Pair(Symbol("lambda"), Pair(Nil, Pair(tag_cond rest, Nil))), Nil)), Nil))),
+                                                        Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Pair(Pair(Symbol("rest"), Nil), Nil)))), Nil)))
+    
+    | Pair(Pair(test, dit), rest) -> Pair(Symbol("if"), Pair(test, Pair(Pair(Symbol("begin"), dit), Pair(tag_cond rest, Nil))))
+    | _ -> raise X_syntax_error
 
 let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
 end;; (* struct Tag_Parser *)
-
