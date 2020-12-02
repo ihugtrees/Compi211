@@ -255,4 +255,3 @@ let rec tag_parse_sexpr sexpr =
 let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
 end;; (* struct Tag_Parser *)
-[Pair (Symbol "pset!", Pair (Pair (Symbol "x", Pair (Number (Fraction (1, 1)), Nil)), Nil))]  
