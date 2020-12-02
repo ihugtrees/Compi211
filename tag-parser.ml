@@ -50,6 +50,7 @@ module type TAG_PARSER = sig
   val tag_parse_sexpr: sexpr ->expr
   val tag_letrec: sexpr -> sexpr -> sexpr -> sexpr
   val tag_let:  sexpr -> sexpr -> sexpr -> expr
+  val pset_to_set: sexpr -> sexpr -> int -> sexpr
 end;; (* signature TAG_PARSER *)
 
 module Tag_Parser : TAG_PARSER = struct
@@ -85,8 +86,8 @@ let rec get_last_var vars =
 
 let rec get_let_vars rib ribs =
   match rib, ribs with
-  | Pair(Symbol(symbol), expr), Nil -> if List.mem symbol reserved_word_list then raise X_syntax_error else Pair(Symbol(symbol), Nil)
-  | Pair(Symbol(symbol), expr), Pair(rib, ribs) -> if List.mem symbol reserved_word_list then raise X_syntax_error else Pair(Symbol(symbol), (get_let_vars rib ribs))
+  | Pair(Symbol(symbol), expr), Nil -> Pair(Symbol(symbol), Nil)
+  | Pair(Symbol(symbol), expr), Pair(rib, ribs) -> Pair(Symbol(symbol), (get_let_vars rib ribs))
   | _ -> raise X_syntax_error
 
 let rec get_let_sexprs rib ribs =
@@ -137,7 +138,8 @@ let rec tag_parse_sexpr sexpr =
   | Pair(Symbol("define"), Pair(Symbol(name), Pair(expr, Nil))) -> Def(Var(name), tag_parse_sexpr expr)
   | Pair(Symbol("define"), Pair(Pair(Symbol(name), argl), expr)) -> tag_parse_sexpr (Pair(Symbol("define"), Pair(Symbol(name), Pair(Pair(Symbol("lambda"), Pair(argl, expr)), Nil))))
   | Pair(Symbol("set!"), Pair(Symbol(var), Pair(expr, Nil))) -> Set(Var(var), tag_parse_sexpr expr)
-  (* | Pair(Symbol("pset!"), Pair(ribs, Nil)) -> *)
+  | Pair(Symbol("pset!"), Pair(rib, ribs)) -> tag_parse_sexpr (tag_pset rib ribs)
+  (* | Pair(Symbol("pset!"), Pair(Pair(Symbol(symbol), expr), Nil), Nil) -> tag_parse_sexpr Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(expr, Nil))) *)
   | Pair(Symbol("begin"), Nil) -> Const(Void)
   | Pair(Symbol("begin"), Pair(a, Nil)) -> tag_parse_sexpr a
   | Pair(Symbol("begin"), Pair(exprs, rest)) -> Seq(tag_begin exprs rest)
@@ -168,12 +170,12 @@ let rec tag_parse_sexpr sexpr =
   and tag_qquote sexpr =
     match sexpr with
     | Nil -> Pair(Symbol("quote"), Pair(Nil, Nil))
-    | Pair(Symbol("unquote"),Pair(x,Nil))-> x
-    | Pair(Symbol("unqute-splicing"),Pair(x,Nil))-> raise X_syntax_error
+    | Pair(Symbol("unquote"), Pair(x, Nil))-> x
+    | Pair(Symbol("unqute-splicing"), Pair(x, Nil))-> raise X_syntax_error
     | Symbol(x) -> Pair(Symbol("quote"), Pair(Symbol(x), Nil))
     | Pair(Pair(Symbol("unquote-splicing"), Pair(a, Nil)), b) -> Pair(Symbol("append"), Pair(a, Pair(tag_qquote b, Nil)))
     | Pair(a, Pair(Symbol("unquote-splicing"), Pair(b, Nil))) -> Pair(Symbol("cons"), Pair(tag_qquote a, Pair(b, Nil)))
-    | Pair(a,b)->  (Pair(Symbol("cons"),Pair((tag_qquote a),Pair(tag_qquote b,Nil))))
+    | Pair(a,b) -> (Pair(Symbol("cons"), Pair((tag_qquote a), Pair(tag_qquote b, Nil))))
     | _ -> raise X_syntax_error
 
   and tag_lambda vars body =
@@ -198,10 +200,10 @@ let rec tag_parse_sexpr sexpr =
     | Pair(bind, binds) ->  Pair(Symbol("let"), Pair(Pair(bind, Nil), Pair(tag_let_star binds body, Nil)))
     | _ -> raise X_syntax_error
 
-  and tag_or vars =
-    match vars with
-    | Pair(var, Nil) -> [tag_parse_sexpr var]
-    | Pair(var, rest) -> [tag_parse_sexpr var] @ (tag_or rest)
+  and tag_or sexpr =
+    match sexpr with
+    | Pair(sexpr, Nil) -> [tag_parse_sexpr sexpr]
+    | Pair(sexpr, rest) -> [tag_parse_sexpr sexpr] @ (tag_or rest)
     | _ -> raise X_syntax_error
 
   and tag_begin sexpr rest =
@@ -235,6 +237,22 @@ let rec tag_parse_sexpr sexpr =
     | Pair(Pair(test, dit), rest) -> Pair(Symbol("if"), Pair(test, Pair(Pair(Symbol("begin"), dit), Pair(tag_cond rest, Nil))))
     | _ -> raise X_syntax_error
 
+  and tag_pset rib ribs =
+    Pair(Symbol "let", Pair((pset_lets rib ribs 0),(pset_to_set rib ribs 0)))
+    (* "a" ^ string_of_int my_integer *)
+    
+  and pset_lets rib ribs count = 
+    match rib, ribs with
+    | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("tmp" ^ string_of_int count), expr),Nil)
+    | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), (pset_lets rib rest (count+1)))
+
+  and pset_to_set rib ribs count =
+    match rib, ribs with
+    | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))),Nil)
+    | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))), (pset_to_set rib rest (count+1)))
+  
+
 let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
 end;; (* struct Tag_Parser *)
+[Pair (Symbol "pset!", Pair (Pair (Symbol "x", Pair (Number (Fraction (1, 1)), Nil)), Nil))]  
