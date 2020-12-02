@@ -47,10 +47,6 @@ exception X_syntax_error;;
 exception Testing_err;;
 module type TAG_PARSER = sig
   val tag_parse_expressions : sexpr list -> expr list
-  val tag_parse_sexpr: sexpr ->expr
-  val tag_letrec: sexpr -> sexpr -> sexpr -> sexpr
-  val tag_let:  sexpr -> sexpr -> sexpr -> expr
-  val pset_to_set: sexpr -> sexpr -> int -> sexpr
 end;; (* signature TAG_PARSER *)
 
 module Tag_Parser : TAG_PARSER = struct
@@ -139,7 +135,6 @@ let rec tag_parse_sexpr sexpr =
   | Pair(Symbol("define"), Pair(Pair(Symbol(name), argl), expr)) -> tag_parse_sexpr (Pair(Symbol("define"), Pair(Symbol(name), Pair(Pair(Symbol("lambda"), Pair(argl, expr)), Nil))))
   | Pair(Symbol("set!"), Pair(Symbol(var), Pair(expr, Nil))) -> Set(Var(var), tag_parse_sexpr expr)
   | Pair(Symbol("pset!"), Pair(rib, ribs)) -> tag_parse_sexpr (tag_pset rib ribs)
-  (* | Pair(Symbol("pset!"), Pair(Pair(Symbol(symbol), expr), Nil), Nil) -> tag_parse_sexpr Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(expr, Nil))) *)
   | Pair(Symbol("begin"), Nil) -> Const(Void)
   | Pair(Symbol("begin"), Pair(a, Nil)) -> tag_parse_sexpr a
   | Pair(Symbol("begin"), Pair(exprs, rest)) -> Seq(tag_begin exprs rest)
@@ -239,7 +234,6 @@ let rec tag_parse_sexpr sexpr =
 
   and tag_pset rib ribs =
     Pair(Symbol "let", Pair((pset_lets rib ribs 0),(pset_to_set rib ribs 0)))
-    (* "a" ^ string_of_int my_integer *)
     
   and pset_lets rib ribs count = 
     match rib, ribs with
