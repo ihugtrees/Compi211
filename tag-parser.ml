@@ -243,7 +243,7 @@ let rec tag_parse_sexpr sexpr =
     
   and pset_lets rib ribs count = 
     match rib, ribs with
-    | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("tmp" ^ string_of_int count), expr),Nil)
+    | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), Nil)
     | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), (pset_lets rib rest (count+1)))
 
   and pset_to_set rib ribs count =
