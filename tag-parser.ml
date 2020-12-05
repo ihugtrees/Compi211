@@ -154,7 +154,7 @@ let rec tag_parse_sexpr sexpr =
   and tag_let rib ribs body =
     Applic((tag_parse_sexpr (Pair(Symbol("lambda"), Pair(get_let_vars rib ribs, body)))),
       (List.map tag_parse_sexpr (get_let_sexprs rib ribs)))
-    
+
   and tag_applic sexpr =
     match sexpr with
     | Pair(a, Nil) -> [tag_parse_sexpr a]
@@ -206,14 +206,14 @@ let rec tag_parse_sexpr sexpr =
     | Nil -> [tag_parse_sexpr sexpr]
     | Pair(expr, rest) -> [tag_parse_sexpr sexpr] @ (tag_begin expr rest)
     | _ -> raise X_syntax_error
-  
+
   and tag_and expr =
     match expr with
     | Nil -> Const(Sexpr(Bool(true)))
     | Pair(expr, Nil) -> tag_parse_sexpr expr
     | Pair(expr, rest) -> If(tag_parse_sexpr expr, tag_parse_sexpr (Pair(Symbol("and"), rest)), Const(Sexpr(Bool(false))))
     | _ -> raise X_syntax_error
-  
+
   and tag_cond ribs =
     match ribs with
     | Nil -> Nil
@@ -222,20 +222,20 @@ let rec tag_parse_sexpr sexpr =
                                                         Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
                                                         Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)), Nil)),
                                                         Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Nil))), Nil)))
-    
+
     | Pair(Pair(test, Pair(Symbol("=>"), dit)), rest) -> Pair(Symbol("let"),
                                                         Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
                                                         Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)),
                                                         Pair(Pair(Symbol("rest"), Pair(Pair(Symbol("lambda"), Pair(Nil, Pair(tag_cond rest, Nil))), Nil)), Nil))),
                                                         Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Pair(Pair(Symbol("rest"), Nil), Nil)))), Nil)))
-    
+
     | Pair(Pair(test, dit), rest) -> Pair(Symbol("if"), Pair(test, Pair(Pair(Symbol("begin"), dit), Pair(tag_cond rest, Nil))))
     | _ -> raise X_syntax_error
 
   and tag_pset rib ribs =
     Pair(Symbol "let", Pair((pset_lets rib ribs 0),(pset_to_set rib ribs 0)))
-    
-  and pset_lets rib ribs count = 
+
+  and pset_lets rib ribs count =
     match rib, ribs with
     | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), Nil)
     | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), (pset_lets rib rest (count+1)))
@@ -244,7 +244,7 @@ let rec tag_parse_sexpr sexpr =
     match rib, ribs with
     | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))),Nil)
     | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))), (pset_to_set rib rest (count+1)))
-  
+
 
 let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
