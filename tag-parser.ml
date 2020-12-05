@@ -118,15 +118,15 @@ let rec letrec_body rib ribs body =
 
 let rec tag_parse_sexpr sexpr =
   match sexpr with
+  | Nil -> Const(Void)
   | Bool(bool) -> Const(Sexpr(sexpr))
   | Number(num) -> Const(Sexpr(sexpr))
   | Char(char) -> Const(Sexpr(sexpr))
   | String(str) -> Const(Sexpr(sexpr))
-  | Nil -> Const(Void)
   | Symbol(symbol) -> if List.mem symbol reserved_word_list then raise X_syntax_error else Var(symbol)
-  | Pair(Symbol("if"), Pair(test, Pair(dit, Pair(dif, Nil)))) -> If(tag_parse_sexpr test, tag_parse_sexpr dit, tag_parse_sexpr dif)
-  | Pair(Symbol("if"), Pair(test, Pair(dit, Nil))) -> If(tag_parse_sexpr test, tag_parse_sexpr dit, Const(Void))
   | Pair(Symbol("quote"), Pair(var, Nil)) -> Const(Sexpr(var))
+  | Pair(Symbol("if"), Pair(test, Pair(dit, Nil))) -> If(tag_parse_sexpr test, tag_parse_sexpr dit, Const(Void))
+  | Pair(Symbol("if"), Pair(test, Pair(dit, Pair(dif, Nil)))) -> If(tag_parse_sexpr test, tag_parse_sexpr dit, tag_parse_sexpr dif)
   | Pair(Symbol("lambda"), Pair(vars, body)) -> tag_lambda vars body
   | Pair(Symbol("or"), Nil) -> Const(Sexpr(Bool (false)))
   | Pair(Symbol("or"), Pair(expr, Nil)) -> tag_parse_sexpr expr
@@ -223,11 +223,11 @@ let rec tag_parse_sexpr sexpr =
                                                         Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)), Nil)),
                                                         Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Nil))), Nil)))
 
-    | Pair(Pair(test, Pair(Symbol("=>"), dit)), rest) -> Pair(Symbol("let"),
-                                                        Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
-                                                        Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)),
-                                                        Pair(Pair(Symbol("rest"), Pair(Pair(Symbol("lambda"), Pair(Nil, Pair(tag_cond rest, Nil))), Nil)), Nil))),
-                                                        Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Pair(Pair(Symbol("rest"), Nil), Nil)))), Nil)))
+    | Pair(Pair(test, Pair(Symbol("=>"), dit)), rest) ->  Pair(Symbol("let"),
+                                                          Pair(Pair(Pair(Symbol("value"), Pair(test, Nil)),
+                                                          Pair(Pair(Symbol("f"), Pair(Pair(Symbol("lambda"), Pair(Nil, dit)), Nil)),
+                                                          Pair(Pair(Symbol("rest"), Pair(Pair(Symbol("lambda"), Pair(Nil, Pair(tag_cond rest, Nil))), Nil)), Nil))),
+                                                          Pair(Pair(Symbol("if"), Pair(Symbol("value"), Pair(Pair(Pair(Symbol("f"), Nil), Pair(Symbol("value"), Nil)), Pair(Pair(Symbol("rest"), Nil), Nil)))), Nil)))
 
     | Pair(Pair(test, dit), rest) -> Pair(Symbol("if"), Pair(test, Pair(Pair(Symbol("begin"), dit), Pair(tag_cond rest, Nil))))
     | _ -> raise X_syntax_error
