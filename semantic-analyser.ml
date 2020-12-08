@@ -57,11 +57,48 @@ module type SEMANTICS = sig
   val annotate_lexical_addresses : expr -> expr'
   val annotate_tail_calls : expr' -> expr'
   val box_set : expr' -> expr'
+  val get_var_of_vartag : expr' -> var
+  val lexical_addressing : expr -> string list -> string list list -> expr'
+  val get_index : string -> string list -> int
 end;;
 
 module Semantics : SEMANTICS = struct
+let get_var_of_vartag v =
+  match v with
+  | Var'(v) -> v
+  | _ -> raise X_syntax_error
 
-let annotate_lexical_addresses e = raise X_not_yet_implemented;;
+let rec lexical_addressing expr params bounds = 
+  match expr with
+  | Const(const) -> Const'(const)
+  | Def(Var(varname), exp) -> Def'(VarFree(varname), (lexical_addressing exp params bounds))
+  | If(test, dit, dif) -> If'((lexical_addressing test params bounds), (lexical_addressing dit params bounds), (lexical_addressing dif params bounds))
+  | Set(var, exp) -> Set'((get_var_of_vartag (lexical_addressing var params bounds)), (lexical_addressing exp params bounds))
+  | Seq(expr_lst) -> Seq'((List.map (fun (expr) -> (lexical_addressing expr params bounds)) expr_lst))
+  | Or(expr_lst) -> Or'((List.map (fun (expr) -> (lexical_addressing expr params bounds)) expr_lst))
+  | Applic(expr, expr_lst) -> Applic'((lexical_addressing expr params bounds), (List.map (fun (expr)-> (lexical_addressing expr params bounds)) expr_lst))
+  | Var(varname) ->if (List.mem varname params)
+                    then Var'(VarParam(varname, (get_index varname params)))
+                    else if (List.exists (fun (str_lst) -> List.mem varname str_lst) bounds)
+                          then   (bound_var varname bounds 0)
+                          else   Var'(VarFree(varname))
+  | LambdaSimple(vars, exp) -> LambdaSimple'(vars, lexical_addressing exp vars (params::bounds))
+  | LambdaOpt(vars, opt_var, exp) -> LambdaOpt'(vars, opt_var, lexical_addressing exp (vars@[opt_var]) (params::bounds))
+
+
+  and get_index varname lst =
+    match lst with
+      | [] -> raise X_syntax_error
+      | h :: t -> if varname = h then 0 else 1 + get_index varname t
+
+
+  and bound_var varname bounds idx = 
+  match bounds with
+  | [] -> raise X_syntax_error
+  | h :: t -> if (List.mem varname h) then Var'(VarBound(varname, idx, (get_index varname h))) else (bound_var varname t (idx+1));; 
+  
+  
+let annotate_lexical_addresses e = lexical_addressing e [] [];;
 
 let annotate_tail_calls e = raise X_not_yet_implemented;;
 
@@ -73,5 +110,3 @@ let run_semantics expr =
        (annotate_lexical_addresses expr));;
   
 end;; (* struct Semantics *)
-
-
