@@ -116,11 +116,13 @@ let rec tail_call expr tp =
     match lst with
     | x :: [] -> []
     | x :: tail -> [x]@(remove_last tail)
+    | _ -> raise X_syntax_error
 
   and get_last lst =
     match lst with
     | x :: [] -> x
     | x :: tail -> (get_last tail)
+    | _ -> raise X_syntax_error
 
 let rec box expr =
   match expr with
@@ -153,12 +155,12 @@ let rec box expr =
 
 let annotate_lexical_addresses e = lexical_addressing e [] [];;
 
-let annotate_tail_calls e = tail_call e true;;
+let annotate_tail_calls e = tail_call e false;;
 
 let box_set e = box e;;
 
 let run_semantics expr =
-  box_set 
+  (* box_set  *)
     (annotate_tail_calls
       (annotate_lexical_addresses expr));;
 
