@@ -1,6 +1,6 @@
 #use "tag-parser.ml";;
 
-type var = 
+type var =
   | VarFree of string
   | VarParam of string * int
   | VarBound of string * int * int;;
@@ -48,8 +48,8 @@ let rec expr'_eq e1 e2 =
 	 (expr'_eq e1 e2) &&
 	   (List.for_all2 expr'_eq args1 args2)
   | _ -> false;;
-	
-                       
+
+
 exception X_syntax_error;;
 
 module type SEMANTICS = sig
@@ -63,12 +63,13 @@ module type SEMANTICS = sig
 end;;
 
 module Semantics : SEMANTICS = struct
+
 let get_var_of_vartag v =
   match v with
   | Var'(v) -> v
   | _ -> raise X_syntax_error
 
-let rec lexical_addressing expr params bounds = 
+let rec lexical_addressing expr params bounds =
   match expr with
   | Const(const) -> Const'(const)
   | Def(Var(varname), exp) -> Def'(VarFree(varname), (lexical_addressing exp params bounds))
@@ -87,75 +88,81 @@ let rec lexical_addressing expr params bounds =
 
 
   and get_index varname lst =
-    match lst with
-      | [] -> raise X_syntax_error
-      | h :: t -> if varname = h then 0 else 1 + get_index varname t
+  match lst with
+  | [] -> raise X_syntax_error
+  | h :: t -> if varname = h then 0 else 1 + get_index varname t
 
 
-  and bound_var varname bounds idx = 
+  and bound_var varname bounds idx =
   match bounds with
   | [] -> raise X_syntax_error
-  | h :: t -> if (List.mem varname h) then Var'(VarBound(varname, idx, (get_index varname h))) else (bound_var varname t (idx+1));; 
-  
+  | h :: t -> if (List.mem varname h) then Var'(VarBound(varname, idx, (get_index varname h))) else (bound_var varname t (idx+1));;
 
-  let rec tail_call expr tp = 
+
+let rec tail_call expr tp =
   match expr with
   | Const'(const)-> Const'(const)
   | If' (test, dit, dif) ->  If'( (tail_call test false) , (tail_call dit tp) , (tail_call dif tp))
-  | Seq' (expr_lst) ->  Seq' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@ [(tail_call (get_last expr_lst) tp)]) 
-  | Def' (var , expr) -> Def' (var, (tail_call expr tp))
+  | Seq' (expr_lst) ->  Seq' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@ [(tail_call (get_last expr_lst) tp)])
+  | Def' (var, expr) -> Def' (var, (tail_call expr tp))
   | Set' (var, expr) -> Set' (var, (tail_call expr false))
-  | Or' (expr_lst)-> Or' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@[(tail_call (get_last expr_lst) tp)]) 
+  | Or' (expr_lst)-> Or' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@[(tail_call (get_last expr_lst) tp)])
   | LambdaSimple' (vars, body)-> LambdaSimple' (vars, (tail_call body true))
   | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var , (tail_call body true))
-  | Var' (varname) -> Var' (varname) 
-  | Applic'(expr, expr_lst)-> if tp 
+  | Var' (varname) -> Var' (varname)
+  | Applic'(expr, expr_lst)-> if tp
                                 then ApplicTP'((tail_call expr false), (List.map (fun (expr)-> (tail_call expr false)) expr_lst ))
                                 else Applic'((tail_call expr false), (List.map (fun (expr)-> (tail_call expr false))  expr_lst))
-  |_-> raise X_syntax_error      
+  |_-> raise X_syntax_error
+
   and remove_last lst =
     match lst with
     | x :: [] -> []
     | x :: tail -> [x]@(remove_last tail)
+
   and get_last lst =
     match lst with
     | x :: [] -> x
     | x :: tail -> (get_last tail)
 
+let rec box expr =
+  match expr with
+  | Const'(const)-> Const'(const)
+  | If' (test, dit, dif) ->  If'(box test, box dit, box dif)
+  | Seq' (expr_lst) ->  Seq' (List.map box expr_lst)
+  | Def' (var, expr) -> Def' (var, box expr)
+  | Set'(var, Box'(varef)) -> Set'(var, Box'(varef))
+  | Set' (var, expr) -> BoxSet'(var,box expr)
+  | Or' (expr_lst)-> Or' (List.map box expr_lst)
+  | LambdaSimple' (vars, body)-> LambdaSimple'(vars, lambda_boxing vars body)
+  | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var, (lambda_boxing (vars@[opt_var]) body))
+  | Var' (varname) -> Var' (varname)
+  | Applic'(expr, expr_lst) -> Applic'(box expr, List.map box expr_lst)
+  | ApplicTP'(expr, expr_lst) -> ApplicTP'(box expr, List.map box expr_lst)
+  | Var'(VarFree(varname)) -> Var'(VarFree(varname))
+  | Var'(VarParam(varname, minor)) -> BoxGet'(VarParam(varname, minor))
+  | Var'(VarBound(varname, major, minor)) -> BoxGet'(VarBound(varname, major, minor))
+  | Box'(var) -> Box'(var)
+  | BoxGet'(var) -> BoxGet'(var)
+  (* | BoxSet'(var, varef) -> BoxSet'(var,box varef) *)
+  |_-> raise X_syntax_error
+
+  and lambda_boxing params body = 
+  if params = [] then body else
+  let boxed = (List.map (fun (varname) -> Set'(VarParam(varname, get_index varname params), Box'(VarParam(varname, get_index varname params)))) params) in
+  match body with
+  | Seq'(expr_lst) -> Seq'(List.append boxed (List.map box expr_lst))
+  | expr -> Seq'(List.append boxed [box expr])
 
 let annotate_lexical_addresses e = lexical_addressing e [] [];;
 
 let annotate_tail_calls e = tail_call e true;;
 
-let box_set e = raise X_not_yet_implemented;;
+let box_set e = box e;;
 
 let run_semantics expr =
-  (* box_set *)
+  box_set 
     (annotate_tail_calls
-       (annotate_lexical_addresses expr));;
-  
+      (annotate_lexical_addresses expr));;
+
 end;; (* struct Semantics *)
-
-Semantics.run_semantics 
-(
-LambdaSimple (["x"; "y"; "z"],
- Applic (Var "+",
-  [Var "x"; Var "y";
-   LambdaSimple (["z"],
-    Applic (Var "+",
-     [Var "z";
-      LambdaSimple (["x"], Applic (Var "+", [Var "x"; Var "y"; Var "z"]))]))]))
-  ) 
-= 
-LambdaSimple' (["x"; "y"; "z"],
- ApplicTP' (Var' (VarFree "+"),
-  [Var' (VarParam ("x", 0)); Var' (VarParam ("y", 1));
-   LambdaSimple' (["z"],
-    ApplicTP' (Var' (VarFree "+"),
-     [Var' (VarParam ("z", 0));
-      LambdaSimple' (["x"],
-       ApplicTP' (Var' (VarFree "+"),
-        [Var' (VarParam ("x", 0)); Var' (VarBound ("y", 1, 1));
-         Var' (VarBound ("z", 0, 0))]))]))]))
-
-      ;;
