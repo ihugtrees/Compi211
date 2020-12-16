@@ -97,16 +97,65 @@ let rec lexical_addressing expr params bounds =
   | [] -> raise X_syntax_error
   | h :: t -> if (List.mem varname h) then Var'(VarBound(varname, idx, (get_index varname h))) else (bound_var varname t (idx+1));; 
   
-  
+
+  let rec tail_call expr tp = 
+  match expr with
+  | Const'(const)-> Const'(const)
+  | If' (test, dit, dif) ->  If'( (tail_call test false) , (tail_call dit tp) , (tail_call dif tp))
+  | Seq' (expr_lst) ->  Seq' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@ [(tail_call (get_last expr_lst) tp)]) 
+  | Def' (var , expr) -> Def' (var, (tail_call expr tp))
+  | Set' (var, expr) -> Set' (var, (tail_call expr false))
+  | Or' (expr_lst)-> Or' ((List.map (fun (expr)-> (tail_call expr false)) (remove_last expr_lst))@[(tail_call (get_last expr_lst) tp)]) 
+  | LambdaSimple' (vars, body)-> LambdaSimple' (vars, (tail_call body true))
+  | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var , (tail_call body true))
+  | Var' (varname) -> Var' (varname) 
+  | Applic'(expr, expr_lst)-> if tp 
+                                then ApplicTP'((tail_call expr false), (List.map (fun (expr)-> (tail_call expr false)) expr_lst ))
+                                else Applic'((tail_call expr false), (List.map (fun (expr)-> (tail_call expr false))  expr_lst))
+  |_-> raise X_syntax_error      
+  and remove_last lst =
+    match lst with
+    | x :: [] -> []
+    | x :: tail -> [x]@(remove_last tail)
+  and get_last lst =
+    match lst with
+    | x :: [] -> x
+    | x :: tail -> (get_last tail)
+
+
 let annotate_lexical_addresses e = lexical_addressing e [] [];;
 
-let annotate_tail_calls e = raise X_not_yet_implemented;;
+let annotate_tail_calls e = tail_call e true;;
 
 let box_set e = raise X_not_yet_implemented;;
 
 let run_semantics expr =
-  box_set
+  (* box_set *)
     (annotate_tail_calls
        (annotate_lexical_addresses expr));;
   
 end;; (* struct Semantics *)
+
+Semantics.run_semantics 
+(
+LambdaSimple (["x"; "y"; "z"],
+ Applic (Var "+",
+  [Var "x"; Var "y";
+   LambdaSimple (["z"],
+    Applic (Var "+",
+     [Var "z";
+      LambdaSimple (["x"], Applic (Var "+", [Var "x"; Var "y"; Var "z"]))]))]))
+  ) 
+= 
+LambdaSimple' (["x"; "y"; "z"],
+ ApplicTP' (Var' (VarFree "+"),
+  [Var' (VarParam ("x", 0)); Var' (VarParam ("y", 1));
+   LambdaSimple' (["z"],
+    ApplicTP' (Var' (VarFree "+"),
+     [Var' (VarParam ("z", 0));
+      LambdaSimple' (["x"],
+       ApplicTP' (Var' (VarFree "+"),
+        [Var' (VarParam ("x", 0)); Var' (VarBound ("y", 1, 1));
+         Var' (VarBound ("z", 0, 0))]))]))]))
+
+      ;;
