@@ -57,9 +57,6 @@ module type SEMANTICS = sig
   val annotate_lexical_addresses : expr -> expr'
   val annotate_tail_calls : expr' -> expr'
   val box_set : expr' -> expr'
-  val get_var_of_vartag : expr' -> var
-  val lexical_addressing : expr -> string list -> string list list -> expr'
-  val get_index : string -> string list -> int
 end;;
 
 module Semantics : SEMANTICS = struct
