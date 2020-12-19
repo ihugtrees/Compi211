@@ -135,7 +135,6 @@ let rec box expr =
   | Or' (expr_lst)-> Or' (List.map box expr_lst)
   | LambdaSimple' (vars, body)-> LambdaSimple'(vars, lambda_boxing vars body)
   | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var, (lambda_boxing (vars@[opt_var]) body))
-  (* | Var' (varname) -> Var' (varname) *)
   | Applic'(expr, expr_lst) -> Applic'(box expr, List.map box expr_lst)
   | ApplicTP'(expr, expr_lst) -> ApplicTP'(box expr, List.map box expr_lst)
   | Var'(VarFree(varname)) -> Var'(VarFree(varname))
@@ -143,8 +142,7 @@ let rec box expr =
   | Var'(VarBound(varname, major, minor)) -> BoxGet'(VarBound(varname, major, minor))
   | Box'(var) -> Box'(var)
   | BoxGet'(var) -> BoxGet'(var)
-  (* | BoxSet'(var, varef) -> BoxSet'(var,box varef) *)
-  |_-> raise X_syntax_error
+  | BoxSet'(var, varef) -> BoxSet'(var,box varef)
 
   and lambda_boxing params body =
   if params = [] then body else
