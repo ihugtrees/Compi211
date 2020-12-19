@@ -82,7 +82,7 @@ let rec lexical_addressing expr params bounds =
                           else   Var'(VarFree(varname))
   | LambdaSimple(vars, exp) -> LambdaSimple'(vars, lexical_addressing exp vars (params::bounds))
   | LambdaOpt(vars, opt_var, exp) -> LambdaOpt'(vars, opt_var, lexical_addressing exp (vars@[opt_var]) (params::bounds))
-
+  | _ -> raise X_syntax_error
 
   and get_index varname lst =
   match lst with
@@ -135,7 +135,7 @@ let rec box expr =
   | Or' (expr_lst)-> Or' (List.map box expr_lst)
   | LambdaSimple' (vars, body)-> LambdaSimple'(vars, lambda_boxing vars body)
   | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var, (lambda_boxing (vars@[opt_var]) body))
-  | Var' (varname) -> Var' (varname)
+  (* | Var' (varname) -> Var' (varname) *)
   | Applic'(expr, expr_lst) -> Applic'(box expr, List.map box expr_lst)
   | ApplicTP'(expr, expr_lst) -> ApplicTP'(box expr, List.map box expr_lst)
   | Var'(VarFree(varname)) -> Var'(VarFree(varname))
@@ -146,7 +146,7 @@ let rec box expr =
   (* | BoxSet'(var, varef) -> BoxSet'(var,box varef) *)
   |_-> raise X_syntax_error
 
-  and lambda_boxing params body = 
+  and lambda_boxing params body =
   if params = [] then body else
   let boxed = (List.map (fun (varname) -> Set'(VarParam(varname, get_index varname params), Box'(VarParam(varname, get_index varname params)))) params) in
   match body with

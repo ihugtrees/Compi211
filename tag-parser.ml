@@ -239,12 +239,13 @@ let rec tag_parse_sexpr sexpr =
     match rib, ribs with
     | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), Nil)
     | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("tmp" ^ string_of_int count), expr), (pset_lets rib rest (count+1)))
+    | _ -> raise X_syntax_error
 
   and pset_to_set rib ribs count =
     match rib, ribs with
     | Pair(Symbol(symbol), expr), Nil -> Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))),Nil)
     | Pair(Symbol(symbol), expr), Pair(rib, rest) ->  Pair(Pair(Symbol("set!"), Pair(Symbol(symbol), Pair(Symbol("tmp" ^ string_of_int count), Nil))), (pset_to_set rib rest (count+1)))
-
+    | _ -> raise X_syntax_error
 
 let tag_parse_expressions sexpr = List.map tag_parse_sexpr sexpr;;
 
