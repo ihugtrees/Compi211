@@ -32,6 +32,9 @@ let rec sexpr_eq s1 s2 =
 
 module Reader: sig
   val read_sexprs : string -> sexpr list
+  val parse_list : char list -> sexpr * char list
+  val nt_line_comment : char list -> char * char list
+  val parse_sexpr : char list -> sexpr * char list
 end
 = struct
 
@@ -104,16 +107,16 @@ let sign_nt =
 let int_nt =
   let num_nt = pack (plus digit_nt) (fun (str)-> ((int_of_string(list_to_string str)))) in
   let signed = pack (caten sign_nt num_nt)
-  (fun (e,n)-> if (e = '-') then  ((-1)*n) else (n)) in
+  (fun (e, n)-> if (e = '-') then  ((-1) * n) else (n)) in
   pack (disj num_nt signed) (fun (n)->(n)) ;;
 
 let integer_nt =
-  let not_frac_and_float = (pack (not_followed_by (not_followed_by  (plus digit_nt) (char '/')) (char '.')) (fun n->int_nt n)) in
-  pack not_frac_and_float (fun (n,e)->Fraction(n,1));;
+  let not_frac_and_float = (pack (not_followed_by (not_followed_by int_nt (char '/')) (char '.')) (fun n ->  n)) in
+  pack not_frac_and_float (fun n->Fraction(n,1));;
 
 let fraction_nt =
-  let num = pack (caten int_nt (char '/')) (fun (n,_)->n) in
-  let guarded = guard (caten num int_nt) (fun (num,den)->den!=0) in
+  let num = pack (caten int_nt (char '/')) (fun (n,_) -> n) in
+  let guarded = guard (caten num int_nt) (fun (num, den) -> den!=0) in
   let divided = pack  guarded (fun (num,den)-> let divider = gcd num den in (num/divider,den/divider)) in
   pack divided  (fun (num,den)->Fraction(num,den));;
 
@@ -135,11 +138,9 @@ let sci_number_nt =
   pack remove_e (fun (num,pow)->Float (num *. (10. ** (float_of_int pow))))
 
 let number_nt =
-  pack (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (fun (num)->Number(num));;
-
+  pack (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (fun (num) -> Number(num));;
 
 (*                             String                        *)
-
 
 let nt_string_meta_char =
   disj_list
@@ -198,7 +199,7 @@ let nt_line_comment =
   let nt_end = disj nt_end_of_line nt_end_of_file in
   let nt_comment = star (diff nt_any nt_end) in
   let nt_whole_comment = (caten (caten nt_semi_colon nt_comment) nt_end) in
-  pack nt_whole_comment (fun (a)->' ');;
+  pack nt_whole_comment (fun (_)->' ');;
 
 let rec parse_sexpr str =
   (make_paired (star comment_and_space) (star comment_and_space)
@@ -214,15 +215,15 @@ let rec parse_sexpr str =
             parse_quote;
             parse_qquote;
             parse_unquote_splice;
-            parse_unquote
+            parse_unquote;
             ]
       )) str
 
 and parse_list str =
   (pack (caten (char '(') (caten (star parse_sexpr) (char ')')))
-  (fun (left,(lst,right))-> match lst with
-          | []-> Nil
-          | _-> (List.fold_right (fun a b -> Pair (a,b)) lst Nil))) str
+  (fun (left, (lst, right))-> match lst with
+          | [] -> Nil
+          | _ -> (List.fold_right (fun a b -> Pair (a,b)) lst Nil))) str
 
 and parse_dot_list str =
   let start = caten (char '(') (caten (plus parse_sexpr) (char '.')) in
@@ -260,7 +261,7 @@ and nt_inline_comment str =
   (pack comment_sepr (fun (_) -> ' ')) str
 
 and comment_and_space str =
-     disj_list[nt_whitespaces; nt_line_comment; nt_inline_comment] str;;
+  disj_list[nt_whitespaces; nt_line_comment; nt_inline_comment] str;;
 
 let parser s =
   let (res, rest) = (plus parse_sexpr) s in
@@ -269,5 +270,15 @@ let parser s =
 let read_sexprs string = parser (string_to_list string);;
 (*  *)
 end;;
+
+(* 
+Reader.read_sexprs "(;Is it List?
+)";;
+Reader.read_sexprs "(    #;#t    )";;
+Reader.read_sexprs "123abc";;
+Reader.read_sexprs "123AbC";;
+Reader.read_sexprs "(    )";;
+Reader.read_sexprs "-30/300";;
+*)
 
  (* struct Reader *)
