@@ -35,6 +35,9 @@ module Reader: sig
   val parse_list : char list -> sexpr * char list
   val nt_line_comment : char list -> char * char list
   val parse_sexpr : char list -> sexpr * char list
+  val make_paired :  ('a -> 'b * 'c) ->
+           ('d -> 'e * 'f) -> ('c -> 'g * 'd) -> 'a -> 'g * 'f
+  val comment_and_space: char list -> char * char list
 end
 = struct
 
@@ -138,7 +141,7 @@ let sci_number_nt =
   pack remove_e (fun (num,pow)->Float (num *. (10. ** (float_of_int pow))))
 
 let number_nt =
-  pack (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (fun (num) -> Number(num));;
+  pack ((not_followed_by (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) visible_simple_char_nt)) (fun (num) -> Number(num));;
 
 (*                             String                        *)
 
@@ -199,7 +202,7 @@ let nt_line_comment =
   let nt_end = disj nt_end_of_line nt_end_of_file in
   let nt_comment = star (diff nt_any nt_end) in
   let nt_whole_comment = (caten (caten nt_semi_colon nt_comment) nt_end) in
-  pack nt_whole_comment (fun (_)->' ');;
+  pack nt_whole_comment (fun (_) -> ' ');;
 
 let rec parse_sexpr str =
   (make_paired (star comment_and_space) (star comment_and_space)

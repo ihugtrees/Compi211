@@ -32,8 +32,40 @@ module type CODE_GEN = sig
 end;;
 
 module Code_Gen : CODE_GEN = struct
+let rec remove_dup lst  = 
+  match lst with
+  |h::t ->if List.mem h t then (remove_dup t) else h :: (remove_dup t)
+  |[] -> []
+  
+let rec create_free_vars_tuples vars index = 
+  match vars with
+  | h::t -> [(h,index)]@(create_free_vars_tuples t (index+1))
+  | [] -> [];;
+
+
+let rec find_free_vars ast = 
+  match ast with 
+        | If' (test , dit , dif) -> (find_free_vars test)@ (find_free_vars dit) @ (find_free_vars dif)
+        | Seq' (expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc@curr)) [] (List.map find_free_vars expr_list)
+        | Set'((VarFree(str)), expr) -> [str]@(find_free_vars expr)
+        | Set' ((VarParam(str , minor)) , e) -> find_free_vars e
+        | Set' ((VarBound(str,major , minor)) , e) -> find_free_vars e
+        | Or' (expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc@curr)) [] (List.map find_free_vars expr_list)
+        | LambdaSimple' (vars , body) -> find_free_vars body
+        | LambdaOpt' (vars,opt,body) -> find_free_vars body
+        | Applic' (e , expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc@curr)) [] (List.map find_free_vars ([e]@expr_list))
+        | ApplicTP'(e ,expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc@curr)) [] (List.map find_free_vars ([e]@expr_list))
+        | BoxSet'(VarFree(str) , e) -> [str]@(find_free_vars e)
+        | BoxSet'(var , e) -> find_free_vars e
+        | Def'((VarFree(str)) , e) -> [str] @ (find_free_vars e)
+        | Var'(VarFree(str)) -> [str]
+        | _ -> [];;
   let make_consts_tbl asts = raise X_not_yet_implemented;;
-  let make_fvars_tbl asts = raise X_not_yet_implemented;;
+    
+
+
+  let make_fvars_tbl asts = (create_free_vars_tuples (remove_dup (List.flatten (List.map find_free_vars asts)) )0);;
+  
   let generate consts fvars e = raise X_not_yet_implemented;;
 end;;
 
