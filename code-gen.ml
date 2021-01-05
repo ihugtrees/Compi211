@@ -118,7 +118,7 @@ let rec find_const ast =
         | _ -> [];;
 
   let make_consts_tbl asts =
-    let consts = (remove_dup (List.flatten (List.map find_const asts))) in
+    let consts = (List.rev (remove_dup (List.rev (List.flatten (List.map find_const asts))))) in
     (* let sorted_sexprs_list = expand_sexpr_list consts  in *)
     let sorted_sexprs_list = List.append [Void; Sexpr(Nil) ; Sexpr(Bool(false)) ; Sexpr(Bool(true))] consts in
     let sorted_sexprs_set = remove_dup sorted_sexprs_list in

@@ -38,6 +38,7 @@ module Reader: sig
   val make_paired :  ('a -> 'b * 'c) ->
            ('d -> 'e * 'f) -> ('c -> 'g * 'd) -> 'a -> 'g * 'f
   val comment_and_space: char list -> char * char list
+  val number_nt: char list -> sexpr * char list
 end
 = struct
 
@@ -90,11 +91,11 @@ let named_char_nt =
    pack (word_ci "space") (fun _ -> '\032')];;
 
 
-let visible_simple_char_nt = const (fun c-> c > ' ');;
+let visible_simple_char_nt = const (fun c -> c > ' ');;
 
 let char_nt =
   let any_char = (disj named_char_nt visible_simple_char_nt) in
-  pack (caten char_perfix_nt any_char) (fun (_,c)->(c));;
+  pack (caten char_perfix_nt any_char) (fun (_,c) -> (c));;
 
 
 (*                             Numberssssssss                        *)
@@ -119,9 +120,9 @@ let integer_nt =
 
 let fraction_nt =
   let num = pack (caten int_nt (char '/')) (fun (n,_) -> n) in
-  let guarded = guard (caten num int_nt) (fun (num, den) -> den!=0) in
-  let divided = pack  guarded (fun (num,den)-> let divider = gcd num den in (num/divider,den/divider)) in
-  pack divided  (fun (num,den)->Fraction(num,den));;
+  let guarded = guard (caten num int_nt) (fun (num, den) -> den != 0) in
+  let divided = pack guarded (fun (num, den)-> let divider = gcd (abs(num)) (abs(den)) in (num/divider, den/divider)) in
+  pack divided (fun (num, den) -> Fraction(num, den));;
 
 let float_nt =
   let float_lst =  caten (plus digit_nt) (caten (char '.') (plus digit_nt)) in
@@ -141,7 +142,7 @@ let sci_number_nt =
   pack remove_e (fun (num,pow)->Float (num *. (10. ** (float_of_int pow))))
 
 let number_nt =
-  pack ((not_followed_by (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) visible_simple_char_nt)) (fun (num) -> Number(num));;
+  pack ((not_followed_by (disj_list [sci_number_nt;fraction_nt;float_nt_obj;integer_nt]) (diff visible_simple_char_nt (char ')')))) (fun (num) -> Number(num));;
 
 (*                             String                        *)
 
@@ -196,7 +197,7 @@ let string_obj =
 
 (*                             List                        *)
 
-let nt_whitespaces = pack (plus nt_whitespace) (fun (a)->' ');;
+let nt_whitespaces = pack (plus nt_whitespace) (fun (a) -> ' ');;
 
 let nt_line_comment =
   let nt_end = disj nt_end_of_line nt_end_of_file in
@@ -223,7 +224,7 @@ let rec parse_sexpr str =
       )) str
 
 and parse_list str =
-  (pack (caten (char '(') (caten (star parse_sexpr) (char ')')))
+  (pack (caten (char '(') (caten (make_paired (star comment_and_space) (star comment_and_space) (star parse_sexpr)) (char ')')))
   (fun (left, (lst, right))-> match lst with
           | [] -> Nil
           | _ -> (List.fold_right (fun a b -> Pair (a,b)) lst Nil))) str
@@ -264,7 +265,7 @@ and nt_inline_comment str =
   (pack comment_sepr (fun (_) -> ' ')) str
 
 and comment_and_space str =
-  disj_list[nt_whitespaces; nt_line_comment; nt_inline_comment] str;;
+  disj_list[nt_whitespaces ; nt_line_comment ; nt_inline_comment] str;;
 
 let parser s =
   let (res, rest) = (plus parse_sexpr) s in
@@ -273,15 +274,5 @@ let parser s =
 let read_sexprs string = parser (string_to_list string);;
 (*  *)
 end;;
-
-(* 
-Reader.read_sexprs "(;Is it List?
-)";;
-Reader.read_sexprs "(    #;#t    )";;
-Reader.read_sexprs "123abc";;
-Reader.read_sexprs "123AbC";;
-Reader.read_sexprs "(    )";;
-Reader.read_sexprs "-30/300";;
-*)
 
  (* struct Reader *)
