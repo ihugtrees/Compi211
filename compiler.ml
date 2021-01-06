@@ -1,6 +1,5 @@
 #use "code-gen.ml";;
 #use "prims.ml";;
-
 (* 
    Auxiliary function to load the contents of a file into a string in memory.
    Note: exceptions are not handled here, and are expected to be handled 
@@ -113,7 +112,7 @@ let clean_exit =
    ret";;
 
 exception X_missing_input_file;;
-
+Printexc.record_backtrace true;;
 (* 
    This is the bit that makes stuff happen. It will try to read a filename from the command line arguments
    and compile that file, along with the contents of stdlib.scm.
@@ -122,7 +121,9 @@ exception X_missing_input_file;;
    This assumption is already handled correctly in the provided makefile.
  *)
 try
-  (* Compile a string of scheme code to a collection of analyzed ASTs *)
+  
+
+
   let string_to_asts s = List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
                               (Reader.read_sexprs s)) in
