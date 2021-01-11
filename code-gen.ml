@@ -31,7 +31,27 @@ module type CODE_GEN = sig
   val generate : (constant * (int * string)) list -> (string * int) list -> expr' -> string
   val get_index : unit -> int
 end;;
-
+let rec expr_to_string ast =
+  match ast with
+        | Const'(Void) -> " void"
+        | Var'(VarFree(str)) -> " var:"^str
+        | Const'(Sexpr(Symbol(str))) -> " symbol:"^str
+        | Const'(Sexpr(String(str))) -> " String: "^str
+        | Const'(Sexpr(Pair(car,cdr))) -> " Pair:"
+        | Const'(Sexpr(Number(n))) ->" number"
+        | Const'(Sexpr(Char(n))) ->" char"
+        | If' (test , dit , dif) ->" if: "^(expr_to_string test) ^"then:"^ (expr_to_string dit) ^"else"^ (expr_to_string dif)
+        | Seq' (expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc ^ curr)) " " (List.map expr_to_string expr_list)
+        | Set'(v, expr) -> " set "^(expr_to_string expr)
+        | Or' (expr_list) -> List.fold_left (fun (acc) -> (fun (curr) -> acc ^  curr)) " " (List.map expr_to_string expr_list)
+        | LambdaSimple' (vars , body) -> " lambda" ^expr_to_string body
+        | LambdaOpt' (vars,opt,body) -> " lambdaOpt" ^expr_to_string body
+        | Applic' (e, expr_list) ->"applic "^ List.fold_left (fun (acc) ->  (fun (curr) -> acc ^  curr)) " " (List.map expr_to_string ([e]@expr_list))
+        | ApplicTP'(e, expr_list) -> "applicTP "^List.fold_left (fun (acc) ->  (fun (curr) -> acc ^ curr)) " " (List.map expr_to_string ([e]@expr_list))
+        | BoxSet'(VarFree(str) , e) -> "Boxset "^str
+        | BoxSet'(var , e) -> "Boxset "
+        | Def'((VarFree(str)) , e) -> "def "^str
+        | _ -> "";;
 module Code_Gen : CODE_GEN = struct
 
 let const_eq e1 e2 =
@@ -72,7 +92,7 @@ let sexpr_to_const_entry sexpr const_tbl curr_off =
       | Sexpr(Char(char)) -> ((Sexpr(Char(char)), (curr_off, "MAKE_LITERAL_CHAR(" ^ (string_of_int (Char.code char)) ^ ")")), curr_off + 2)
       | Sexpr(Number(Fraction(num, denum))) -> ((Sexpr(Number(Fraction(num, denum))), (curr_off , "MAKE_LITERAL_RATIONAL(" ^ (string_of_int num) ^ "," ^ (string_of_int denum) ^ ")")), curr_off + 17)
       | Sexpr(Number(Float(num))) -> ((Sexpr(Number(Float(num))), (curr_off, "MAKE_LITERAL_FLOAT(" ^ (string_of_float num) ^ ")")), curr_off + 9)
-      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING \'" ^ str ^"\'")), curr_off + 9 + (String.length str))
+      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING \"" ^ str ^"\"")), curr_off + 9 + (String.length str))
       | Sexpr(Symbol(sym)) -> ((Sexpr(Symbol(sym)), (curr_off, "MAKE_LITERAL_SYMBOL(const_tbl+" ^ (get_constant_offset (Sexpr(String(sym))) const_tbl) ^ ")")), curr_off + 9)
       | Sexpr(Pair(car, cdr)) -> ((Sexpr(Pair(car,cdr)), (curr_off, "MAKE_LITERAL_PAIR(const_tbl+" ^ (get_constant_offset (Sexpr(car)) const_tbl) ^ ",const_tbl+" ^ (get_constant_offset (Sexpr(cdr)) const_tbl) ^")")), curr_off + 17)
 
@@ -151,12 +171,12 @@ let rec asm_from_expr consts fvars e depth =
                                                   mov rbx, qword[rbp+8*2]
                                                   mov rbx, qword[rbx+8*"^(string_of_int major)^"]
                                                   mov qword[rbx+8*"^(string_of_int minor)^"],rax"
-  | Var'(VarFree(v)) -> "mov rax, qword[fvar_tbl + WORD_SIZE*"^( (get_fvar_index  v fvars))^" ]"
+  | Var'(VarFree(v)) -> ";"^(expr_to_string ( Var'(VarFree(v))))^"\n"^"mov rax, qword[fvar_tbl + WORD_SIZE*"^( (get_fvar_index  v fvars))^" ]"
 
-  | Set'((VarFree(v)),expr) -> (asm_from_expr consts fvars expr depth) ^ "
+  | Set'((VarFree(v)),expr) -> ";"^(expr_to_string (  Set'((VarFree(v)),expr)))^"\n"^(asm_from_expr consts fvars expr depth) ^ "
                                     mov qword[fvar_tbl + WORD_SIZE*"^ (get_fvar_index  v fvars)^"], rax
                                     mov rax, SOB_VOID_ADDRESS\n"
-  | Def'((VarFree(v)), expr) -> (asm_from_expr consts fvars expr depth)^"
+  | Def'((VarFree(v)), expr) ->  ";"^(expr_to_string (Def'((VarFree(v)), expr)))^"\n"^(asm_from_expr consts fvars expr depth)^"
               mov qword [fvar_tbl + WORD_SIZE*"^((get_fvar_index  v fvars))^"], rax
               mov rax, SOB_VOID_ADDRESS\n
           "
@@ -179,12 +199,32 @@ let rec asm_from_expr consts fvars e depth =
   | BoxSet'(v, expr) ->(asm_from_expr consts fvars expr depth)^"\n
                               push rax\n
                               "^(asm_from_expr consts fvars (Var'(v)) depth)^"
-                              pop qword[rax]
+                              pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS\n"
+  | Box'(VarParam(_,minor)) -> "
+          MALLOC rbx, WORD_SIZE\n
+          mov rcx , qword [rbp + WORD_SIZE*(4+"^(string_of_int minor)^")]\n
+          mov qword [rbx] , rcx\n
+          mov rax , rbx\n"
+
+          (* 
+          "mov rax, qword[rbp + 8 * (4 + " ^ minor ^ ")]\n" ^
+          "push SOB_NIL_ADDRESS ; something for the cdr\n" ^
+          "push rax             ; car\n" ^
+          "push 2               ; argc\n" ^
+          "push SOB_NIL_ADDRESS ;fake env\n" ^
+          "call cons\n" ^
+          "add rsp,8*1          ;pop env\n" ^
+          "pop rbx              ;pop argc\n" ^
+          "shl rbx,3            ;rbx=rbx*8\n" ^
+          "add rsp,rbx          ;pop args\n" ^
+          "mov qword[rbp + 8 * (4 + " ^ minor ^ ")],rax\n" 
+      *)
 
   | LambdaSimple'(params, body) ->
     let index = string_of_int (get_index ()) in
-      "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
+      ";"^(expr_to_string (LambdaSimple'(params, body)))^"\n"^
+      "\n"^"CREATE_EXT_ENV "^(string_of_int (depth+1))^"\n"^
       "mov rcx, rax"^"\n"^
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
@@ -197,20 +237,26 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | Applic'(body, args) ->
+    (* "push T_NIL"^"\n"^ *)
+    ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
     (asm_from_expr consts fvars body depth)^"\n"^
-    "CLOSURE_ENV rbx, rax"^"\n"^
-    "push rbx"^"\n" ^
-    "CLOSURE_CODE rbx, rax"^"\n"^
-    "call rbx"^"\n" ^
+    "mov rbx, rax"^"\n"^
+    "CLOSURE_ENV rax, rbx"^"\n"^
+    "push rax"^"\n"^
+    "CLOSURE_CODE rax, rbx"^"\n"^
+    "call rax"^"\n"^
     "add rsp, 8*1 ;pop env"^"\n"^
     "pop rbx      ;pop arg count"^"\n"^
     "shl rbx, 3   ;rbx = rbx*8"^"\n"^
     "add rsp, rbx ;pop args"^"\n"
+    (* "pop rbx"^"\n" *)
 
   | LambdaOpt'(params, opt, body) ->
     let index = string_of_int (get_index ()) in
+        ";"^(expr_to_string (LambdaOpt'(params, opt, body)))^"\n"^
+
       "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
       "mov rcx, rax"^"\n"^
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
@@ -225,6 +271,9 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | ApplicTP'(body, args) ->
+    (* "push T_NIL"^"\n"^ *)
+    ";"^(expr_to_string (ApplicTP'(body, args) ))^"\n"^
+
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
     (asm_from_expr consts fvars body depth)^"\n"^
@@ -237,6 +286,8 @@ let rec asm_from_expr consts fvars e depth =
   
   | _ -> ""
   ;;
+
+(* =========================================================================================================== *)
 
 let make_consts_tbl asts =
   let consts = (List.rev (remove_dup (List.rev (List.flatten (List.map find_const asts))))) in
@@ -261,7 +312,9 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 (* let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "1"));; *)
+                              (Reader.read_sexprs "(list \"ab\" '(1 2) 'c 'ab)"));; *)
+
+(* Code_Gen.make_consts_tbl ast;; *)
 (*
 let test_collect_sexp str =
   collect_sexp (Semantics.run_semantics (List.hd (Tag_Parser.tag_parse_expressions (Reader.read_sexprs str))));;
@@ -292,7 +345,6 @@ let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
                               (Reader.read_sexprs ""));;
 
-(* Code_Gen.make_consts_tbl ast;; *)
 (* Code_Gen.make_consts_tbl [
  Const' (Sexpr
    (Pair

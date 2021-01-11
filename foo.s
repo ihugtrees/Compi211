@@ -18,7 +18,7 @@ db T_VOID
 db T_NIL
 db T_BOOL, 0
 db T_BOOL, 1
-MAKE_LITERAL_STRING 'whatever'
+MAKE_LITERAL_STRING "whatever"
 MAKE_LITERAL_SYMBOL(const_tbl+6)
 MAKE_LITERAL_CHAR(0)
 MAKE_LITERAL_RATIONAL(0,1)
@@ -57,88 +57,153 @@ main:
     ;; This is where we simulate the missing (define ...) expressions
     ;; for all the primitive procedures.
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, boolean?)
-mov [fvar_tbl+0], rax
+mov [fvar_tbl+WORD_SIZE*0], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, flonum?)
-mov [fvar_tbl+61], rax
+mov [fvar_tbl+WORD_SIZE*61], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, rational?)
-mov [fvar_tbl+60], rax
+mov [fvar_tbl+WORD_SIZE*60], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, pair?)
-mov [fvar_tbl+3], rax
+mov [fvar_tbl+WORD_SIZE*3], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, null?)
-mov [fvar_tbl+4], rax
+mov [fvar_tbl+WORD_SIZE*4], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, char?)
-mov [fvar_tbl+5], rax
+mov [fvar_tbl+WORD_SIZE*5], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, string?)
-mov [fvar_tbl+6], rax
+mov [fvar_tbl+WORD_SIZE*6], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, procedure?)
-mov [fvar_tbl+7], rax
+mov [fvar_tbl+WORD_SIZE*7], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, symbol?)
-mov [fvar_tbl+8], rax
+mov [fvar_tbl+WORD_SIZE*8], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, string_length)
-mov [fvar_tbl+9], rax
+mov [fvar_tbl+WORD_SIZE*9], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, string_ref)
-mov [fvar_tbl+10], rax
+mov [fvar_tbl+WORD_SIZE*10], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, string_set)
-mov [fvar_tbl+11], rax
+mov [fvar_tbl+WORD_SIZE*11], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, make_string)
-mov [fvar_tbl+12], rax
+mov [fvar_tbl+WORD_SIZE*12], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, symbol_to_string)
-mov [fvar_tbl+13], rax
+mov [fvar_tbl+WORD_SIZE*13], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, char_to_integer)
-mov [fvar_tbl+14], rax
+mov [fvar_tbl+WORD_SIZE*14], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, integer_to_char)
-mov [fvar_tbl+15], rax
+mov [fvar_tbl+WORD_SIZE*15], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, exact_to_inexact)
-mov [fvar_tbl+36], rax
+mov [fvar_tbl+WORD_SIZE*36], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, eq?)
-mov [fvar_tbl+16], rax
+mov [fvar_tbl+WORD_SIZE*16], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, add)
-mov [fvar_tbl+17], rax
+mov [fvar_tbl+WORD_SIZE*17], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, mul)
-mov [fvar_tbl+18], rax
+mov [fvar_tbl+WORD_SIZE*18], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, div)
-mov [fvar_tbl+20], rax
+mov [fvar_tbl+WORD_SIZE*20], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, eq)
-mov [fvar_tbl+22], rax
+mov [fvar_tbl+WORD_SIZE*22], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, lt)
-mov [fvar_tbl+21], rax
+mov [fvar_tbl+WORD_SIZE*21], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, numerator)
-mov [fvar_tbl+35], rax
+mov [fvar_tbl+WORD_SIZE*35], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, denominator)
-mov [fvar_tbl+47], rax
+mov [fvar_tbl+WORD_SIZE*47], rax
 MAKE_CLOSURE(rax, SOB_NIL_ADDRESS, gcd)
-mov [fvar_tbl+43], rax
+mov [fvar_tbl+WORD_SIZE*43], rax
 
 user_code_fragment:
 ;;; The code you compiled will be added here.
 ;;; It will be executed immediately after the closures for 
 ;;; the primitive procedures are set up.
+;def map
+;applic   lambda  set  set  set  set  set applicTP   lambda  set  set Boxset Boxset applicTP   lambda lambdaOptapplicTP   symbol:whatever symbol:whatever var:null? var:car var:cdr var:cons var:apply
+; var:apply
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 push rax
+; var:cons
 mov rax, qword[fvar_tbl + WORD_SIZE*23 ]
 push rax
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
 push rax
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
 push 5
+; lambda  set  set  set  set  set applicTP   lambda  set  set Boxset Boxset applicTP   lambda lambdaOptapplicTP   symbol:whatever symbol:whatever
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode1)
 jmp Lcont1
 Lcode1:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+4)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+4)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set  set Boxset Boxset applicTP   lambda lambdaOptapplicTP   symbol:whatever symbol:whatever
 mov rax, const_tbl+23
 push rax
 mov rax, const_tbl+23
 push rax
 push 2
+; lambda  set  set Boxset Boxset applicTP   lambda lambdaOptapplicTP  
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode2)
 jmp Lcont2
@@ -146,23 +211,75 @@ Lcode2:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if: applic  applic  then:elseapplicTP  applic  applic  applic  applic  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode3)
 jmp Lcont3
 Lcode3:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  applic  
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -173,10 +290,13 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -191,30 +311,64 @@ add rsp, rbx ;pop args
  Lelse4:
                     mov rax, const_tbl+1
  Lexit4:
+
 leave
 ret
 Lcont3:
 
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
 
-CREATE_EXT_ENV 2
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+0)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if: applic  then:elseapplicTP  applic  applic  applic  applic  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode5)
 jmp Lcont5
 Lcode5:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -229,21 +383,29 @@ add rsp, rbx ;pop args
  Lelse6:
                     mov rax, const_tbl+1
  Lexit6:
+
 leave
 ret
 Lcont5:
 
-                                              mov qword[rbp+8*(4+1)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-push 0
 
-CREATE_EXT_ENV 2
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+1)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda lambdaOptapplicTP  
+push 0
+; lambda lambdaOptapplicTP  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode7)
 jmp Lcont7
 Lcode7:
 push rbp
 mov rbp, rsp
+; lambdaOptapplicTP  
 
 CREATE_EXT_ENV 3
 mov rcx, rax
@@ -253,6 +415,7 @@ Lcode8:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
+;applicTP  
 mov rax, qword[rbp+8 * (4+1)]
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -295,14 +458,16 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont1:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -314,24 +479,64 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def fold-left
+; lambda  set  set  set  if: applic   var:equal?then:elseapplicTP   var:fold-leftapplic  applic   var:carapplic   var:cdr
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode9)
 jmp Lcont9
 Lcode9:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic   var:equal?
 mov rax, const_tbl+1
 push rax
 mov rax, qword[rbp+8 * (4+2)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
+; var:equal?
 mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -341,11 +546,16 @@ add rsp, rbx ;pop args
  jne Lelse10
 
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit10
  Lelse10:
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  Lexit10:
+
 leave
 ret
 Lcont9:
@@ -356,24 +566,64 @@ Lcont9:
           
 	call write_sob_if_not_void
 
+;def fold-right
+; lambda  set  set  set  if: applic   var:equal?then:elseapplicTP  applic   var:carapplic   var:fold-rightapplic   var:cdr
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode11)
 jmp Lcont11
 Lcode11:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic   var:equal?
 mov rax, const_tbl+1
 push rax
 mov rax, qword[rbp+8 * (4+2)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
+; var:equal?
 mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -383,11 +633,16 @@ add rsp, rbx ;pop args
  jne Lelse12
 
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit12
  Lelse12:
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  Lexit12:
+
 leave
 ret
 Lcont11:
@@ -398,6 +653,8 @@ Lcont11:
           
 	call write_sob_if_not_void
 
+;def cons*
+; lambdaOpt  set  if: applic   var:null?applic   var:cdrthen:applicTP   var:carelseapplicTP   var:consapplic   var:carapplic   var:apply var:cons*applic   var:cdr
 
 CREATE_EXT_ENV 0
 mov rcx, rax
@@ -407,14 +664,31 @@ Lcode13:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic   var:null?applic   var:cdr
+;applic   var:cdr
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -422,11 +696,13 @@ add rsp, rbx ;pop args
 
 push rax
 push 1
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -435,9 +711,13 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse14
 
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   var:car
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 CLOSURE_ENV rbx, rax
 push rbx
@@ -449,9 +729,13 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit14
  Lelse14:
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   var:car
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 CLOSURE_ENV rbx, rax
 push rbx
@@ -461,6 +745,7 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit14:
+
 leave
 ret
 Lcont13:
@@ -471,21 +756,61 @@ Lcont13:
           
 	call write_sob_if_not_void
 
+;def append
+;applic   lambda  set  set  set  lambdaOpt  set applicTP   lambda  set  set  if: applic  then:elseapplicTP   var:null? var:fold-right var:cons
+; var:cons
 mov rax, qword[fvar_tbl + WORD_SIZE*23 ]
 push rax
+; var:fold-right
 mov rax, qword[fvar_tbl + WORD_SIZE*31 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
 push 3
+; lambda  set  set  set  lambdaOpt  set applicTP   lambda  set  set  if: applic  then:elseapplicTP  
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode15)
 jmp Lcont15
 Lcode15:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set applicTP   lambda  set  set  if: applic  then:elseapplicTP  
 
 CREATE_EXT_ENV 1
 mov rcx, rax
@@ -495,28 +820,71 @@ Lcode16:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set  set  if: applic  then:elseapplicTP  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+1
 push rax
+; lambda  set  set  if: applic  then:elseapplicTP  
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode17)
 jmp Lcont17
 Lcode17:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -526,11 +894,16 @@ add rsp, rbx ;pop args
  jne Lelse18
 
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit18
  Lelse18:
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  Lexit18:
+
 leave
 ret
 Lcont17:
@@ -540,6 +913,8 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -547,18 +922,21 @@ FIX_APPLICTP_STACK 6
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont16:
+
 
 leave
 ret
 Lcont15:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -570,6 +948,8 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def list
+; lambdaOpt  set 
 
 CREATE_EXT_ENV 0
 mov rcx, rax
@@ -579,7 +959,21 @@ Lcode19:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
+
 leave
 ret
 Lcont19:
@@ -590,26 +984,67 @@ Lcont19:
           
 	call write_sob_if_not_void
 
+;def list?
+;applic   lambda  set  set  set applicTP   lambda  set Boxset applicTP   lambda symbol:whatever var:null? var:pair? var:cdr
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
 push rax
+; var:pair?
 mov rax, qword[fvar_tbl + WORD_SIZE*3 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
 push 3
+; lambda  set  set  set applicTP   lambda  set Boxset applicTP   lambda symbol:whatever
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode20)
 jmp Lcont20
 Lcode20:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set Boxset applicTP   lambda symbol:whatever
 mov rax, const_tbl+23
 push rax
 push 1
+; lambda  set Boxset applicTP   lambda
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode21)
 jmp Lcont21
@@ -617,23 +1052,52 @@ Lcode21:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  applic   if: applic  then:applicTP   var:list?applic  else
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode22)
 jmp Lcont22
 Lcode22:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -641,16 +1105,22 @@ add rsp, rbx ;pop args
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit23
-    mov rax, qword[rbp+8 * (4+0)]
+    ;applic  
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -659,16 +1129,23 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse24
 
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   var:list?applic  
+;applic  
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -676,6 +1153,7 @@ add rsp, rbx ;pop args
 
 push rax
 push 1
+; var:list?
 mov rax, qword[fvar_tbl + WORD_SIZE*33 ]
 CLOSURE_ENV rbx, rax
 push rbx
@@ -687,16 +1165,23 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit24
  Lelse24:
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   var:list?applic  
+;applic  
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -704,6 +1189,7 @@ add rsp, rbx ;pop args
 
 push rax
 push 1
+; var:list?
 mov rax, qword[fvar_tbl + WORD_SIZE*33 ]
 CLOSURE_ENV rbx, rax
 push rbx
@@ -717,15 +1203,22 @@ jmp rbx
  jne Lexit23
     
 Lexit23:
+
 leave
 ret
 Lcont22:
 
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-push 0
 
-CREATE_EXT_ENV 2
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+0)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda
+push 0
+; lambda
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode25)
 jmp Lcont25
@@ -758,14 +1251,16 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont20:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -777,21 +1272,61 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def make-string
+;applic   lambda  set  set  set  lambdaOpt  set  set  if: applic  then:applicTP   charelseapplicTP  applic   var:null? var:car var:make-string
+; var:make-string
 mov rax, qword[fvar_tbl + WORD_SIZE*12 ]
 push rax
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
 push 3
+; lambda  set  set  set  lambdaOpt  set  set  if: applic  then:applicTP   charelseapplicTP  applic  
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode26)
 jmp Lcont26
 Lcode26:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set  set  if: applic  then:applicTP   charelseapplicTP  applic  
 
 CREATE_EXT_ENV 1
 mov rcx, rax
@@ -801,16 +1336,44 @@ Lcode27:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -819,14 +1382,19 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse28
 
-                    mov rax, const_tbl+32
+                    ;applicTP   char
+mov rax, const_tbl+32
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*2]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -837,14 +1405,19 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit28
  Lelse28:
-                    mov rax, const_tbl+32
+                    ;applicTP   char
+mov rax, const_tbl+32
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*2]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -853,18 +1426,21 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit28:
+
 leave
 ret
 Lcont27:
+
 
 leave
 ret
 Lcont26:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -876,15 +1452,30 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def not
+; lambda  set  if: then:else
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode29)
 jmp Lcont29
 Lcode29:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse30
 
@@ -894,6 +1485,7 @@ mov rax, qword[rbp+8 * (4+0)]
  Lelse30:
                     mov rax, const_tbl+2
  Lexit30:
+
 leave
 ret
 Lcont29:
@@ -904,35 +1496,50 @@ Lcont29:
           
 	call write_sob_if_not_void
 
+;applic   lambda  set  set  set  set  set  set  set  set  set  set  set  set  set applicTP   lambda  set applic   lambda  set Boxset +Boxset *Boxset / lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominatorapplicTP   lambda  set Boxset =Boxset < lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP   lambda  set  lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  elseapplicTP   var:flonum? var:rational? var:exact->inexact var:fold-left var:map var:+ var:* var:/ var:= var:< var:car var:cdr var:null?
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
 push rax
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 push rax
+; var:<
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
 push rax
+; var:=
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
 push rax
+; var:/
 mov rax, qword[fvar_tbl + WORD_SIZE*20 ]
 push rax
+; var:*
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 push rax
+; var:+
 mov rax, qword[fvar_tbl + WORD_SIZE*17 ]
 push rax
+; var:map
 mov rax, qword[fvar_tbl + WORD_SIZE*37 ]
 push rax
+; var:fold-left
 mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 push rax
+; var:exact->inexact
 mov rax, qword[fvar_tbl + WORD_SIZE*36 ]
 push rax
+; var:rational?
 mov rax, qword[fvar_tbl + WORD_SIZE*60 ]
 push rax
+; var:flonum?
 mov rax, qword[fvar_tbl + WORD_SIZE*61 ]
 push rax
 push 13
+; lambda  set  set  set  set  set  set  set  set  set  set  set  set  set applicTP   lambda  set applic   lambda  set Boxset +Boxset *Boxset / lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominatorapplicTP   lambda  set Boxset =Boxset < lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP   lambda  set  lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  elseapplicTP  
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode31)
 jmp Lcont31
@@ -940,7 +1547,152 @@ Lcode31:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+4)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+4)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+5)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+5)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+6)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+6)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+7)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+7)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+8)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+8)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+9)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+9)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+10)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+10)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+11)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+11)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+12)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+12)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set applic   lambda  set Boxset +Boxset *Boxset / lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominatorapplicTP   lambda  set Boxset =Boxset < lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP   lambda  set  lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  elseapplicTP  
+; lambda  set  lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  elseapplicTP  
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode47)
 jmp Lcont47
@@ -948,23 +1700,63 @@ Lcode47:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  elseapplicTP  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode48)
 jmp Lcont48
 Lcode48:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -973,16 +1765,22 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse50
 
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -991,16 +1789,22 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit50
  Lelse50:
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1010,16 +1814,23 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse49
 
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP  applic  
+;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1027,11 +1838,15 @@ add rsp, rbx ;pop args
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1042,16 +1857,23 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit49
  Lelse49:
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP  applic  
+;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1059,11 +1881,15 @@ add rsp, rbx ;pop args
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1072,9 +1898,11 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit49:
+
 leave
 ret
 Lcont48:
+
 
 leave
 ret
@@ -1082,8 +1910,9 @@ Lcont47:
 
 push rax
 push 1
+; lambda  set applic   lambda  set Boxset +Boxset *Boxset / lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominatorapplicTP   lambda  set Boxset =Boxset < lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP  
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode32)
 jmp Lcont32
@@ -1091,23 +1920,53 @@ Lcode32:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic   lambda  set Boxset +Boxset *Boxset / lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominator
+; lambda  set  if: applic  then:elseapplicTP   lambda  set applicTP  applic  applic   var:numeratorapplic  applic   var:denominatorapplic   var:gcdapplic   var:numeratorapplic   var:denominator
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode39)
 jmp Lcont39
 Lcode39:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1117,25 +1976,43 @@ add rsp, rbx ;pop args
  jne Lelse40
 
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit40
  Lelse40:
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  Lexit40:
+
 leave
 ret
 Lcont39:
 
 push rax
 push 1
+; lambda  set Boxset +Boxset *Boxset /
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode33)
 jmp Lcont33
 Lcode33:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set applicTP  applic  applic   number
 
 CREATE_EXT_ENV 3
 mov rcx, rax
@@ -1145,22 +2022,43 @@ Lcode34:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP  applic  applic   number
+;applic  applic   number
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+34
 push rax
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*5]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1171,10 +2069,13 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*3]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1185,6 +2086,8 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1192,12 +2095,19 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont34:
 
-                                    mov qword[fvar_tbl + WORD_SIZE*17], rax
-                                    mov rax, SOB_VOID_ADDRESS
+
+                              push rax
+
+                              ; var:+
+mov rax, qword[fvar_tbl + WORD_SIZE*17 ]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set applicTP  applic  applic   number
 
 CREATE_EXT_ENV 3
 mov rcx, rax
@@ -1207,22 +2117,43 @@ Lcode35:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP  applic  applic   number
+;applic  applic   number
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+51
 push rax
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*6]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1233,10 +2164,13 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*3]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1247,6 +2181,8 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1254,24 +2190,37 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont35:
 
-                                    mov qword[fvar_tbl + WORD_SIZE*18], rax
-                                    mov rax, SOB_VOID_ADDRESS
+
+                              push rax
+
+                              ; var:*
+mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applic   lambda  set  lambdaOpt  set  set  if: applic  then:applicTP   numberelseapplicTP  applic  applic  
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*7]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1279,14 +2228,27 @@ add rsp, rbx ;pop args
 
 push rax
 push 1
+; lambda  set  lambdaOpt  set  set  if: applic  then:applicTP   numberelseapplicTP  applic  
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 4
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode36)
 jmp Lcont36
 Lcode36:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set  set  if: applic  then:applicTP   numberelseapplicTP  applic  
 
 CREATE_EXT_ENV 4
 mov rcx, rax
@@ -1296,16 +2258,44 @@ Lcode37:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*3]
                                         mov rax, qword[rbp+8*12]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1314,7 +2304,10 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse38
 
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   number
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+51
 push rax
@@ -1322,6 +2315,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1332,7 +2327,10 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit38
  Lelse38:
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   number
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+51
 push rax
@@ -1340,6 +2338,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1348,47 +2348,70 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit38:
+
 leave
 ret
 Lcont37:
+
 
 leave
 ret
 Lcont36:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-                                    mov qword[fvar_tbl + WORD_SIZE*20], rax
-                                    mov rax, SOB_VOID_ADDRESS
+
+                              push rax
+
+                              ; var:/
+mov rax, qword[fvar_tbl + WORD_SIZE*20 ]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
 
 
 leave
 ret
 Lcont33:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
+;applicTP   lambda  set Boxset =Boxset < lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP  
+; lambda  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP  
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode42)
 jmp Lcont42
 Lcode42:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set  set applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP  
 
 CREATE_EXT_ENV 3
 mov rcx, rax
@@ -1398,32 +2421,78 @@ Lcode43:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
-mov rax, qword[rbp+8 * (4+1)]
-push rax
 
-CREATE_EXT_ENV 4
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set  set  if: then:elseapplic   lambda  set applicTP  
+;applic   lambda  set applicTP  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
+push rax
+; lambda  set applicTP  
+
+CREATE_EXT_ENV 5
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode44)
 jmp Lcont44
 Lcode44:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
 FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
+
 
 leave
 ret
@@ -1434,10 +2503,13 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*4]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1446,24 +2518,54 @@ add rsp, rbx ;pop args
 push rax
 mov rax, const_tbl+4
 push rax
+; lambda  set  set  if: then:else
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 5
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode45)
 jmp Lcont45
 Lcode45:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse46
 
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit46
  Lelse46:
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  Lexit46:
+
 leave
 ret
 Lcont45:
@@ -1473,6 +2575,8 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*3]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1480,9 +2584,11 @@ FIX_APPLICTP_STACK 6
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont43:
+
 
 leave
 ret
@@ -1490,26 +2596,45 @@ Lcont42:
 
 push rax
 push 1
+; lambda  set Boxset =Boxset <
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode41)
 jmp Lcont41
 Lcode41:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  applic  
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*8]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1518,29 +2643,44 @@ add rsp, rbx ;pop args
 push rax
 push 1
 mov rax, qword[rbp+8 * (4+0)]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-                                    mov qword[fvar_tbl + WORD_SIZE*22], rax
-                                    mov rax, SOB_VOID_ADDRESS
+
+                              push rax
+
+                              ; var:=
+mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applic  applic  
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*9]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1549,17 +2689,25 @@ add rsp, rbx ;pop args
 push rax
 push 1
 mov rax, qword[rbp+8 * (4+0)]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-                                    mov qword[fvar_tbl + WORD_SIZE*21], rax
-                                    mov rax, SOB_VOID_ADDRESS
+
+                              push rax
+
+                              ; var:<
+mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
 
 
 leave
@@ -1585,14 +2733,16 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont31:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1600,21 +2750,61 @@ add rsp, rbx ;pop args
 
 	call write_sob_if_not_void
 
+;def -
+;applic   lambda  set  set  set  lambdaOpt  set  set  if: applic  then:applicTP   numberapplic   var:* numberelseapplicTP  applic   var:* numberapplic   var:apply var:+ var:null?
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
+; var:+
 mov rax, qword[fvar_tbl + WORD_SIZE*17 ]
 push rax
+; var:apply
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 push rax
 push 3
+; lambda  set  set  set  lambdaOpt  set  set  if: applic  then:applicTP   numberapplic   var:* numberelseapplicTP  applic   var:* numberapplic  
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode51)
 jmp Lcont51
 Lcode51:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set  set  if: applic  then:applicTP   numberapplic   var:* numberelseapplicTP  applic   var:* numberapplic  
 
 CREATE_EXT_ENV 1
 mov rcx, rax
@@ -1624,16 +2814,44 @@ Lcode52:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1642,16 +2860,22 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse53
 
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   numberapplic   var:* number
+;applic   var:* number
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+68
 push rax
 push 2
+; var:*
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1664,6 +2888,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1674,16 +2900,22 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit53
  Lelse53:
-                    mov rax, qword[rbp+8 * (4+0)]
+                    ;applicTP   numberapplic   var:* number
+;applic   var:* number
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+68
 push rax
 push 2
+; var:*
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1696,6 +2928,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1704,18 +2938,21 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit53:
+
 leave
 ret
 Lcont52:
+
 
 leave
 ret
 Lcont51:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1727,25 +2964,89 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def >
+;applic   lambda  set  set  set  set  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:applicTP   applic  applic  else var:null? var:not var:< var:= var:fold-left
+; var:fold-left
 mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 push rax
+; var:=
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
 push rax
+; var:<
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
 push rax
+; var:not
 mov rax, qword[fvar_tbl + WORD_SIZE*42 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
 push 5
+; lambda  set  set  set  set  set  lambdaOpt  set  set applicTP   lambda  set  set  if: then:applicTP   applic  applic  else
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode54)
 jmp Lcont54
 Lcode54:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+4)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+4)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambdaOpt  set  set applicTP   lambda  set  set  if: then:applicTP   applic  applic  else
 
 CREATE_EXT_ENV 1
 mov rcx, rax
@@ -1755,36 +3056,95 @@ Lcode55:
 ADJUST_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set  set  if: then:applicTP   applic  applic  else
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+4
 push rax
+; lambda  set  set  if: then:applicTP   applic  applic  else
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode56)
 jmp Lcont56
 Lcode56:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse57
 
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP   applic  applic  
+;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1792,20 +3152,28 @@ add rsp, rbx ;pop args
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit59
-    mov rax, qword[rbp+8 * (4+1)]
+    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*3]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1820,6 +3188,8 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1830,20 +3200,29 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit57
  Lelse57:
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP   applic  applic  
+;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1851,20 +3230,28 @@ add rsp, rbx ;pop args
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit58
-    mov rax, qword[rbp+8 * (4+1)]
+    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*3]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1879,6 +3266,8 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1887,6 +3276,7 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit57:
+
 leave
 ret
 Lcont56:
@@ -1896,6 +3286,8 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*4]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -1903,18 +3295,21 @@ FIX_APPLICTP_STACK 6
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont55:
+
 
 leave
 ret
 Lcont54:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1926,28 +3321,81 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def gcd
+;applic   lambda  set  set  set  set applicTP   lambda  set Boxset applicTP   lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic   symbol:whatever var:gcd var:null? var:car var:cdr
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
 push rax
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 push rax
+; var:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 push rax
+; var:gcd
 mov rax, qword[fvar_tbl + WORD_SIZE*43 ]
 push rax
 push 4
+; lambda  set  set  set  set applicTP   lambda  set Boxset applicTP   lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic   symbol:whatever
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode60)
 jmp Lcont60
 Lcode60:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set Boxset applicTP   lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic   symbol:whatever
 mov rax, const_tbl+23
 push rax
 push 1
+; lambda  set Boxset applicTP   lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic  
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode61)
 jmp Lcont61
@@ -1955,23 +3403,63 @@ Lcode61:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if: applic  then:elseapplicTP  applic  applic  applic  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode62)
 jmp Lcont62
 Lcode62:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -1981,26 +3469,38 @@ add rsp, rbx ;pop args
  jne Lelse63
 
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit63
  Lelse63:
                     mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
  Lexit63:
+
 leave
 ret
 Lcont62:
 
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-push 0
 
-CREATE_EXT_ENV 2
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+0)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic  
+push 0
+; lambda lambdaOpt if: applic  then: numberelseapplicTP  applic  applic  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode64)
 jmp Lcont64
 Lcode64:
 push rbp
 mov rbp, rsp
+; lambdaOpt if: applic  then: numberelseapplicTP  applic  applic  
 
 CREATE_EXT_ENV 3
 mov rcx, rax
@@ -2010,16 +3510,18 @@ Lcode65:
 ADJUST_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2061,14 +3563,16 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont60:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2080,11 +3584,15 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def zero?
+;applic   lambda  set  lambda  set applicTP   number var:=
+; var:=
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
 push rax
 push 1
+; lambda  set  lambda  set applicTP   number
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode67)
 jmp Lcont67
@@ -2092,21 +3600,49 @@ Lcode67:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set applicTP   number
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode68)
 jmp Lcont68
 Lcode68:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   number
 mov rax, const_tbl+34
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2114,18 +3650,21 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont68:
+
 
 leave
 ret
 Lcont67:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2137,15 +3676,21 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def integer?
+;applic   lambda  set  set  set  lambda  set  if: applic  then:applicTP  applic   numberelse var:rational? var:= var:denominator
+; var:denominator
 mov rax, qword[fvar_tbl + WORD_SIZE*47 ]
 push rax
+; var:=
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
 push rax
+; var:rational?
 mov rax, qword[fvar_tbl + WORD_SIZE*60 ]
 push rax
 push 3
+; lambda  set  set  set  lambda  set  if: applic  then:applicTP  applic   numberelse
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode69)
 jmp Lcont69
@@ -2153,23 +3698,74 @@ Lcode69:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  if: applic  then:applicTP  applic   numberelse
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode70)
 jmp Lcont70
 Lcode70:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2178,18 +3774,25 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse71
 
-                    mov rax, const_tbl+51
+                    ;applicTP  applic   number
+mov rax, const_tbl+51
 push rax
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2200,6 +3803,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2210,18 +3815,25 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit71
  Lelse71:
-                    mov rax, const_tbl+51
+                    ;applicTP  applic   number
+mov rax, const_tbl+51
 push rax
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2232,6 +3844,8 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2240,18 +3854,21 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit71:
+
 leave
 ret
 Lcont70:
+
 
 leave
 ret
 Lcont69:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2263,13 +3880,18 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def number?
+;applic   lambda  set  set  lambda  set  applic  applicTP   var:flonum? var:rational?
+; var:rational?
 mov rax, qword[fvar_tbl + WORD_SIZE*60 ]
 push rax
+; var:flonum?
 mov rax, qword[fvar_tbl + WORD_SIZE*61 ]
 push rax
 push 2
+; lambda  set  set  lambda  set  applic  applicTP  
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode72)
 jmp Lcont72
@@ -2277,23 +3899,63 @@ Lcode72:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  applic  applicTP  
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode73)
 jmp Lcont73
 Lcode73:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2301,12 +3963,17 @@ add rsp, rbx ;pop args
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit74
-    mov rax, qword[rbp+8 * (4+0)]
+    ;applicTP  
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2318,18 +3985,21 @@ jmp rbx
  jne Lexit74
     
 Lexit74:
+
 leave
 ret
 Lcont73:
+
 
 leave
 ret
 Lcont72:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2341,13 +4011,18 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def length
+;applic   lambda  set  set  lambda  set applicTP   lambda  set  set applicTP   number number var:fold-left var:+
+; var:+
 mov rax, qword[fvar_tbl + WORD_SIZE*17 ]
 push rax
+; var:fold-left
 mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 push rax
 push 2
+; lambda  set  set  lambda  set applicTP   lambda  set  set applicTP   number number
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode75)
 jmp Lcont75
@@ -2355,39 +4030,105 @@ Lcode75:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set applicTP   lambda  set  set applicTP   number number
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode76)
 jmp Lcont76
 Lcode76:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set  set applicTP   number number
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, const_tbl+34
 push rax
+; lambda  set  set applicTP   number
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode77)
 jmp Lcont77
 Lcode77:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   number
 mov rax, const_tbl+51
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*1]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
 FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
+
 
 leave
 ret
@@ -2398,6 +4139,8 @@ push 3
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*0]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2405,18 +4148,21 @@ FIX_APPLICTP_STACK 6
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont76:
+
 
 leave
 ret
 Lcont75:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2428,19 +4174,27 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def string->list
+;applic   lambda  set  set  set  set  set  lambda  set applicTP   lambda  set Boxset applicTP   lambdaapplicTP  applic  applic   number symbol:whatever var:string-ref var:string-length var:< var:- var:cons
+; var:cons
 mov rax, qword[fvar_tbl + WORD_SIZE*23 ]
 push rax
+; var:-
 mov rax, qword[fvar_tbl + WORD_SIZE*19 ]
 push rax
+; var:<
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
 push rax
+; var:string-length
 mov rax, qword[fvar_tbl + WORD_SIZE*9 ]
 push rax
+; var:string-ref
 mov rax, qword[fvar_tbl + WORD_SIZE*10 ]
 push rax
 push 5
+; lambda  set  set  set  set  set  lambda  set applicTP   lambda  set Boxset applicTP   lambdaapplicTP  applic  applic   number symbol:whatever
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode78)
 jmp Lcont78
@@ -2448,18 +4202,87 @@ Lcode78:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 1
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+4)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+4)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set applicTP   lambda  set Boxset applicTP   lambdaapplicTP  applic  applic   number symbol:whatever
+
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode79)
 jmp Lcont79
 Lcode79:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set Boxset applicTP   lambdaapplicTP  applic  applic   number symbol:whatever
 mov rax, const_tbl+23
 push rax
 push 1
+; lambda  set Boxset applicTP   lambdaapplicTP  applic  applic   number
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode80)
 jmp Lcont80
@@ -2467,25 +4290,65 @@ Lcode80:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 3
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if: applic   numberthen:elseapplicTP  applic   numberapplic  applic  
+
+CREATE_EXT_ENV 4
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode81)
 jmp Lcont81
 Lcode81:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic   number
 mov rax, const_tbl+34
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2495,30 +4358,44 @@ add rsp, rbx ;pop args
  jne Lelse82
 
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit82
  Lelse82:
                     mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
  Lexit82:
+
 leave
 ret
 Lcont81:
 
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-push 0
 
-CREATE_EXT_ENV 3
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+0)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambdaapplicTP  applic  applic   number
+push 0
+; lambdaapplicTP  applic  applic   number
+
+CREATE_EXT_ENV 4
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode83)
 jmp Lcont83
 Lcode83:
 push rbp
 mov rbp, rsp
+;applicTP  applic  applic   number
 mov rax, const_tbl+1
 push rax
+;applic  applic   number
 mov rax, const_tbl+51
 push rax
+;applic  
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
@@ -2527,10 +4404,11 @@ push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2541,10 +4419,11 @@ push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*3]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2585,18 +4464,21 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont79:
+
 
 leave
 ret
 Lcont78:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2608,42 +4490,179 @@ add rsp, rbx ;pop args
           
 	call write_sob_if_not_void
 
+;def equal?
+;applic   lambda  set  set  set  set  set  set  set  set  set  set  set applicTP   lambda  set Boxset applicTP   lambda symbol:whatever var:= var:string->list var:rational? var:flonum? var:pair? var:char? var:string? var:eq? var:car var:cdr var:char->integer
+; var:char->integer
 mov rax, qword[fvar_tbl + WORD_SIZE*14 ]
 push rax
+; var:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*25 ]
 push rax
+; var:car
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
 push rax
+; var:eq?
 mov rax, qword[fvar_tbl + WORD_SIZE*16 ]
 push rax
+; var:string?
 mov rax, qword[fvar_tbl + WORD_SIZE*6 ]
 push rax
+; var:char?
 mov rax, qword[fvar_tbl + WORD_SIZE*5 ]
 push rax
+; var:pair?
 mov rax, qword[fvar_tbl + WORD_SIZE*3 ]
 push rax
+; var:flonum?
 mov rax, qword[fvar_tbl + WORD_SIZE*61 ]
 push rax
+; var:rational?
 mov rax, qword[fvar_tbl + WORD_SIZE*60 ]
 push rax
+; var:string->list
 mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
 push rax
+; var:=
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
 push rax
 push 11
+; lambda  set  set  set  set  set  set  set  set  set  set  set applicTP   lambda  set Boxset applicTP   lambda symbol:whatever
 
-CREATE_EXT_ENV 0
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode84)
 jmp Lcont84
 Lcode84:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+2)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+2)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+3)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+3)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+4)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+4)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+5)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+5)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+6)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+6)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+7)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+7)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+8)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+8)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+9)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+9)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+10)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+10)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda  set Boxset applicTP   lambda symbol:whatever
 mov rax, const_tbl+23
 push rax
 push 1
+; lambda  set Boxset applicTP   lambda
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode85)
 jmp Lcont85
@@ -2651,23 +4670,63 @@ Lcode85:
 push rbp
 mov rbp, rsp
 
-CREATE_EXT_ENV 2
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+; lambda  set  set  if:  if: applic  then:applic  elsethen:applicTP  else if:  if: applic  then:applic  elsethen:applicTP  else if:  if: applic  then:applic  elsethen:applicTP  applic  applic  else if:  if: applic  then:applic  elsethen: applic  applic  applic  applicTP  applic  applic  else if:  if: applic  then:applic  elsethen:applicTP  applic  applic  elseapplicTP  
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode86)
 jmp Lcont86
 Lcode86:
 push rbp
 mov rbp, rsp
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+0)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+          MALLOC rbx, WORD_SIZE
+
+          mov rcx , qword [rbp + WORD_SIZE*(4+1)]
+
+          mov qword [rbx] , rcx
+
+          mov rax , rbx
+
+                                              mov qword[rbp+8*(4+1)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+;applic  
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2676,16 +4735,22 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse88
 
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2694,16 +4759,22 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit88
  Lelse88:
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applic  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 1
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*2]
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+                        mov rax,qword[rax]
+                        
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
@@ -2713,14 +4784,21 @@ add rsp, rbx ;pop args
  cmp rax, SOB_FALSE_ADDRESS
  jne Lelse87
 
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2731,14 +4809,21 @@ jmp rbx
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit87
  Lelse87:
-                    mov rax, qword[rbp+8 * (4+1)]
+                    ;applicTP  
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rbp+8*1]
                                         mov rax, qword[rbp+8*0]
+                        mov rax,qword[rax]
+                        
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -2747,15 +4832,22 @@ CLOSURE_CODE rbx, rax
 jmp rbx
 
  Lexit87:
+
 leave
 ret
 Lcont86:
 
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-push 0
 
-CREATE_EXT_ENV 2
+                              push rax
+
+                              mov rax, qword[rbp+8 * (4+0)]
+                              pop qword [rax]
+                              mov rax, SOB_VOID_ADDRESS
+;applicTP   lambda
+push 0
+; lambda
+
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode89)
 jmp Lcont89
@@ -2788,14 +4880,16 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
+
 leave
 ret
 Lcont84:
 
-CLOSURE_ENV rbx, rax
-push rbx
-CLOSURE_CODE rbx, rax
-call rbx
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
 add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8

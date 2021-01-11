@@ -174,8 +174,8 @@ db %1
 
 ; %1 = |Env|
 %macro CREATE_EXT_ENV 1
-	MALLOC rax, WORD_SIZE * (1 + %1) 			; allocating external Env in size |env| + 1
-	mov rbx, [rbp + WORD_SIZE * 3]					; rbx = argc
+	MALLOC rax, WORD_SIZE * %1 					; allocating external Env in size |env| + 1
+	mov rbx, [rbp + WORD_SIZE * 3]				; rbx = argc
 	shl rbx, 3
 	MALLOC rcx, rbx
 	mov [rax], rcx								; allocate Env[0] with size of argc
@@ -212,7 +212,25 @@ db %1
 	%%end_copy_params:
 %endmacro
 
+%macro SHIFT_FRAME 1
+;%1 = size of frame(constant)
+	push rax
+%assign i 1
+%rep %1
+	dec rax
+	push [rbp-%i*WORD_SIZE]
+%assign i i+1
+%endrep
+	pop rax
+%endmacro
+
 %macro FIX_APPLICTP_STACK 1
+	mov rbx, [rbp] ;rbx = old rbp
+	mov [rbp], rbx ;rbp = old rbp
+	mov rcx, [rbx + 1 * WORD_SIZE]
+	mov [rbp + 1 * WORD_SIZE], rcx
+	mov rbx, [rbx] ;rbx = old old rbp
+
 	mov rsi, [rbp]								; rsi = old rbp
 	mov rbx, [rbp + WORD_SIZE * 3]
 	add rbx, 4									; rbx = h1
@@ -241,12 +259,12 @@ db %1
 %macro ADJUST_LAMBDA_OPT_STACK 1
 	mov rax,%1
 	mov rbx,[rsp+8*2]
-	cmp [rsp+8*2],rax							;if argc >= desired				
+	cmp [rsp+8*2],rax							;if argc >= desired
 	jb %%missing_arg
 	%%extra_args:
 		mov rcx,[rsp+8*2]
 		sub rcx,%1								; rcx = diff = argc-desired
-		
+
 		mov rdx, SOB_NIL_ADDRESS
 		; for (int i=0 ; i<=diff ; i++)
 		; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
@@ -257,14 +275,14 @@ db %1
 			mov rdi,[rsp+8*2]					; rdi = argc
 			add rdi,2							; rdi = 2 + argc
 			sub rdi,rbx							; rdi = 2 + argc - i
-			mov rdi, [rsp+8*rdi]				; rdi = [rsp+8*(2+argc-i)]      
-			MAKE_PAIR(rax,rdi,rdx)	
+			mov rdi, [rsp+8*rdi]				; rdi = [rsp+8*(2+argc-i)]
+			MAKE_PAIR(rax,rdi,rdx)
 			mov rdx,rax
 			inc rbx
 			jmp %%make_pairs
 		%%end_make_pairs:
 		mov [rsp+8*(2+%1)],rdx					; last argument = artificial pair
-		
+
 
 		; for (i = 0 ; i < 4 + desired ; i++)
 		;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]

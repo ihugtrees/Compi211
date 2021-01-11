@@ -158,7 +158,7 @@ let annotate_tail_calls e = tail_call e false;;
 let box_set e = box e;;
 
 let run_semantics expr =
-  (* box_set  *)
+  box_set 
     (annotate_tail_calls
       (annotate_lexical_addresses expr));;
 
