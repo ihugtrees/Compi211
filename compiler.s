@@ -256,74 +256,64 @@ db %1
 %endmacro
 
 %macro FIX_LAMBDA_OPT_STACK 1
-	mov rax,%1
-	mov rbx,[rsp+8*2]
-	cmp [rsp+8*2],rax							;if argc >= desired
-	jb %%missing_arg
-	%%extra_args:
-		mov rcx,[rsp+8*2]
-		sub rcx,%1								; rcx = diff = argc-desired
+	; %1 - expected, rax-return reg, rbx-argc, rcx-counter
+	mov rbx, [rsp+2*WORD_SIZE] ; rbx = num of stack args
+	cmp rbx, %1
+	jae %%compress ;create list if n >= %1
+
+	; only to change magic
+	add rbx, 3
+	mov [rsp+rbx*WORD_SIZE], SOB_NIL_ADDRESS
+	jmp %%end_fix
+
+	%%compress:
+		mov r10, rbx
+		sub r10, %1	; r10 = argc-desired = diff
 
 		mov rdx, SOB_NIL_ADDRESS
 		; for (int i=0 ; i<=diff ; i++)
 		; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
-		mov rbx,0								; i = 0
-		%%make_pairs:
-			cmp rbx,rcx							; if i <= diff
-			ja %%end_make_pairs
-			mov rdi,[rsp+8*2]					; rdi = argc
-			add rdi,2							; rdi = 2 + argc
-			sub rdi,rbx							; rdi = 2 + argc - i
-			mov rdi, [rsp+8*rdi]				; rdi = [rsp+8*(2+argc-i)]
-			MAKE_PAIR(rax,rdi,rdx)
-			mov rdx,rax
-			inc rbx
-			jmp %%make_pairs
-		%%end_make_pairs:
-		mov [rsp+8*(2+%1)],rdx					; last argument = artificial pair
+		; r8=argc+2,
+		mov r8, rbx	; r8 = num of stack args
+		add r8, 2 ; r8 = 2 + argc
+		mov rcx, 0							; i = 0
+		%%make_list:
+			; r9=argc+2-i
+			cmp rcx, r10					; if i <= diff
+			ja %%end_make_list
+			mov r9, r8
+			sub r9, rcx						; r9 = 2 + argc - i
+			mov r9, [rsp+r9*WORD_SIZE]		; r9 = [rsp+8*(2+argc-i)]
+			MAKE_PAIR(rax, r9, rdx)
+			mov rdx, rax
+			inc rcx
+			jmp %%make_list
+		%%end_make_list:
+		mov [rsp+(2+%1)*WORD_SIZE], rdx				; last argument = artificial pair
 
-
-		; for (i = 0 ; i < 4 + desired ; i++)
+		; for (i = 0 ; i < 3 + desired ; i++)
 		;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-		mov rbx,0 								; i = 0
-		%%shift_stack_up:
-			mov rax,4+%1
-			cmp rbx,rax				     		; if i < 4 + desired
-			jae %%end_shift_stack_up
-			mov rdx,2+%1						; rdx = 2 + desired
-			sub rdx,rbx 						; rdx = 2 + desired - i
-			mov rax,[rsp+8*rdx]					; rax = [rsp + 8 * (2+ desired - i)]
-			add rdx,rcx							; rdx = 2 + desired - i + diff
-			mov [rsp+8*rdx],rax					; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-			inc rbx
-			jmp %%shift_stack_up
-		%%end_shift_stack_up:
 
-		shl rcx,3								; rcx = 8 * rcx
-		add rsp,rcx								; fx stack pointer
-		mov rax,%1
-		mov [rsp+8*2],rax						; fix argc
-		jmp %%end_missing_arg
-	%%missing_arg:
-		;	for (i = 0 ; i < 3 + argc ; i++)	; 3 for Ret,Env,argc
-		;		stack_i = stack_(i+1)
-		mov rbx,0								; i = 0
-		mov rcx,[rsp+8*2]						; rcx = argc
-		add rcx,3								; rcx = argc + 3
-		push SOB_NIL_ADDRESS					; extend the stack with some value
-		%%shift_stack_down:
-			cmp rbx,rcx
-			jae %%end_shift_stack_down
-			mov rax,[rsp+8*(rbx+1)]					; rax = stack_(i+1)
-			mov [rsp+8*rbx],rax					; stack_i = stack_(i+1)
-			inc rbx
-			jmp %%shift_stack_down
-		%%end_shift_stack_down:
-		mov rax,SOB_NIL_ADDRESS
-		mov [rsp+8*(2+%1)],rax					; put () in last argument
-		mov rax,%1
-		mov [rsp+8*2],rax						; fix arg count
-	%%end_missing_arg:
+		; r8=desired+2,
+		mov r8, %1+2	; r8 = desired + 2
+		mov rcx, 0
+		%%adjust_stack:
+			cmp rcx, %1+3
+			jae %%end_adjust_stack
+			mov r9, r8						; r9 = 2 + desired
+			sub r9, rcx 					; r9 = 2 + desired - i
+			mov r11, [rsp+r9*WORD_SIZE]		; rax = [rsp + 8 * (2+ desired - i)]
+			add r9, r10						; r9 = 2 + desired - i + diff
+			mov [rsp+r9*WORD_SIZE], r11		; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
+			inc rcx
+			jmp %%adjust_stack
+		%%end_adjust_stack:
+
+		shl r10, 3
+		add rsp, r10 ; adjust rsp
+		mov rax, %1
+		mov [rsp+2*WORD_SIZE], rax ; update argc
+	%%end_fix:
 %endmacro
 
 ;;; ========= End =========
