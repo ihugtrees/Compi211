@@ -270,10 +270,10 @@ db %1
 		mov r10, rbx
 		sub r10, %1	; r10 = argc-desired = diff
 
-		mov rdx, SOB_NIL_ADDRESS
+		mov r11, SOB_NIL_ADDRESS
 		; for (int i=0 ; i<=diff ; i++)
 		; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
-		; r8=argc+2,
+		; r8=argc+2, r11=the pair
 		mov r8, rbx	; r8 = num of stack args
 		add r8, 2 ; r8 = 2 + argc
 		mov rcx, 0							; i = 0
@@ -284,12 +284,12 @@ db %1
 			mov r9, r8
 			sub r9, rcx						; r9 = 2 + argc - i
 			mov r9, [rsp+r9*WORD_SIZE]		; r9 = [rsp+8*(2+argc-i)]
-			MAKE_PAIR(rax, r9, rdx)
-			mov rdx, rax
+			MAKE_PAIR(rax, r9, r11)
+			mov r11, rax
 			inc rcx
 			jmp %%make_list
 		%%end_make_list:
-		mov [rsp+(2+%1)*WORD_SIZE], rdx				; last argument = artificial pair
+		mov [rsp+(2+%1)*WORD_SIZE], r11				; last argument = artificial pair
 
 		; for (i = 0 ; i < 3 + desired ; i++)
 		;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
@@ -311,8 +311,8 @@ db %1
 
 		shl r10, 3
 		add rsp, r10 ; adjust rsp
-		mov rax, %1
-		mov [rsp+2*WORD_SIZE], rax ; update argc
+		mov r11, %1
+		mov [rsp+2*WORD_SIZE], r11 ; update argc
 	%%end_fix:
 %endmacro
 

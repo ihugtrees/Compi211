@@ -309,8 +309,7 @@ module Prims : PRIMS = struct
     String.concat "\n\n" (List.map (fun (a, b, c) -> (b c a)) misc_parts);;
 
 let i_must_imblement =
-"
-  car:
+" car:
     push rbp
     mov rbp, rsp
     mov rbx, PVAR(0)
@@ -372,15 +371,17 @@ let i_must_imblement =
       inc rdx
       jmp push_args
     end_push_args:
+
     mov rsi,rdx                   ; rsi = list_size backup
     mov rcx, 0                    ; i = 0
     mov rbx, rdx                  ; rbx = list_size
     shr rbx, 1                    ; rbx = list_size/2
     dec rdx                       ; rdx = list_size -1
+
     _revert_args:
       cmp rcx, rbx
       jae end_revert_args
-      mov rax, [rsp + 8 * (rdx)]          ; rax = [rsp + 8*(list_size - i -1)]
+      mov rax, [rsp + 8 * (rdx)]  ; rax = [rsp + 8*(list_size - i -1)]
       mov rdi,[rsp+8*rcx]
       mov [rsp + 8 * rdx], rdi
       mov [rsp + 8 * rcx],  rax
@@ -388,30 +389,32 @@ let i_must_imblement =
       inc rcx
       jmp _revert_args
     end_revert_args:
-      mov rax, [rbp + 8 * 3]      ;rax = argc
-      mov rdi, rax                ;rdi = index
-      add rdi,2
-      push_objs:
-        cmp rdi, 4
-        jbe end_push_objs
-        push qword [rbp + 8 * rdi]
-        inc rsi
-        dec rdi
-        jmp push_objs
-      end_push_objs:
-      push rsi                    ;push number of args
-      mov rax, PVAR(0)            ; rax = closure of the procedure
-      CLOSURE_ENV rbx, rax
-      push rbx
-      CLOSURE_CODE rbx, rax
-      call rbx
-      add rsp, 8 * 1
-      pop rbx
-      shl rbx, 3
-      add rsp, rbx
+
+    mov rax, [rbp + 8 * 3]      ;rax = argc
+    mov rdi, rax                ;rdi = index
+    add rdi,2
+    push_objs:
+      cmp rdi, 4
+      jbe end_push_objs
+      push qword [rbp + 8 * rdi]
+      inc rsi
+      dec rdi
+      jmp push_objs
+    end_push_objs:
+
+    push rsi                    ;push number of args
+    mov rax, PVAR(0)            ; rax = closure of the procedure
+    CLOSURE_ENV rbx, rax
+    push rbx
+    CLOSURE_CODE rbx, rax
+    call rbx
+    add rsp, 8 * 1
+    pop rbx
+    shl rbx, 3
+    add rsp, rbx
+
     pop rbp
-    ret
-    "
+    ret"
 
   (* This is the interface of the module. It constructs a large x86 64-bit string using the routines
      defined above. The main compiler pipline code (in compiler.ml) calls into this module to get the
