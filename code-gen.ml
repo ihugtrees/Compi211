@@ -164,8 +164,8 @@ let rec asm_from_expr consts fvars e depth =
                                               mov rax, SOB_VOID_ADDRESS\n"
 
   | Var'(VarBound(_, major, minor)) -> "mov rax, qword[rbp+8*2]
-                                        mov rax, qword[rbp+8*"^(string_of_int major)^"]
-                                        mov rax, qword[rbp+8*"^(string_of_int minor)^"]"
+                                        mov rax, qword[rax+8*"^(string_of_int major)^"]
+                                        mov rax, qword[rax+8*"^(string_of_int minor)^"]"
 
   | Set'((VarBound(_,major,minor)),expr) -> (asm_from_expr consts fvars expr depth) ^ "
                                                   mov rbx, qword[rbp+8*2]
@@ -219,7 +219,7 @@ let rec asm_from_expr consts fvars e depth =
           "shl rbx,3            ;rbx=rbx*8\n" ^
           "add rsp,rbx          ;pop args\n" ^
           "mov qword[rbp + 8 * (4 + " ^ minor ^ ")],rax\n" 
-      *)
+          *)
 
   | LambdaSimple'(params, body) ->
     let index = string_of_int (get_index ()) in
@@ -237,7 +237,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | Applic'(body, args) ->
-    "push T_NIL"^"\n"^
+    "push SOB_NIL_ADDRESS "^"\n"^
     ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
@@ -250,7 +250,7 @@ let rec asm_from_expr consts fvars e depth =
     "add rsp, 8*1 ;pop env"^"\n"^
     "pop rbx      ;pop arg count"^"\n"^
     "shl rbx, 3   ;rbx = rbx*8"^"\n"^
-    "add rsp, rbx ;pop args"^"\n"
+    "add rsp, rbx ;pop args"^"\n"^
     "pop rbx"^"\n"
 
   | LambdaOpt'(params, opt, body) ->
@@ -271,7 +271,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | ApplicTP'(body, args) ->
-    "push T_NIL"^"\n"^
+    "push SOB_NIL_ADDRESS "^"\n"^
     ";"^(expr_to_string (ApplicTP'(body, args) ))^"\n"^
 
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
@@ -296,14 +296,24 @@ let make_consts_tbl asts =
   let sorted_sexprs_set = remove_dup sorted_sexprs_list in
   build_const_tbl sorted_sexprs_set [] 0 ;;
 
-let make_fvars_tbl asts = let init_fvars= ["boolean?"; "float?"; "integer?"; "pair?";
-   "null?"; "char?"; "string?";
-   "procedure?"; "symbol?"; "string-length";
-   "string-ref"; "string-set!"; "make-string";
-   "symbol->string"; 
-   "char->integer"; "integer->char"; "eq?";
-   "+"; "*"; "-"; "/"; "<"; "=";
-   "cons"; "car"; "cdr"; "set-car!"; "set-cdr!"; "apply"] in
+let make_fvars_tbl asts = let init_fvars= [  
+  (* Type queries  *)
+  "boolean?"; "flonum?"; "rational?";
+  "pair?"; "null?"; "char?"; "string?";
+  "procedure?"; "symbol?";
+  (* String procedures *)
+  "string-length"; "string-ref"; "string-set!";
+  "make-string"; "symbol->string";
+  (* Type conversions *)
+  "char->integer"; "integer->char"; "exact->inexact";
+  (* Identity test *)
+  "eq?";
+  (* Arithmetic ops *)
+  "+"; "*"; "/"; "="; "<";
+  (* Additional rational numebr ops *)
+  "numerator"; "denominator"; "gcd";
+  (* you can add yours here *)
+  "car"; "cdr"; "cons"; "set-car!"; "set-cdr!"; "apply"] in
 (create_free_vars_tuples (List.append init_fvars (remove_dup (List.flatten (List.map find_free_vars asts)))) 0);;
 
 let generate consts fvars e = asm_from_expr consts fvars e 0;;
