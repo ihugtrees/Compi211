@@ -212,51 +212,50 @@ db %1
 	%%end_copy_params:
 %endmacro
 
-%macro SHIFT_FRAME 1
-;%1 = size of frame(constant)
-	push rax
-%assign i 1
-%rep %1
-	dec rax
-	push [rbp-%i*WORD_SIZE]
-%assign i i+1
-%endrep
-	pop rax
-%endmacro
-
 %macro FIX_APPLICTP_STACK 1
-	mov rbx, [rbp] ;rbx = old rbp
-	mov [rbp], rbx ;rbp = old rbp
-	mov rcx, [rbx + 1 * WORD_SIZE]
-	mov [rbp + 1 * WORD_SIZE], rcx
+;%1 = new stack size
+	mov rbx, [rbp]
+	mov rcx, [rbx] ;rcx = old rbp
+	mov [rbp], rcx ;[rbp] = old rbp
+	mov rcx, [rbx + 1 * WORD_SIZE] ;rcx = old ret adres
+	mov [rbp + 1 * WORD_SIZE], rcx ;[rbp+1] = old ret adress
 	mov rbx, [rbx] ;rbx = old old rbp
-
-	mov rsi, [rbp]								; rsi = old rbp
-	mov rbx, [rbp + WORD_SIZE * 3]
-	add rbx, 4									; rbx = h1
-	mov rcx, 1									; i = 1
-	%%stack_loop:
-		cmp rcx, %1								;rcx = h2
-		ja %%end_stack_loop
-		mov rdi, rbp								; rdi = rbp
-		shl rcx, 3
-		sub rdi, rcx								; rdi = rbp - (8 rcx)
-		shr rcx, 3
-		mov rdx, [rdi]
-		mov rdi, rbx
-		sub rdi, rcx
-		mov [rbp + WORD_SIZE * rdi], rdx
-		inc rcx
-		jmp %%stack_loop
-	%%end_stack_loop:
-	sub rbx, %1
-	shl rbx, 3
-	add rbx, rbp
 	mov rsp, rbx
-	mov rbp, rsi									; rbp = old rbp
+	mov rcx, %1
+	%%shift_stack:
+		dec rcx
+		push [rbp+rcx*WORD_SIZE]
+		cmp rcx, 0
+		je %%end_shift_stack
+		jmp %%shift_stack
+	%%end_shift_stack:
+
+	; mov rsi, [rbp]								; rsi = old rbp
+	; mov rbx, [rbp + WORD_SIZE * 3]
+	; add rbx, 4									; rbx = h1
+	; mov rcx, 1									; i = 1
+	; %%stack_loop:
+	; 	cmp rcx, %1								;rcx = h2
+	; 	ja %%end_stack_loop
+	; 	mov rdi, rbp								; rdi = rbp
+	; 	shl rcx, 3
+	; 	sub rdi, rcx								; rdi = rbp - (8 rcx)
+	; 	shr rcx, 3
+	; 	mov rdx, [rdi]
+	; 	mov rdi, rbx
+	; 	sub rdi, rcx
+	; 	mov [rbp + WORD_SIZE * rdi], rdx
+	; 	inc rcx
+	; 	jmp %%stack_loop
+	; %%end_stack_loop:
+	; sub rbx, %1
+	; shl rbx, 3
+	; add rbx, rbp
+	; mov rsp, rbx
+	; mov rbp, rsi									; rbp = old rbp
 %endmacro
 
-%macro ADJUST_LAMBDA_OPT_STACK 1
+%macro FIX_LAMBDA_OPT_STACK 1
 	mov rax,%1
 	mov rbx,[rsp+8*2]
 	cmp [rsp+8*2],rax							;if argc >= desired

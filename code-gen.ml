@@ -237,7 +237,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | Applic'(body, args) ->
-    (* "push T_NIL"^"\n"^ *)
+    "push T_NIL"^"\n"^
     ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
@@ -251,7 +251,7 @@ let rec asm_from_expr consts fvars e depth =
     "pop rbx      ;pop arg count"^"\n"^
     "shl rbx, 3   ;rbx = rbx*8"^"\n"^
     "add rsp, rbx ;pop args"^"\n"
-    (* "pop rbx"^"\n" *)
+    "pop rbx"^"\n"
 
   | LambdaOpt'(params, opt, body) ->
     let index = string_of_int (get_index ()) in
@@ -262,7 +262,7 @@ let rec asm_from_expr consts fvars e depth =
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
       "Lcode"^index^":"^"\n"^
-      "ADJUST_LAMBDA_OPT_STACK "^(string_of_int ((List.length params) + 1))^"\n"^
+      "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params) + 1))^"\n"^
       "push rbp"^"\n"^
       "mov rbp, rsp"^"\n"^
       (asm_from_expr consts fvars body (depth + 1))^"\n"^
@@ -271,7 +271,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | ApplicTP'(body, args) ->
-    (* "push T_NIL"^"\n"^ *)
+    "push T_NIL"^"\n"^
     ";"^(expr_to_string (ApplicTP'(body, args) ))^"\n"^
 
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
