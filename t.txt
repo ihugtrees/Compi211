@@ -1,0 +1,5 @@
+10-special problem
+7fff77ffb17a
+7fff77ffb02e
+7fff77ffb17a
+x 0x7fff77ffb393

@@ -145,7 +145,7 @@ let rec box expr =
   | BoxSet'(var, varef) -> BoxSet'(var,box varef)
 
   and lambda_boxing params body =
-  if params = [] then body else
+  if params = [] then (box body) else
   let boxed = (List.map (fun (varname) -> Set'(VarParam(varname, get_index varname params), Box'(VarParam(varname, get_index varname params)))) params) in
   match body with
   | Seq'(expr_lst) -> Seq'(List.append boxed (List.map box expr_lst))

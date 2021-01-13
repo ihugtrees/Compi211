@@ -171,7 +171,7 @@ let rec tag_parse_sexpr sexpr =
     | Pair(Pair(Symbol("unquote-splicing"), Pair(a, Nil)), b) -> Pair(Symbol("append"), Pair(a, Pair(tag_qquote b, Nil)))
     | Pair(a, Pair(Symbol("unquote-splicing"), Pair(b, Nil))) -> Pair(Symbol("cons"), Pair(tag_qquote a, Pair(b, Nil)))
     | Pair(a,b) -> (Pair(Symbol("cons"), Pair((tag_qquote a), Pair(tag_qquote b, Nil))))
-    | _ -> raise X_syntax_error
+    | _ -> sexpr
 
   and tag_lambda vars body =
     if check_vars vars then (

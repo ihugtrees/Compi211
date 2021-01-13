@@ -172,13 +172,10 @@ db %1
 %%end_str:
 %endmacro
 
-; %1 = |Env|
 %macro CREATE_EXT_ENV 1
 	MALLOC rax, WORD_SIZE * %1 					; allocating external Env in size |env| + 1
 	mov rbx, [rbp + WORD_SIZE * 3]				; rbx = argc
 	shl rbx, 3
-	MALLOC rcx, rbx
-	mov [rax], rcx								; allocate Env[0] with size of argc
 
 	; for (i = 0 , j = 1 ; i < |Env| ; i++,j++)
 	; 	ExtEnv[j] = Env[i]
@@ -187,47 +184,54 @@ db %1
 	%%copy_vectors:
 		cmp rcx, %1								; if i < |Env|
 		je %%end_copy_vectors
-		mov rdx, [rbp + WORD_SIZE * 2]				; rdx = *Env
+		mov rdx, [rbp + WORD_SIZE * 2]			; rdx = *Env
 		shl rcx, 3
 		add rdx, rcx							; rdx = Env[i]
 		shr rcx, 3
 		mov rdx, [rdx]							; rdx = *Env[i]
-		mov [rax + WORD_SIZE * rbx], rdx 			; ExtEnv[j] = Env[i]
+		mov [rax + WORD_SIZE * rbx], rdx 		; *ExtEnv[j] = *Env[i]
 		inc rcx									; i++
 		inc rbx									; j++
 		jmp %%copy_vectors
 	%%end_copy_vectors:
 
+	mov rdx, [rbp + WORD_SIZE * 3]				; rbx = argc
+	add rdx, 1
+	shl rdx, 3
+	MALLOC rbx, rdx
+	mov [rax], rbx								; allocate Env[0] with size of argc
 	; for (i= 0 ; i<argc ; i++)
 	; 	ExtEnv[0][i] = Param_i
-	mov rcx,0									; i = 0
+	mov rcx, 0									; i = 0
 	%%copy_params:
-		cmp rcx, [rbp + WORD_SIZE * 3]				; if i < argc
+		cmp rcx, [rbp + WORD_SIZE * 3]			; if i < argc
 		je %%end_copy_params
-		mov rdx, [rbp  +WORD_SIZE * (4 + rcx)]		; rdx = param_i
-		mov rbx, [rax]							; rbx = *ExtEnv[0]
-		mov [rbx + (WORD_SIZE * rcx)], rdx			; ExtEnv[0][i] = param_i
+		mov rdx, [rbp + WORD_SIZE * (4 + rcx)]	; rdx = param_i
+		; mov rbx, [rax]								; rbx = *ExtEnv[0]
+		mov [rbx + (WORD_SIZE * rcx)], rdx		; ExtEnv[0][i] = param_i
 		inc rcx									; i++
 		jmp %%copy_params
 	%%end_copy_params:
+	mov rdx, SOB_NIL_ADDRESS
+	mov [rbx + (WORD_SIZE * rcx)], rdx ; adding the magic
 %endmacro
 
 %macro FIX_APPLICTP_STACK 1
 ;%1 = new stack size
 	mov rbx, [rbp+3*WORD_SIZE] ; rbx = i
 	add rbx, 4
-	mov r9, [rbp] ; r9 = old rbp
+	mov r9, qword [rbp] ; r9 = old rbp
 	mov rcx, %1
 	%%shift_stack:
 		cmp rcx, 0
 		je %%end_shift_stack
-		mov r8, [rsp+rcx*WORD_SIZE]
+		mov r8, qword [rsp+rcx*WORD_SIZE]
 		mov [rbp+rbx*WORD_SIZE], r8
 		dec rcx
 		dec rbx
 		jmp %%shift_stack
 	%%end_shift_stack:
-	mov r8, [rsp+rcx*WORD_SIZE]
+	mov r8, qword [rsp+rcx*WORD_SIZE]
 	mov [rbp+rbx*WORD_SIZE], r8
 
 	shl rbx, 3
@@ -240,13 +244,14 @@ db %1
 	; %1 - expected, rax-return reg, rbx-argc, rcx-counter
 	mov rbx, [rsp+2*WORD_SIZE] ; rbx = num of stack args
 	cmp rbx, %1
-	jae %%compress ;create list if n >= %1
+	; jae %%compress ;create list if n >= %1
+	je %%end_fix
 
-	; only to change magic
-	add rbx, 3
-	mov r15, SOB_NIL_ADDRESS
-	mov [rsp+rbx*WORD_SIZE], r15
-	jmp %%end_fix
+	; ; if we need enlarge stack
+	; add rbx, 3
+	; mov r15, SOB_NIL_ADDRESS
+	; mov [rsp+rbx*WORD_SIZE], r15
+	; jmp %%end_fix
 
 	%%compress:
 		mov r10, rbx
