@@ -1,5 +1,10 @@
-10-special problem
-7fff77ffb17a
-7fff77ffb02e
-7fff77ffb17a
-x 0x7fff77ffb393
+> - wtf
+cons and lists
+
+test 19
+test 20
+test 22,34 - FIX_LAMBDA_OPT_STACK when argc =0
+test 23,35 - no apply?
+test 26 - print hex value of space
+test 31
+test 39

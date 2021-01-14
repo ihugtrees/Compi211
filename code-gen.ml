@@ -200,8 +200,8 @@ let rec asm_from_expr consts fvars e depth =
                   (List.fold_right (fun curr acc -> curr^acc)  (List.map (fun (expr) -> (asm_from_expr consts fvars expr depth)^jmp_asm) exprs) "\n")^"Lexit"^index^":"
 
   | If'(test,dit,dif) -> let index = string_of_int (get_index ()) in
-                    (asm_from_expr consts fvars test depth)^"\n cmp rax, SOB_FALSE_ADDRESS\n jne Lelse"^index^"\n
-                    "^(asm_from_expr consts fvars dit depth)^"\n cmp rax, SOB_FALSE_ADDRESS\n jne Lexit"^index^"\n Lelse"^index^":
+                    (asm_from_expr consts fvars test depth)^"\n cmp rax, SOB_FALSE_ADDRESS\n je Lelse"^index^"\n
+                    "^(asm_from_expr consts fvars dit depth)^"\n  jmp Lexit"^index^"\n Lelse"^index^":
                     "^(asm_from_expr consts fvars dif depth)^"\n Lexit"^index^":"
 
   | BoxGet'(v) -> (asm_from_expr consts fvars (Var'(v)) depth)^"
@@ -266,7 +266,7 @@ let rec asm_from_expr consts fvars e depth =
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
       "Lcode"^index^":"^"\n"^
-      "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params) + 1))^"\n"^
+      "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params)))^"\n"^
       "push rbp"^"\n"^
       "mov rbp, rsp"^"\n"^
       (asm_from_expr consts fvars body (depth+1))^"\n"^
@@ -328,7 +328,7 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "(letrec ((x 2)) x)"));;
+                              (Reader.read_sexprs "((lambda x x) '())"));;
 
 (* Code_Gen.make_consts_tbl ast;; *)
 (*

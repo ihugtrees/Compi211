@@ -10,7 +10,7 @@ malloc_pointer:
 ;;; here we REServe enough Quad-words (64-bit "cells") for the free variables
 ;;; each free variable has 8 bytes reserved for a 64-bit pointer to its value
 fvar_tbl:
-    resq 73
+    resq 71
 
 section .data
 const_tbl:
@@ -24,8 +24,12 @@ MAKE_LITERAL_CHAR(0)
 MAKE_LITERAL_RATIONAL(0,1)
 MAKE_LITERAL_RATIONAL(1,1)
 MAKE_LITERAL_RATIONAL(-1,1)
-MAKE_LITERAL_CHAR(114)
-MAKE_LITERAL_CHAR(102)
+MAKE_LITERAL_STRING "a"
+MAKE_LITERAL_SYMBOL(const_tbl+85)
+MAKE_LITERAL_STRING "b"
+MAKE_LITERAL_SYMBOL(const_tbl+104)
+MAKE_LITERAL_PAIR(const_tbl+114,const_tbl+1)
+MAKE_LITERAL_PAIR(const_tbl+95,const_tbl+123)
 
 ;;; These macro definitions are required for the primitive
 ;;; definitions in the epilogue to work properly
@@ -310,11 +314,10 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse4
+ je Lelse4
 
                     mov rax, const_tbl+1
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit4
+  jmp Lexit4
  Lelse4:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGet
@@ -505,11 +508,10 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse6
+ je Lelse6
 
                     mov rax, const_tbl+1
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit6
+  jmp Lexit6
  Lelse6:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -651,7 +653,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode8)
 jmp Lcont8
 Lcode8:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
@@ -792,7 +794,7 @@ mov rax, qword[rbp+8 * (4+2)]
 push rax
 push 2
 ; varfree:equal?
-mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
 mov rbx, rax
 CLOSURE_ENV rax, rbx
 push rax
@@ -805,13 +807,12 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse10
+ je Lelse10
 
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit10
+  jmp Lexit10
  Lelse10:
                     push SOB_NIL_ADDRESS 
 ;applicTP   varfree:fold-leftboxGetapplic  boxGetapplic   varfree:carboxGetboxGetapplic   varfree:cdrboxGet
@@ -887,7 +888,7 @@ push rax
 push 3
 ;body
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -900,7 +901,7 @@ leave
 ret
 Lcont9:
 
-mov qword [fvar_tbl + WORD_SIZE*50], rax
+mov qword [fvar_tbl + WORD_SIZE*52], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -953,7 +954,7 @@ mov rax, qword[rbp+8 * (4+2)]
 push rax
 push 2
 ; varfree:equal?
-mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
 mov rbx, rax
 CLOSURE_ENV rax, rbx
 push rax
@@ -966,13 +967,12 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse12
+ je Lelse12
 
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit12
+  jmp Lexit12
  Lelse12:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
@@ -1074,7 +1074,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode13)
 jmp Lcont13
 Lcode13:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, if: applic   varfree:null?applic   varfree:cdrboxGetthen: applicTP   varfree:carboxGetelse applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
@@ -1125,7 +1125,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse14
+ je Lelse14
 
                     push SOB_NIL_ADDRESS 
 ;applicTP   varfree:carboxGet
@@ -1145,8 +1145,7 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit14
+  jmp Lexit14
  Lelse14:
                     push SOB_NIL_ADDRESS 
 ;applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
@@ -1291,7 +1290,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode16)
 jmp Lcont16
 Lcode16:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:args to box  VarParam:args,applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet
@@ -1365,13 +1364,12 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse18
+ je Lelse18
 
                     mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit18
+  jmp Lexit18
  Lelse18:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGetboxGet
@@ -1456,7 +1454,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode19)
 jmp Lcont19
 Lcode19:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,boxGet
@@ -1625,7 +1623,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse24
+ je Lelse24
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGet
@@ -1668,8 +1666,7 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit24
+  jmp Lexit24
  Lelse24:
                     mov rax, const_tbl+2
  Lexit24:
@@ -1806,7 +1803,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode27)
 jmp Lcont27
 Lcode27:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGetboxGet charelse applicTP  boxGetboxGetapplic  boxGetboxGet
@@ -1852,7 +1849,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse28
+ je Lelse28
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGet char
@@ -1877,8 +1874,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit28
+  jmp Lexit28
  Lelse28:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetapplic  boxGetboxGet
@@ -1974,11 +1970,10 @@ mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse30
+ je Lelse30
 
                     mov rax, const_tbl+2
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit30
+  jmp Lexit30
  Lelse30:
                     mov rax, const_tbl+4
  Lexit30:
@@ -1986,7 +1981,7 @@ leave
 ret
 Lcont29:
 
-mov qword [fvar_tbl + WORD_SIZE*69], rax
+mov qword [fvar_tbl + WORD_SIZE*44], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -2021,7 +2016,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*39 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
 push rax
 ; varfree:exact->inexact
 mov rax, qword[fvar_tbl + WORD_SIZE*16 ]
@@ -2234,7 +2229,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse51
+ je Lelse51
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -2259,13 +2254,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit51
+  jmp Lexit51
  Lelse51:
                     mov rax, const_tbl+2
  Lexit51:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse48
+ je Lelse48
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetapplic  boxGetboxGet
@@ -2312,8 +2306,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit48
+  jmp Lexit48
  Lelse48:
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -2339,7 +2332,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse50
+ je Lelse50
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -2364,13 +2357,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit50
+  jmp Lexit50
  Lelse50:
                     mov rax, const_tbl+2
  Lexit50:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse49
+ je Lelse49
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetboxGet
@@ -2417,8 +2409,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit49
+  jmp Lexit49
  Lelse49:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
@@ -2484,7 +2475,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode33)
 jmp Lcont33
 Lcode33:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 0,1boxGet
@@ -2565,7 +2556,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode34)
 jmp Lcont34
 Lcode34:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 1,1boxGet
@@ -2692,7 +2683,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode36)
 jmp Lcont36
 Lcode36:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 1,1boxGetelse applicTP  boxGetboxGetboxGetboxGet
@@ -2738,7 +2729,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse37
+ je Lelse37
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGet number 1,1boxGet
@@ -2763,8 +2754,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit37
+  jmp Lexit37
  Lelse37:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGetboxGet
@@ -2974,7 +2964,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse43
+ je Lelse43
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -3041,8 +3031,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit43
+  jmp Lexit43
  Lelse43:
                     mov rax, const_tbl+2
  Lexit43:
@@ -3082,7 +3071,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode45)
 jmp Lcont45
 Lcode45:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
@@ -3379,7 +3368,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode53)
 jmp Lcont53
 Lcode53:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGetelse applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
@@ -3425,7 +3414,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse54
+ je Lelse54
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGet
@@ -3469,8 +3458,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit54
+  jmp Lexit54
  Lelse54:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
@@ -3562,7 +3550,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*55], rax
+mov qword [fvar_tbl + WORD_SIZE*57], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -3583,7 +3571,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*26 ]
 push rax
 ; varfree:not
-mov rax, qword[fvar_tbl + WORD_SIZE*69 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*44 ]
 push rax
 ; varfree:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
@@ -3800,7 +3788,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse59
+ je Lelse59
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -3870,7 +3858,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse60
+ je Lelse60
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -3937,13 +3925,11 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit60
+  jmp Lexit60
  Lelse60:
                     mov rax, const_tbl+2
  Lexit60:
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit59
+  jmp Lexit59
  Lelse59:
                     mov rax, const_tbl+2
  Lexit59:
@@ -3983,7 +3969,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode62)
 jmp Lcont62
 Lcode62:
-FIX_LAMBDA_OPT_STACK 2
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
@@ -4071,7 +4057,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*70], rax
+mov qword [fvar_tbl + WORD_SIZE*43], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4216,13 +4202,12 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse66
+ je Lelse66
 
                     mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit66
+  jmp Lexit66
  Lelse66:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -4346,7 +4331,7 @@ mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode68)
 jmp Lcont68
 Lcode68:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -4383,11 +4368,10 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse69
+ je Lelse69
 
                     mov rax, const_tbl+34
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit69
+  jmp Lexit69
  Lelse69:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -4588,7 +4572,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*45], rax
+mov qword [fvar_tbl + WORD_SIZE*47], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4686,7 +4670,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse74
+ je Lelse74
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGet number 1,1
@@ -4731,8 +4715,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit74
+  jmp Lexit74
  Lelse74:
                     mov rax, const_tbl+2
  Lexit74:
@@ -4755,7 +4738,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*46], rax
+mov qword [fvar_tbl + WORD_SIZE*48], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4886,7 +4869,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*48], rax
+mov qword [fvar_tbl + WORD_SIZE*50], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4898,7 +4881,7 @@ push SOB_NIL_ADDRESS
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
 push rax
 push 2
 ; lambda (fold-left +):seq:   set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:+ to box  VarParam:+, lambda (l):seq:   set  VarParam:l to box  VarParam:l,applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet
@@ -5046,7 +5029,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*49], rax
+mov qword [fvar_tbl + WORD_SIZE*51], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -5058,7 +5041,7 @@ push SOB_NIL_ADDRESS
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 push rax
 ; varfree:-
-mov rax, qword[fvar_tbl + WORD_SIZE*55 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
 push rax
 ; varfree:<
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
@@ -5224,13 +5207,12 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse85
+ je Lelse85
 
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit85
+  jmp Lexit85
  Lelse85:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGet
@@ -5463,7 +5445,7 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*59], rax
+mov qword [fvar_tbl + WORD_SIZE*61], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -5499,7 +5481,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*2 ]
 push rax
 ; varfree:string->list
-mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*61 ]
 push rax
 ; varfree:=
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
@@ -5692,7 +5674,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse100
+ je Lelse100
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5717,13 +5699,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit100
+  jmp Lexit100
  Lelse100:
                     mov rax, const_tbl+2
  Lexit100:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse90
+ je Lelse90
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
@@ -5750,8 +5731,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit90
+  jmp Lexit90
  Lelse90:
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5777,7 +5757,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse99
+ je Lelse99
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5802,13 +5782,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit99
+  jmp Lexit99
  Lelse99:
                     mov rax, const_tbl+2
  Lexit99:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse91
+ je Lelse91
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
@@ -5835,8 +5814,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit91
+  jmp Lexit91
  Lelse91:
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5862,7 +5840,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse98
+ je Lelse98
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5887,13 +5865,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit98
+  jmp Lexit98
  Lelse98:
                     mov rax, const_tbl+2
  Lexit98:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse92
+ je Lelse92
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -5960,8 +5937,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit92
+  jmp Lexit92
  Lelse92:
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -5987,7 +5963,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse97
+ je Lelse97
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -6012,13 +5988,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit97
+  jmp Lexit97
  Lelse97:
                     mov rax, const_tbl+2
  Lexit97:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse93
+ je Lelse93
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -6088,7 +6063,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse96
+ je Lelse96
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -6155,13 +6130,11 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit96
+  jmp Lexit96
  Lelse96:
                     mov rax, const_tbl+2
  Lexit96:
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit93
+  jmp Lexit93
  Lelse93:
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -6187,7 +6160,7 @@ add rsp, rbx ;pop args
 pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse95
+ je Lelse95
 
                     push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
@@ -6212,13 +6185,12 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit95
+  jmp Lexit95
  Lelse95:
                     mov rax, const_tbl+2
  Lexit95:
  cmp rax, SOB_FALSE_ADDRESS
- jne Lelse94
+ je Lelse94
 
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -6285,8 +6257,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
- cmp rax, SOB_FALSE_ADDRESS
- jne Lexit94
+  jmp Lexit94
  Lelse94:
                     push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
@@ -6385,87 +6356,43 @@ shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*57], rax
-mov rax, SOB_VOID_ADDRESS
-
-	call write_sob_if_not_void
-
-;def rocket
-push SOB_NIL_ADDRESS 
-;applic   varfree:char->integer char
-mov rax, const_tbl+85
-push rax
-push 1
-; varfree:char->integer
-mov rax, qword[fvar_tbl + WORD_SIZE*14 ]
-mov rbx, rax
-CLOSURE_ENV rax, rbx
-push rax
-CLOSURE_CODE rax, rbx
-call rax
-add rsp, 8*1 ;pop env
-pop rbx      ;pop arg count
-shl rbx, 3   ;rbx = rbx*8
-add rsp, rbx ;pop args
-pop rbx
-
-mov qword [fvar_tbl + WORD_SIZE*72], rax
-mov rax, SOB_VOID_ADDRESS
-
-	call write_sob_if_not_void
-
-;def frily
-push SOB_NIL_ADDRESS 
-;applic   varfree:char->integer char
-mov rax, const_tbl+87
-push rax
-push 1
-; varfree:char->integer
-mov rax, qword[fvar_tbl + WORD_SIZE*14 ]
-mov rbx, rax
-CLOSURE_ENV rax, rbx
-push rax
-CLOSURE_CODE rax, rbx
-call rax
-add rsp, 8*1 ;pop env
-pop rbx      ;pop arg count
-shl rbx, 3   ;rbx = rbx*8
-add rsp, rbx ;pop args
-pop rbx
-
-mov qword [fvar_tbl + WORD_SIZE*71], rax
+mov qword [fvar_tbl + WORD_SIZE*59], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 push SOB_NIL_ADDRESS 
-;applic   varfree:notapplic   varfree:> varfree:frily varfree:rocket
-push SOB_NIL_ADDRESS 
-;applic   varfree:> varfree:frily varfree:rocket
-; varfree:rocket
-mov rax, qword[fvar_tbl + WORD_SIZE*72 ]
-push rax
-; varfree:frily
-mov rax, qword[fvar_tbl + WORD_SIZE*71 ]
-push rax
-push 2
-; varfree:>
-mov rax, qword[fvar_tbl + WORD_SIZE*70 ]
-mov rbx, rax
-CLOSURE_ENV rax, rbx
-push rax
-CLOSURE_CODE rax, rbx
-call rax
-add rsp, 8*1 ;pop env
-pop rbx      ;pop arg count
-shl rbx, 3   ;rbx = rbx*8
-add rsp, rbx ;pop args
-pop rbx
-
+;applic   lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,boxGet Pair:
+mov rax, const_tbl+140
 push rax
 push 1
-; varfree:not
-mov rax, qword[fvar_tbl + WORD_SIZE*69 ]
+; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,boxGet
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode102)
+jmp Lcont102
+Lcode102:
+FIX_LAMBDA_OPT_STACK 0
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:x to box  VarParam:x,boxGet
+;box  VarParam:x,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
+leave
+ret
+Lcont102:
+
 mov rbx, rax
 CLOSURE_ENV rax, rbx
 push rax
@@ -7075,19 +7002,20 @@ gcd:
     mov rax, [rbp + 8 * 3]      ; rax = argc
     dec rax
     mov rax, PVAR(rax)          ; rax = last arg = list
-    mov rdx, 0                  ; rdx = list_size
+    xor rdx, rdx                ; rdx = list_size
 
+    push SOB_NIL_ADDRESS
     push_args:
-      cmp byte[rax], T_NIL
-      je end_push_args
-      CAR rbx, rax              ; rbx = car
-      push rbx
-      CDR rax, rax              ; rax = cdr
-      inc rdx
-      jmp push_args
+        cmp byte[rax], T_NIL
+        je end_push_args
+        CAR rbx, rax              ; rbx = car
+        push rbx
+        CDR rax, rax              ; rax = cdr
+        inc rdx
+        jmp push_args
     end_push_args:
 
-    mov rsi,rdx                   ; rsi = list_size backup
+    mov rsi, rdx                  ; rsi = list_size backup
     mov rcx, 0                    ; i = 0
     mov rbx, rdx                  ; rbx = list_size
     shr rbx, 1                    ; rbx = list_size/2
@@ -7107,7 +7035,7 @@ gcd:
 
     mov rax, [rbp + 8 * 3]      ;rax = argc
     mov rdi, rax                ;rdi = index
-    add rdi,2
+    add rdi, 2
     push_objs:
       cmp rdi, 4
       jbe end_push_objs
@@ -7118,7 +7046,7 @@ gcd:
     end_push_objs:
 
     push rsi                    ;push number of args
-    mov rax, PVAR(0)            ; rax = closure of the procedure
+    mov rax, PVAR(0)            ;rax = closure of the procedure
     CLOSURE_ENV rbx, rax
     push rbx
     CLOSURE_CODE rbx, rax
@@ -7127,6 +7055,7 @@ gcd:
     pop rbx
     shl rbx, 3
     add rsp, rbx
+    pop rbx
 
     pop rbp
     ret

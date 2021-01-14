@@ -402,19 +402,20 @@ let i_must_imblement =
     mov rax, [rbp + 8 * 3]      ; rax = argc
     dec rax
     mov rax, PVAR(rax)          ; rax = last arg = list
-    mov rdx, 0                  ; rdx = list_size
+    xor rdx, rdx                ; rdx = list_size
 
+    push SOB_NIL_ADDRESS
     push_args:
-      cmp byte[rax], T_NIL
-      je end_push_args
-      CAR rbx, rax              ; rbx = car
-      push rbx
-      CDR rax, rax              ; rax = cdr
-      inc rdx
-      jmp push_args
+        cmp byte[rax], T_NIL
+        je end_push_args
+        CAR rbx, rax              ; rbx = car
+        push rbx
+        CDR rax, rax              ; rax = cdr
+        inc rdx
+        jmp push_args
     end_push_args:
 
-    mov rsi,rdx                   ; rsi = list_size backup
+    mov rsi, rdx                  ; rsi = list_size backup
     mov rcx, 0                    ; i = 0
     mov rbx, rdx                  ; rbx = list_size
     shr rbx, 1                    ; rbx = list_size/2
@@ -434,7 +435,7 @@ let i_must_imblement =
 
     mov rax, [rbp + 8 * 3]      ;rax = argc
     mov rdi, rax                ;rdi = index
-    add rdi,2
+    add rdi, 2
     push_objs:
       cmp rdi, 4
       jbe end_push_objs
@@ -445,7 +446,7 @@ let i_must_imblement =
     end_push_objs:
 
     push rsi                    ;push number of args
-    mov rax, PVAR(0)            ; rax = closure of the procedure
+    mov rax, PVAR(0)            ;rax = closure of the procedure
     CLOSURE_ENV rbx, rax
     push rbx
     CLOSURE_CODE rbx, rax
@@ -454,6 +455,7 @@ let i_must_imblement =
     pop rbx
     shl rbx, 3
     add rsp, rbx
+    pop rbx
 
     pop rbp
     ret"
