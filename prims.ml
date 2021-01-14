@@ -404,15 +404,14 @@ let i_must_imblement =
     mov rax, PVAR(rax)          ; rax = last arg = list
     xor rdx, rdx                ; rdx = list_size
 
-    push SOB_NIL_ADDRESS
     push_args:
-        cmp byte[rax], T_NIL
-        je end_push_args
-        CAR rbx, rax              ; rbx = car
-        push rbx
-        CDR rax, rax              ; rax = cdr
-        inc rdx
-        jmp push_args
+      cmp byte[rax], T_NIL
+      je end_push_args
+      CAR rbx, rax              ; rbx = car
+      push rbx
+      CDR rax, rax              ; rax = cdr
+      inc rdx
+      jmp push_args
     end_push_args:
 
     mov rsi, rdx                  ; rsi = list_size backup

@@ -21,15 +21,15 @@
 
 (define fold-left 
   (lambda (func acc list) 
-    (if (equal? list '()) 
+    (if (null? list) 
         acc
-        (fold-left func (func (car list) acc) (cdr list))
+        (fold-left func (func acc (car list)) (cdr list))
     )
   )
 )
 (define fold-right
   (lambda (func acc list) 
-    (if (equal? list '()) 
+    (if (null? list) 
         acc
         (func (car list) (fold-right func acc (cdr list)))
     )

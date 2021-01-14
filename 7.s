@@ -24,12 +24,32 @@ MAKE_LITERAL_CHAR(0)
 MAKE_LITERAL_RATIONAL(0,1)
 MAKE_LITERAL_RATIONAL(1,1)
 MAKE_LITERAL_RATIONAL(-1,1)
-MAKE_LITERAL_STRING "a"
-MAKE_LITERAL_SYMBOL(const_tbl+85)
-MAKE_LITERAL_STRING "b"
-MAKE_LITERAL_SYMBOL(const_tbl+104)
-MAKE_LITERAL_PAIR(const_tbl+114,const_tbl+1)
-MAKE_LITERAL_PAIR(const_tbl+95,const_tbl+123)
+MAKE_LITERAL_PAIR(const_tbl+1,const_tbl+1)
+MAKE_LITERAL_RATIONAL(2,1)
+MAKE_LITERAL_RATIONAL(3,1)
+MAKE_LITERAL_RATIONAL(4,1)
+MAKE_LITERAL_RATIONAL(5,1)
+MAKE_LITERAL_RATIONAL(6,1)
+MAKE_LITERAL_RATIONAL(7,1)
+MAKE_LITERAL_RATIONAL(8,1)
+MAKE_LITERAL_RATIONAL(9,1)
+MAKE_LITERAL_RATIONAL(10,1)
+MAKE_LITERAL_RATIONAL(11,1)
+MAKE_LITERAL_RATIONAL(12,1)
+MAKE_LITERAL_RATIONAL(13,1)
+MAKE_LITERAL_RATIONAL(14,1)
+MAKE_LITERAL_RATIONAL(15,1)
+MAKE_LITERAL_RATIONAL(16,1)
+MAKE_LITERAL_RATIONAL(17,1)
+MAKE_LITERAL_RATIONAL(18,1)
+MAKE_LITERAL_RATIONAL(19,1)
+MAKE_LITERAL_RATIONAL(20,1)
+MAKE_LITERAL_RATIONAL(21,1)
+MAKE_LITERAL_RATIONAL(22,1)
+MAKE_LITERAL_RATIONAL(23,1)
+MAKE_LITERAL_RATIONAL(24,1)
+MAKE_LITERAL_RATIONAL(25,1)
+MAKE_LITERAL_RATIONAL(26,1)
 
 ;;; These macro definitions are required for the primitive
 ;;; definitions in the epilogue to work properly
@@ -132,7 +152,6 @@ user_code_fragment:
 ;;; It will be executed immediately after the closures for 
 ;;; the primitive procedures are set up.
 ;def map
-push SOB_NIL_ADDRESS 
 ;applic   lambda (null? car cdr cons apply):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:cons to box  VarParam:cons, set  VarParam:apply to box  VarParam:apply,applicTP   lambda (map-many map-one):seq:   set  VarParam:map-many to box  VarParam:map-many, set  VarParam:map-one to box  VarParam:map-one,Boxset  lambda (f lists):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:lists to box  VarParam:lists, if: applic  boxGetapplic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetBoxset  lambda (f s):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:s to box  VarParam:s, if: applic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet symbol:whatever symbol:whatever varfree:null? varfree:car varfree:cdr varfree:cons varfree:apply
 ; varfree:apply
 mov rax, qword[fvar_tbl + WORD_SIZE*31 ]
@@ -152,7 +171,7 @@ push rax
 push 5
 ; lambda (null? car cdr cons apply):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:cons to box  VarParam:cons, set  VarParam:apply to box  VarParam:apply,applicTP   lambda (map-many map-one):seq:   set  VarParam:map-many to box  VarParam:map-many, set  VarParam:map-one to box  VarParam:map-one,Boxset  lambda (f lists):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:lists to box  VarParam:lists, if: applic  boxGetapplic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetBoxset  lambda (f s):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:s to box  VarParam:s, if: applic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet symbol:whatever symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode1)
 jmp Lcont1
@@ -205,7 +224,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+4)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (map-many map-one):seq:   set  VarParam:map-many to box  VarParam:map-many, set  VarParam:map-one to box  VarParam:map-one,Boxset  lambda (f lists):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:lists to box  VarParam:lists, if: applic  boxGetapplic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetBoxset  lambda (f s):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:s to box  VarParam:s, if: applic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet symbol:whatever symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -216,7 +234,7 @@ push 2
 ;body
 ; lambda (map-many map-one):seq:   set  VarParam:map-many to box  VarParam:map-many, set  VarParam:map-one to box  VarParam:map-one,Boxset  lambda (f lists):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:lists to box  VarParam:lists, if: applic  boxGetapplic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetBoxset  lambda (f s):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:s to box  VarParam:s, if: applic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode2)
 jmp Lcont2
@@ -244,7 +262,7 @@ pop qword[rax]
 
 ; lambda (f lists):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:lists to box  VarParam:lists, if: applic  boxGetapplic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode3)
 jmp Lcont3
@@ -270,9 +288,7 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -293,7 +309,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -311,20 +326,16 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse4
 
                     mov rax, const_tbl+1
-  jmp Lexit4
+ jmp Lexit4
  Lelse4:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetapplic  boxGetboxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -351,7 +362,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -373,12 +383,9 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetapplic  boxGetboxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -405,7 +412,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -427,7 +433,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -458,7 +463,7 @@ Lcont3:
 
 ; lambda (f s):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:s to box  VarParam:s, if: applic  boxGetboxGetthen: nil|boolelse applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode5)
 jmp Lcont5
@@ -484,7 +489,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -505,20 +509,16 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse6
 
                     mov rax, const_tbl+1
-  jmp Lexit6
+ jmp Lexit6
  Lelse6:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -539,7 +539,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -561,12 +560,9 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -587,7 +583,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -603,7 +598,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -632,14 +626,13 @@ Lcont5:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
 ;args
 push 0
 ;body
 ; lambda (): lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode7)
 jmp Lcont7
@@ -648,12 +641,12 @@ push rbp
 mov rbp, rsp
 ; lambdaOpt f):seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode8)
 jmp Lcont8
 Lcode8:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:f to box  VarParam:f, set  VarParam:args to box  VarParam:args,applicTP  boxGetboxGetboxGet
@@ -675,7 +668,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
@@ -739,24 +731,23 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*39], rax
+mov qword [fvar_tbl + WORD_SIZE*68], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def fold-left
-; lambda (func acc list):seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:equal?boxGetnil|boolthen: boxGetelse applicTP   varfree:fold-leftboxGetapplic  boxGetapplic   varfree:carboxGetboxGetapplic   varfree:cdrboxGet
+; lambda (func acc list):seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:null?boxGetthen: boxGetelse applicTP   varfree:fold-leftboxGetapplic  boxGetboxGetapplic   varfree:carboxGetapplic   varfree:cdrboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode9)
 jmp Lcont9
 Lcode9:
 push rbp
 mov rbp, rsp
-;seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:equal?boxGetnil|boolthen: boxGetelse applicTP   varfree:fold-leftboxGetapplic  boxGetapplic   varfree:carboxGetboxGetapplic   varfree:cdrboxGet
+;seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:null?boxGetthen: boxGetelse applicTP   varfree:fold-leftboxGetapplic  boxGetboxGetapplic   varfree:carboxGetapplic   varfree:cdrboxGet
 ;box  VarParam:func,
 mov rax, qword[rbp+8 * (4+0)]
 push rax
@@ -784,17 +775,14 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+2)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
-;applic   varfree:equal?boxGetnil|bool
-mov rax, const_tbl+1
-push rax
+;applic   varfree:null?boxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
                         
 push rax
-push 2
-; varfree:equal?
-mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
+push 1
+; varfree:null?
+mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 mov rbx, rax
 CLOSURE_ENV rax, rbx
 push rax
@@ -804,7 +792,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse10
@@ -812,12 +799,10 @@ pop rbx
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
-  jmp Lexit10
+ jmp Lexit10
  Lelse10:
-                    push SOB_NIL_ADDRESS 
-;applicTP   varfree:fold-leftboxGetapplic  boxGetapplic   varfree:carboxGetboxGetapplic   varfree:cdrboxGet
+                    ;applicTP   varfree:fold-leftboxGetapplic  boxGetboxGetapplic   varfree:carboxGetapplic   varfree:cdrboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic   varfree:cdrboxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
@@ -835,16 +820,9 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
-;applic  boxGetapplic   varfree:carboxGetboxGet
-mov rax, qword[rbp+8 * (4+1)]
-                        mov rax,qword[rax]
-                        
-push rax
-push SOB_NIL_ADDRESS 
+;applic  boxGetboxGetapplic   varfree:carboxGet
 ;applic   varfree:carboxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
@@ -862,8 +840,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
+push rax
+mov rax, qword[rbp+8 * (4+1)]
+                        mov rax,qword[rax]
+                        
 push rax
 push 2
 mov rax, qword[rbp+8 * (4+0)]
@@ -878,7 +859,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -888,7 +868,7 @@ push rax
 push 3
 ;body
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
@@ -901,22 +881,22 @@ leave
 ret
 Lcont9:
 
-mov qword [fvar_tbl + WORD_SIZE*52], rax
+mov qword [fvar_tbl + WORD_SIZE*50], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def fold-right
-; lambda (func acc list):seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:equal?boxGetnil|boolthen: boxGetelse applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
+; lambda (func acc list):seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:null?boxGetthen: boxGetelse applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode11)
 jmp Lcont11
 Lcode11:
 push rbp
 mov rbp, rsp
-;seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:equal?boxGetnil|boolthen: boxGetelse applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
+;seq:   set  VarParam:func to box  VarParam:func, set  VarParam:acc to box  VarParam:acc, set  VarParam:list to box  VarParam:list, if: applic   varfree:null?boxGetthen: boxGetelse applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
 ;box  VarParam:func,
 mov rax, qword[rbp+8 * (4+0)]
 push rax
@@ -944,17 +924,14 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+2)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
-;applic   varfree:equal?boxGetnil|bool
-mov rax, const_tbl+1
-push rax
+;applic   varfree:null?boxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
                         
 push rax
-push 2
-; varfree:equal?
-mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
+push 1
+; varfree:null?
+mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
 mov rbx, rax
 CLOSURE_ENV rax, rbx
 push rax
@@ -964,7 +941,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse12
@@ -972,14 +948,11 @@ pop rbx
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
-  jmp Lexit12
+ jmp Lexit12
  Lelse12:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
+                    ;applicTP  boxGetapplic   varfree:carboxGetapplic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic   varfree:fold-rightboxGetboxGetapplic   varfree:cdrboxGet
-push SOB_NIL_ADDRESS 
 ;applic   varfree:cdrboxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
@@ -997,7 +970,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+1)]
@@ -1020,10 +992,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic   varfree:carboxGet
 mov rax, qword[rbp+8 * (4+2)]
                         mov rax,qword[rax]
@@ -1041,7 +1011,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -1069,12 +1038,12 @@ mov rax, SOB_VOID_ADDRESS
 ;def cons*
 ; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic   varfree:null?applic   varfree:cdrboxGetthen: applicTP   varfree:carboxGetelse applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode13)
 jmp Lcont13
 Lcode13:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, if: applic   varfree:null?applic   varfree:cdrboxGetthen: applicTP   varfree:carboxGetelse applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
@@ -1087,9 +1056,7 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic   varfree:null?applic   varfree:cdrboxGet
-push SOB_NIL_ADDRESS 
 ;applic   varfree:cdrboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1107,7 +1074,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -1122,13 +1088,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse14
 
-                    push SOB_NIL_ADDRESS 
-;applicTP   varfree:carboxGet
+                    ;applicTP   varfree:carboxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1145,14 +1109,11 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit14
+ jmp Lexit14
  Lelse14:
-                    push SOB_NIL_ADDRESS 
-;applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
+                    ;applicTP   varfree:consapplic   varfree:carboxGetapplic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic   varfree:apply varfree:cons*applic   varfree:cdrboxGet
-push SOB_NIL_ADDRESS 
 ;applic   varfree:cdrboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1170,7 +1131,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 ; varfree:cons*
@@ -1188,10 +1148,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic   varfree:carboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1209,7 +1167,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -1234,7 +1191,6 @@ mov rax, SOB_VOID_ADDRESS
 	call write_sob_if_not_void
 
 ;def append
-push SOB_NIL_ADDRESS 
 ;applic   lambda (null? fold-right cons):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:fold-right to box  VarParam:fold-right, set  VarParam:cons to box  VarParam:cons, lambdaOpt ):seq:   set  VarParam:args to box  VarParam:args,applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet varfree:null? varfree:fold-right varfree:cons
 ; varfree:cons
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
@@ -1248,7 +1204,7 @@ push rax
 push 3
 ; lambda (null? fold-right cons):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:fold-right to box  VarParam:fold-right, set  VarParam:cons to box  VarParam:cons, lambdaOpt ):seq:   set  VarParam:args to box  VarParam:args,applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode15)
 jmp Lcont15
@@ -1285,12 +1241,12 @@ pop qword[rax]
 
 ; lambdaOpt ):seq:   set  VarParam:args to box  VarParam:args,applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode16)
 jmp Lcont16
 Lcode16:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:args to box  VarParam:args,applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet
@@ -1303,7 +1259,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGet lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGetnil|boolboxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
@@ -1314,7 +1269,7 @@ mov rax, const_tbl+1
 push rax
 ; lambda (e a):seq:   set  VarParam:e to box  VarParam:e, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetboxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode17)
 jmp Lcont17
@@ -1340,7 +1295,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -1361,7 +1315,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse18
@@ -1369,10 +1322,9 @@ pop rbx
                     mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
-  jmp Lexit18
+ jmp Lexit18
  Lelse18:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1439,7 +1391,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 mov qword [fvar_tbl + WORD_SIZE*33], rax
 mov rax, SOB_VOID_ADDRESS
@@ -1449,12 +1400,12 @@ mov rax, SOB_VOID_ADDRESS
 ;def list
 ; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,boxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode19)
 jmp Lcont19
 Lcode19:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,boxGet
@@ -1480,7 +1431,6 @@ mov rax, SOB_VOID_ADDRESS
 	call write_sob_if_not_void
 
 ;def list?
-push SOB_NIL_ADDRESS 
 ;applic   lambda (null? pair? cdr):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:pair? to box  VarParam:pair?, set  VarParam:cdr to box  VarParam:cdr,applicTP   lambda (list?-loop):seq:   set  VarParam:list?-loop to box  VarParam:list?-loop,Boxset  lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGet if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda ():boxGet symbol:whatever varfree:null? varfree:pair? varfree:cdr
 ; varfree:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*27 ]
@@ -1494,7 +1444,7 @@ push rax
 push 3
 ; lambda (null? pair? cdr):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:pair? to box  VarParam:pair?, set  VarParam:cdr to box  VarParam:cdr,applicTP   lambda (list?-loop):seq:   set  VarParam:list?-loop to box  VarParam:list?-loop,Boxset  lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGet if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda ():boxGet symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode20)
 jmp Lcont20
@@ -1529,7 +1479,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+2)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (list?-loop):seq:   set  VarParam:list?-loop to box  VarParam:list?-loop,Boxset  lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGet if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda ():boxGet symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -1538,7 +1487,7 @@ push 1
 ;body
 ; lambda (list?-loop):seq:   set  VarParam:list?-loop to box  VarParam:list?-loop,Boxset  lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGet if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda ():boxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode21)
 jmp Lcont21
@@ -1557,7 +1506,7 @@ pop qword[rax]
 
 ; lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGet if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetelse nil|bool
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode22)
 jmp Lcont22
@@ -1574,7 +1523,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1595,12 +1543,10 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit23
-    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -1620,15 +1566,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse24
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -1649,7 +1592,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -1666,7 +1608,7 @@ FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit24
+ jmp Lexit24
  Lelse24:
                     mov rax, const_tbl+2
  Lexit24:
@@ -1685,14 +1627,13 @@ Lcont22:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda ():boxGet
 ;args
 push 0
 ;body
 ; lambda ():boxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode25)
 jmp Lcont25
@@ -1739,7 +1680,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 mov qword [fvar_tbl + WORD_SIZE*36], rax
 mov rax, SOB_VOID_ADDRESS
@@ -1747,7 +1687,6 @@ mov rax, SOB_VOID_ADDRESS
 	call write_sob_if_not_void
 
 ;def make-string
-push SOB_NIL_ADDRESS 
 ;applic   lambda (null? car make-string):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:make-string to box  VarParam:make-string, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGetboxGet charelse applicTP  boxGetboxGetapplic  boxGetboxGet varfree:null? varfree:car varfree:make-string
 ; varfree:make-string
 mov rax, qword[fvar_tbl + WORD_SIZE*12 ]
@@ -1761,7 +1700,7 @@ push rax
 push 3
 ; lambda (null? car make-string):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:make-string to box  VarParam:make-string, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGetboxGet charelse applicTP  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode26)
 jmp Lcont26
@@ -1798,12 +1737,12 @@ pop qword[rax]
 
 ; lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGetboxGet charelse applicTP  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode27)
 jmp Lcont27
 Lcode27:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGetboxGet charelse applicTP  boxGetboxGetapplic  boxGetboxGet
@@ -1825,7 +1764,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -1846,13 +1784,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse28
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGet char
+                    ;applicTP  boxGetboxGet char
 ;args
 mov rax, const_tbl+32
 push rax
@@ -1874,12 +1810,10 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit28
+ jmp Lexit28
  Lelse28:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -1900,7 +1834,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -1939,7 +1872,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 mov qword [fvar_tbl + WORD_SIZE*12], rax
 mov rax, SOB_VOID_ADDRESS
@@ -1949,7 +1881,7 @@ mov rax, SOB_VOID_ADDRESS
 ;def not
 ; lambda (x):seq:   set  VarParam:x to box  VarParam:x, if: boxGetthen: nil|boolelse nil|bool
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode29)
 jmp Lcont29
@@ -1973,7 +1905,7 @@ mov rax, qword[rbp+8 * (4+0)]
  je Lelse30
 
                     mov rax, const_tbl+2
-  jmp Lexit30
+ jmp Lexit30
  Lelse30:
                     mov rax, const_tbl+4
  Lexit30:
@@ -1981,12 +1913,11 @@ leave
 ret
 Lcont29:
 
-mov qword [fvar_tbl + WORD_SIZE*44], rax
+mov qword [fvar_tbl + WORD_SIZE*42], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
-push SOB_NIL_ADDRESS 
 ;applic   lambda (flonum? rational? exact->inexact fold-left map _+ _* _/ _= _< car cdr null?):seq:   set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:rational? to box  VarParam:rational?, set  VarParam:exact->inexact to box  VarParam:exact->inexact, set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:map to box  VarParam:map, set  VarParam:_+ to box  VarParam:_+, set  VarParam:_* to box  VarParam:_*, set  VarParam:_/ to box  VarParam:_/, set  VarParam:_= to box  VarParam:_=, set  VarParam:_< to box  VarParam:_<, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:null? to box  VarParam:null?,applicTP   lambda (^numeric-op-dispatcher):seq:   set  VarParam:^numeric-op-dispatcher to box  VarParam:^numeric-op-dispatcher,Boxset +Boxset *Boxset /applicTP   lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset < lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever lambda (op):seq:   set  VarParam:op to box  VarParam:op, lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetboxGetelse applicTP  boxGetboxGetboxGet varfree:flonum? varfree:rational? varfree:exact->inexact varfree:fold-left varfree:map varfree:+ varfree:* varfree:/ varfree:= varfree:< varfree:car varfree:cdr varfree:null?
 ; varfree:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
@@ -2013,10 +1944,10 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 push rax
 ; varfree:map
-mov rax, qword[fvar_tbl + WORD_SIZE*39 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*68 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 push rax
 ; varfree:exact->inexact
 mov rax, qword[fvar_tbl + WORD_SIZE*16 ]
@@ -2030,7 +1961,7 @@ push rax
 push 13
 ; lambda (flonum? rational? exact->inexact fold-left map _+ _* _/ _= _< car cdr null?):seq:   set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:rational? to box  VarParam:rational?, set  VarParam:exact->inexact to box  VarParam:exact->inexact, set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:map to box  VarParam:map, set  VarParam:_+ to box  VarParam:_+, set  VarParam:_* to box  VarParam:_*, set  VarParam:_/ to box  VarParam:_/, set  VarParam:_= to box  VarParam:_=, set  VarParam:_< to box  VarParam:_<, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:null? to box  VarParam:null?,applicTP   lambda (^numeric-op-dispatcher):seq:   set  VarParam:^numeric-op-dispatcher to box  VarParam:^numeric-op-dispatcher,Boxset +Boxset *Boxset /applicTP   lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset < lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever lambda (op):seq:   set  VarParam:op to box  VarParam:op, lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetboxGetelse applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode31)
 jmp Lcont31
@@ -2155,12 +2086,11 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+12)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (^numeric-op-dispatcher):seq:   set  VarParam:^numeric-op-dispatcher to box  VarParam:^numeric-op-dispatcher,Boxset +Boxset *Boxset /applicTP   lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset < lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever lambda (op):seq:   set  VarParam:op to box  VarParam:op, lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetboxGetelse applicTP  boxGetboxGetboxGet
 ;args
 ; lambda (op):seq:   set  VarParam:op to box  VarParam:op, lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetboxGetelse applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode46)
 jmp Lcont46
@@ -2179,7 +2109,7 @@ pop qword[rax]
 
 ; lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetboxGetelse applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode47)
 jmp Lcont47
@@ -2205,7 +2135,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -2226,13 +2155,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse51
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -2252,19 +2179,16 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit51
+ jmp Lexit51
  Lelse51:
                     mov rax, const_tbl+2
  Lexit51:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse48
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2285,7 +2209,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -2306,10 +2229,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit48
+ jmp Lexit48
  Lelse48:
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -2329,13 +2251,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse50
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -2355,23 +2275,20 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit50
+ jmp Lexit50
  Lelse50:
                     mov rax, const_tbl+2
  Lexit50:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse49
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -2392,7 +2309,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -2409,10 +2325,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit49
+ jmp Lexit49
  Lelse49:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2451,7 +2366,7 @@ push 1
 ;body
 ; lambda (^numeric-op-dispatcher):seq:   set  VarParam:^numeric-op-dispatcher to box  VarParam:^numeric-op-dispatcher,Boxset +Boxset *Boxset /applicTP   lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset < lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode32)
 jmp Lcont32
@@ -2470,12 +2385,12 @@ pop qword[rax]
 
 ; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 0,1boxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode33)
 jmp Lcont33
 Lcode33:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 0,1boxGet
@@ -2488,7 +2403,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGet number 0,1boxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
@@ -2497,7 +2411,6 @@ mov rax, qword[rbp+8 * (4+0)]
 push rax
 mov rax, const_tbl+34
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*1]
@@ -2520,7 +2433,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 3
@@ -2551,12 +2463,12 @@ mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 
 ; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 1,1boxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode34)
 jmp Lcont34
 Lcode34:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetapplic  boxGetboxGet number 1,1boxGet
@@ -2569,7 +2481,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetboxGet number 1,1boxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
@@ -2578,7 +2489,6 @@ mov rax, qword[rbp+8 * (4+0)]
 push rax
 mov rax, const_tbl+51
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*1]
@@ -2601,7 +2511,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 3
@@ -2630,9 +2539,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*19 ]
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic   lambda (/):seq:   set  VarParam:/ to box  VarParam:/, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 1,1boxGetelse applicTP  boxGetboxGetboxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*0]
@@ -2653,13 +2560,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
 ; lambda (/):seq:   set  VarParam:/ to box  VarParam:/, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 1,1boxGetelse applicTP  boxGetboxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode35)
 jmp Lcont35
@@ -2678,12 +2584,12 @@ pop qword[rax]
 
 ; lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 1,1boxGetelse applicTP  boxGetboxGetboxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode36)
 jmp Lcont36
 Lcode36:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 1,1boxGetelse applicTP  boxGetboxGetboxGetboxGet
@@ -2705,7 +2611,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2726,13 +2631,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse37
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGet number 1,1boxGet
+                    ;applicTP  boxGet number 1,1boxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -2754,10 +2657,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit37
+ jmp Lexit37
  Lelse37:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2805,7 +2707,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 
                               push rax
@@ -2815,12 +2716,11 @@ mov rax, qword[fvar_tbl + WORD_SIZE*20 ]
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset < lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 ;args
 ; lambda (op):seq:   set  VarParam:op to box  VarParam:op,applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode39)
 jmp Lcont39
@@ -2837,7 +2737,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -2846,7 +2745,7 @@ push 1
 ;body
 ; lambda (comparator):seq:   set  VarParam:comparator to box  VarParam:comparator,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode40)
 jmp Lcont40
@@ -2865,7 +2764,7 @@ pop qword[rax]
 
 ; lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|bool
 
-CREATE_EXT_ENV 5
+CREATE_EXT_ENV 4
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode41)
 jmp Lcont41
@@ -2891,7 +2790,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2912,13 +2810,10 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit42
-    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
+    ;applic  boxGetboxGetapplic  boxGetboxGet
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2939,7 +2834,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -2961,15 +2855,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse43
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -2990,10 +2881,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3014,7 +2903,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -3031,7 +2919,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit43
+ jmp Lexit43
  Lelse43:
                     mov rax, const_tbl+2
  Lexit43:
@@ -3050,14 +2938,13 @@ Lcont41:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 ;args
 push 0
 ;body
 ; lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 5
+CREATE_EXT_ENV 4
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode44)
 jmp Lcont44
@@ -3066,12 +2953,12 @@ push rbp
 mov rbp, rsp
 ; lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 6
+CREATE_EXT_ENV 5
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode45)
 jmp Lcont45
 Lcode45:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
@@ -3093,7 +2980,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
@@ -3153,7 +3039,7 @@ push 1
 ;body
 ; lambda (^comparator):seq:   set  VarParam:^comparator to box  VarParam:^comparator,Boxset =Boxset <
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode38)
 jmp Lcont38
@@ -3170,9 +3056,7 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*1]
@@ -3195,7 +3079,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -3211,7 +3094,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 
                               push rax
@@ -3221,9 +3103,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*1]
@@ -3246,7 +3126,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -3262,7 +3141,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 
                               push rax
@@ -3307,12 +3185,10 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 	call write_sob_if_not_void
 
 ;def -
-push SOB_NIL_ADDRESS 
 ;applic   lambda (apply + null?):seq:   set  VarParam:apply to box  VarParam:apply, set  VarParam:+ to box  VarParam:+, set  VarParam:null? to box  VarParam:null?, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGetelse applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet varfree:apply varfree:+ varfree:null?
 ; varfree:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
@@ -3326,7 +3202,7 @@ push rax
 push 3
 ; lambda (apply + null?):seq:   set  VarParam:apply to box  VarParam:apply, set  VarParam:+ to box  VarParam:+, set  VarParam:null? to box  VarParam:null?, lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGetelse applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode52)
 jmp Lcont52
@@ -3363,12 +3239,12 @@ pop qword[rax]
 
 ; lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGetelse applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode53)
 jmp Lcont53
 Lcode53:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if: applic  boxGetboxGetthen: applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGetelse applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
@@ -3390,7 +3266,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3411,15 +3286,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse54
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGet
+                    ;applicTP  boxGet number 0,1applic   varfree:* number -1,1boxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic   varfree:* number -1,1boxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -3439,7 +3311,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, const_tbl+34
@@ -3458,14 +3329,11 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit54
+ jmp Lexit54
  Lelse54:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetapplic   varfree:* number -1,1applic  boxGetboxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic   varfree:* number -1,1applic  boxGetboxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3492,7 +3360,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, const_tbl+68
@@ -3509,7 +3376,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -3548,15 +3414,13 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*57], rax
+mov qword [fvar_tbl + WORD_SIZE*55], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def >
-push SOB_NIL_ADDRESS 
 ;applic   lambda (null? not car cdr < =):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:not to box  VarParam:not, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:< to box  VarParam:<, set  VarParam:= to box  VarParam:=,applicTP   lambda (>-loop):seq:   set  VarParam:>-loop to box  VarParam:>-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever varfree:null? varfree:not varfree:car varfree:cdr varfree:< varfree:=
 ; varfree:=
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
@@ -3571,7 +3435,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*26 ]
 push rax
 ; varfree:not
-mov rax, qword[fvar_tbl + WORD_SIZE*44 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*42 ]
 push rax
 ; varfree:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
@@ -3579,7 +3443,7 @@ push rax
 push 6
 ; lambda (null? not car cdr < =):seq:   set  VarParam:null? to box  VarParam:null?, set  VarParam:not to box  VarParam:not, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:< to box  VarParam:<, set  VarParam:= to box  VarParam:=,applicTP   lambda (>-loop):seq:   set  VarParam:>-loop to box  VarParam:>-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode55)
 jmp Lcont55
@@ -3641,7 +3505,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+5)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (>-loop):seq:   set  VarParam:>-loop to box  VarParam:>-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -3650,7 +3513,7 @@ push 1
 ;body
 ; lambda (>-loop):seq:   set  VarParam:>-loop to box  VarParam:>-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse nil|boolapplicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode56)
 jmp Lcont56
@@ -3669,7 +3532,7 @@ pop qword[rax]
 
 ; lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, applic  boxGetboxGet if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse nil|bool
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode57)
 jmp Lcont57
@@ -3695,7 +3558,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3716,15 +3578,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit58
-    push SOB_NIL_ADDRESS 
-;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
+    ;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;applic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3745,7 +3603,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -3767,7 +3624,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -3785,16 +3641,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse59
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
+                    ;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;applic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3815,7 +3667,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -3837,7 +3688,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 1
@@ -3855,15 +3705,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse60
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3884,10 +3731,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -3908,7 +3753,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -3925,11 +3769,11 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit60
+ jmp Lexit60
  Lelse60:
                     mov rax, const_tbl+2
  Lexit60:
-  jmp Lexit59
+ jmp Lexit59
  Lelse59:
                     mov rax, const_tbl+2
  Lexit59:
@@ -3948,14 +3792,13 @@ Lcont57:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 ;args
 push 0
 ;body
 ; lambda (): lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode61)
 jmp Lcont61
@@ -3964,12 +3807,12 @@ push rbp
 mov rbp, rsp
 ; lambdaOpt x):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode62)
 jmp Lcont62
 Lcode62:
-FIX_LAMBDA_OPT_STACK 1
+FIX_LAMBDA_OPT_STACK 2
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,applicTP  boxGetboxGetboxGet
@@ -3991,7 +3834,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
@@ -4055,15 +3897,13 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*43], rax
+mov qword [fvar_tbl + WORD_SIZE*41], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def gcd
-push SOB_NIL_ADDRESS 
 ;applic   lambda (gcd null? car cdr):seq:   set  VarParam:gcd to box  VarParam:gcd, set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr,applicTP   lambda (gcd-loop):seq:   set  VarParam:gcd-loop to box  VarParam:gcd-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet symbol:whatever varfree:gcd varfree:null? varfree:car varfree:cdr
 ; varfree:cdr
 mov rax, qword[fvar_tbl + WORD_SIZE*27 ]
@@ -4080,7 +3920,7 @@ push rax
 push 4
 ; lambda (gcd null? car cdr):seq:   set  VarParam:gcd to box  VarParam:gcd, set  VarParam:null? to box  VarParam:null?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr,applicTP   lambda (gcd-loop):seq:   set  VarParam:gcd-loop to box  VarParam:gcd-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode63)
 jmp Lcont63
@@ -4124,7 +3964,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+3)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (gcd-loop):seq:   set  VarParam:gcd-loop to box  VarParam:gcd-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -4133,7 +3972,7 @@ push 1
 ;body
 ; lambda (gcd-loop):seq:   set  VarParam:gcd-loop to box  VarParam:gcd-loop,Boxset  lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGetapplicTP   lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode64)
 jmp Lcont64
@@ -4152,7 +3991,7 @@ pop qword[rax]
 
 ; lambda (x ys):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:ys to box  VarParam:ys, if: applic  boxGetboxGetthen: boxGetelse applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode65)
 jmp Lcont65
@@ -4178,7 +4017,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -4199,7 +4037,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse66
@@ -4207,12 +4044,10 @@ pop rbx
                     mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
-  jmp Lexit66
+ jmp Lexit66
  Lelse66:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -4233,12 +4068,9 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -4259,7 +4091,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 mov rax, qword[rbp+8 * (4+0)]
@@ -4281,7 +4112,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -4310,14 +4140,13 @@ Lcont65:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
 push 0
 ;body
 ; lambda (): lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode67)
 jmp Lcont67
@@ -4326,12 +4155,12 @@ push rbp
 mov rbp, rsp
 ; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode68)
 jmp Lcont68
 Lcode68:
-FIX_LAMBDA_OPT_STACK 0
+FIX_LAMBDA_OPT_STACK 1
 push rbp
 mov rbp, rsp
 ;seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen:  number 0,1else applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
@@ -4344,7 +4173,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4365,18 +4193,15 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse69
 
                     mov rax, const_tbl+34
-  jmp Lexit69
+ jmp Lexit69
  Lelse69:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4397,10 +4222,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4421,7 +4244,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -4478,7 +4300,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 mov qword [fvar_tbl + WORD_SIZE*25], rax
 mov rax, SOB_VOID_ADDRESS
@@ -4486,7 +4307,6 @@ mov rax, SOB_VOID_ADDRESS
 	call write_sob_if_not_void
 
 ;def zero?
-push SOB_NIL_ADDRESS 
 ;applic   lambda (=):seq:   set  VarParam:= to box  VarParam:=, lambda (x):seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetboxGet number 0,1 varfree:=
 ; varfree:=
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
@@ -4494,7 +4314,7 @@ push rax
 push 1
 ; lambda (=):seq:   set  VarParam:= to box  VarParam:=, lambda (x):seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetboxGet number 0,1
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode70)
 jmp Lcont70
@@ -4513,7 +4333,7 @@ pop qword[rax]
 
 ; lambda (x):seq:   set  VarParam:x to box  VarParam:x,applicTP  boxGetboxGet number 0,1
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode71)
 jmp Lcont71
@@ -4530,7 +4350,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGet number 0,1
 ;args
 mov rax, const_tbl+34
@@ -4570,15 +4389,13 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*47], rax
+mov qword [fvar_tbl + WORD_SIZE*45], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def integer?
-push SOB_NIL_ADDRESS 
 ;applic   lambda (rational? = denominator):seq:   set  VarParam:rational? to box  VarParam:rational?, set  VarParam:= to box  VarParam:=, set  VarParam:denominator to box  VarParam:denominator, lambda (x):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGet number 1,1else nil|bool varfree:rational? varfree:= varfree:denominator
 ; varfree:denominator
 mov rax, qword[fvar_tbl + WORD_SIZE*24 ]
@@ -4592,7 +4409,7 @@ push rax
 push 3
 ; lambda (rational? = denominator):seq:   set  VarParam:rational? to box  VarParam:rational?, set  VarParam:= to box  VarParam:=, set  VarParam:denominator to box  VarParam:denominator, lambda (x):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGet number 1,1else nil|bool
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode72)
 jmp Lcont72
@@ -4629,7 +4446,7 @@ pop qword[rax]
 
 ; lambda (x):seq:   set  VarParam:x to box  VarParam:x, if: applic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGet number 1,1else nil|bool
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode73)
 jmp Lcont73
@@ -4646,7 +4463,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4667,17 +4483,14 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse74
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGet number 1,1
+                    ;applicTP  boxGetapplic  boxGetboxGet number 1,1
 ;args
 mov rax, const_tbl+51
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4698,7 +4511,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -4715,7 +4527,7 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit74
+ jmp Lexit74
  Lelse74:
                     mov rax, const_tbl+2
  Lexit74:
@@ -4736,15 +4548,13 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*48], rax
+mov qword [fvar_tbl + WORD_SIZE*46], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def number?
-push SOB_NIL_ADDRESS 
 ;applic   lambda (flonum? rational?):seq:   set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:rational? to box  VarParam:rational?, lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGetapplicTP  boxGetboxGet varfree:flonum? varfree:rational?
 ; varfree:rational?
 mov rax, qword[fvar_tbl + WORD_SIZE*2 ]
@@ -4755,7 +4565,7 @@ push rax
 push 2
 ; lambda (flonum? rational?):seq:   set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:rational? to box  VarParam:rational?, lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGetapplicTP  boxGetboxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode75)
 jmp Lcont75
@@ -4783,7 +4593,7 @@ pop qword[rax]
 
 ; lambda (x):seq:   set  VarParam:x to box  VarParam:x, applic  boxGetboxGetapplicTP  boxGetboxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode76)
 jmp Lcont76
@@ -4800,7 +4610,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4821,12 +4630,10 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  jne Lexit77
-    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGet
+    ;applicTP  boxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -4867,26 +4674,24 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*50], rax
+mov qword [fvar_tbl + WORD_SIZE*48], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def length
-push SOB_NIL_ADDRESS 
 ;applic   lambda (fold-left +):seq:   set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:+ to box  VarParam:+, lambda (l):seq:   set  VarParam:l to box  VarParam:l,applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet varfree:fold-left varfree:+
 ; varfree:+
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 push rax
 push 2
 ; lambda (fold-left +):seq:   set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:+ to box  VarParam:+, lambda (l):seq:   set  VarParam:l to box  VarParam:l,applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode78)
 jmp Lcont78
@@ -4914,7 +4719,7 @@ pop qword[rax]
 
 ; lambda (l):seq:   set  VarParam:l to box  VarParam:l,applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode79)
 jmp Lcont79
@@ -4931,7 +4736,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet
 ;args
 mov rax, qword[rbp+8 * (4+0)]
@@ -4942,7 +4746,7 @@ mov rax, const_tbl+34
 push rax
 ; lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode80)
 jmp Lcont80
@@ -4968,7 +4772,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetboxGet number 1,1
 ;args
 mov rax, const_tbl+51
@@ -5027,21 +4830,19 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*51], rax
+mov qword [fvar_tbl + WORD_SIZE*49], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def string->list
-push SOB_NIL_ADDRESS 
 ;applic   lambda (string-ref string-length < - cons):seq:   set  VarParam:string-ref to box  VarParam:string-ref, set  VarParam:string-length to box  VarParam:string-length, set  VarParam:< to box  VarParam:<, set  VarParam:- to box  VarParam:-, set  VarParam:cons to box  VarParam:cons, lambda (s):seq:   set  VarParam:s to box  VarParam:s,applicTP   lambda (s->l-loop):seq:   set  VarParam:s->l-loop to box  VarParam:s->l-loop,Boxset  lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGetapplicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool symbol:whatever varfree:string-ref varfree:string-length varfree:< varfree:- varfree:cons
 ; varfree:cons
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 push rax
 ; varfree:-
-mov rax, qword[fvar_tbl + WORD_SIZE*57 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*55 ]
 push rax
 ; varfree:<
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
@@ -5055,7 +4856,7 @@ push rax
 push 5
 ; lambda (string-ref string-length < - cons):seq:   set  VarParam:string-ref to box  VarParam:string-ref, set  VarParam:string-length to box  VarParam:string-length, set  VarParam:< to box  VarParam:<, set  VarParam:- to box  VarParam:-, set  VarParam:cons to box  VarParam:cons, lambda (s):seq:   set  VarParam:s to box  VarParam:s,applicTP   lambda (s->l-loop):seq:   set  VarParam:s->l-loop to box  VarParam:s->l-loop,Boxset  lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGetapplicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode81)
 jmp Lcont81
@@ -5110,7 +4911,7 @@ pop qword[rax]
 
 ; lambda (s):seq:   set  VarParam:s to box  VarParam:s,applicTP   lambda (s->l-loop):seq:   set  VarParam:s->l-loop to box  VarParam:s->l-loop,Boxset  lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGetapplicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool symbol:whatever
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode82)
 jmp Lcont82
@@ -5127,7 +4928,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (s->l-loop):seq:   set  VarParam:s->l-loop to box  VarParam:s->l-loop,Boxset  lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGetapplicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -5136,7 +4936,7 @@ push 1
 ;body
 ; lambda (s->l-loop):seq:   set  VarParam:s->l-loop to box  VarParam:s->l-loop,Boxset  lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGetapplicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode83)
 jmp Lcont83
@@ -5155,7 +4955,7 @@ pop qword[rax]
 
 ; lambda (n a):seq:   set  VarParam:n to box  VarParam:n, set  VarParam:a to box  VarParam:a, if: applic  boxGetboxGet number 0,1then: boxGetelse applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGet
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode84)
 jmp Lcont84
@@ -5181,7 +4981,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet number 0,1
 mov rax, const_tbl+34
 push rax
@@ -5204,7 +5003,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse85
@@ -5212,18 +5010,15 @@ pop rbx
                     mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
-  jmp Lexit85
+ jmp Lexit85
  Lelse85:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGet number 1,1applic  boxGetapplic  boxGetboxGetboxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGetboxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -5250,7 +5045,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -5268,10 +5062,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet number 1,1
 mov rax, const_tbl+51
 push rax
@@ -5294,7 +5086,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -5323,30 +5114,26 @@ Lcont84:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool
 ;args
 push 0
 ;body
 ; lambda ():applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool
 
-CREATE_EXT_ENV 4
+CREATE_EXT_ENV 3
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode86)
 jmp Lcont86
 Lcode86:
 push rbp
 mov rbp, rsp
-push SOB_NIL_ADDRESS 
 ;applicTP  boxGetapplic  boxGetapplic  boxGetboxGet number 1,1nil|bool
 ;args
 mov rax, const_tbl+1
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetapplic  boxGetboxGet number 1,1
 mov rax, const_tbl+51
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8*2]
                                         mov rax, qword[rax+8*1]
@@ -5369,7 +5156,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -5387,7 +5173,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -5443,15 +5228,13 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*61], rax
+mov qword [fvar_tbl + WORD_SIZE*58], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
 ;def equal?
-push SOB_NIL_ADDRESS 
 ;applic   lambda (= string->list rational? flonum? pair? char? string? eq? car cdr char->integer):seq:   set  VarParam:= to box  VarParam:=, set  VarParam:string->list to box  VarParam:string->list, set  VarParam:rational? to box  VarParam:rational?, set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:pair? to box  VarParam:pair?, set  VarParam:char? to box  VarParam:char?, set  VarParam:string? to box  VarParam:string?, set  VarParam:eq? to box  VarParam:eq?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:char->integer to box  VarParam:char->integer,applicTP   lambda (equal?-loop):seq:   set  VarParam:equal?-loop to box  VarParam:equal?-loop,Boxset  lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse applicTP  boxGetboxGetboxGetapplicTP   lambda ():boxGet symbol:whatever varfree:= varfree:string->list varfree:rational? varfree:flonum? varfree:pair? varfree:char? varfree:string? varfree:eq? varfree:car varfree:cdr varfree:char->integer
 ; varfree:char->integer
 mov rax, qword[fvar_tbl + WORD_SIZE*14 ]
@@ -5481,7 +5264,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*2 ]
 push rax
 ; varfree:string->list
-mov rax, qword[fvar_tbl + WORD_SIZE*61 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*58 ]
 push rax
 ; varfree:=
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
@@ -5489,7 +5272,7 @@ push rax
 push 11
 ; lambda (= string->list rational? flonum? pair? char? string? eq? car cdr char->integer):seq:   set  VarParam:= to box  VarParam:=, set  VarParam:string->list to box  VarParam:string->list, set  VarParam:rational? to box  VarParam:rational?, set  VarParam:flonum? to box  VarParam:flonum?, set  VarParam:pair? to box  VarParam:pair?, set  VarParam:char? to box  VarParam:char?, set  VarParam:string? to box  VarParam:string?, set  VarParam:eq? to box  VarParam:eq?, set  VarParam:car to box  VarParam:car, set  VarParam:cdr to box  VarParam:cdr, set  VarParam:char->integer to box  VarParam:char->integer,applicTP   lambda (equal?-loop):seq:   set  VarParam:equal?-loop to box  VarParam:equal?-loop,Boxset  lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse applicTP  boxGetboxGetboxGetapplicTP   lambda ():boxGet symbol:whatever
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode87)
 jmp Lcont87
@@ -5596,7 +5379,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+10)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda (equal?-loop):seq:   set  VarParam:equal?-loop to box  VarParam:equal?-loop,Boxset  lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse applicTP  boxGetboxGetboxGetapplicTP   lambda ():boxGet symbol:whatever
 ;args
 mov rax, const_tbl+23
@@ -5605,7 +5387,7 @@ push 1
 ;body
 ; lambda (equal?-loop):seq:   set  VarParam:equal?-loop to box  VarParam:equal?-loop,Boxset  lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse applicTP  boxGetboxGetboxGetapplicTP   lambda ():boxGet
 
-CREATE_EXT_ENV 2
+CREATE_EXT_ENV 1
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode88)
 jmp Lcont88
@@ -5624,7 +5406,7 @@ pop qword[rax]
 
 ; lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y, if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetboxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen:  if: applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGetthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse nil|boolelse  if:  if: applic  boxGetboxGetthen: applic  boxGetboxGetelse nil|boolthen: applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGetelse applicTP  boxGetboxGetboxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode89)
 jmp Lcont89
@@ -5650,7 +5432,6 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+1)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -5671,13 +5452,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse100
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -5697,17 +5476,15 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit100
+ jmp Lexit100
  Lelse100:
                     mov rax, const_tbl+2
  Lexit100:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse90
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -5731,10 +5508,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit90
+ jmp Lexit90
  Lelse90:
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -5754,13 +5530,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse99
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -5780,17 +5554,15 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit99
+ jmp Lexit99
  Lelse99:
                     mov rax, const_tbl+2
  Lexit99:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse91
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -5814,10 +5586,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit91
+ jmp Lexit91
  Lelse91:
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -5837,13 +5608,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse98
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -5863,19 +5632,16 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit98
+ jmp Lexit98
  Lelse98:
                     mov rax, const_tbl+2
  Lexit98:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse92
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -5896,10 +5662,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -5920,7 +5684,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -5937,10 +5700,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit92
+ jmp Lexit92
  Lelse92:
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -5960,13 +5722,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse97
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -5986,18 +5746,15 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit97
+ jmp Lexit97
  Lelse97:
                     mov rax, const_tbl+2
  Lexit97:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse93
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
-push SOB_NIL_ADDRESS 
+                    ;applic  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -6018,10 +5775,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -6042,7 +5797,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -6060,15 +5814,12 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse96
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -6089,10 +5840,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -6113,7 +5862,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -6130,14 +5878,13 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit96
+ jmp Lexit96
  Lelse96:
                     mov rax, const_tbl+2
  Lexit96:
-  jmp Lexit93
+ jmp Lexit93
  Lelse93:
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
                         
@@ -6157,13 +5904,11 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse95
 
-                    push SOB_NIL_ADDRESS 
-;applic  boxGetboxGet
+                    ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
                         
@@ -6183,19 +5928,16 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-  jmp Lexit95
+ jmp Lexit95
  Lelse95:
                     mov rax, const_tbl+2
  Lexit95:
  cmp rax, SOB_FALSE_ADDRESS
  je Lelse94
 
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
+                    ;applicTP  boxGetapplic  boxGetboxGetapplic  boxGetboxGet
 ;args
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -6216,10 +5958,8 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
-push SOB_NIL_ADDRESS 
 ;applic  boxGetboxGet
 mov rax, qword[rbp+8 * (4+0)]
                         mov rax,qword[rax]
@@ -6240,7 +5980,6 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
 push rax
 push 2
@@ -6257,10 +5996,9 @@ FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
-  jmp Lexit94
+ jmp Lexit94
  Lelse94:
-                    push SOB_NIL_ADDRESS 
-;applicTP  boxGetboxGetboxGet
+                    ;applicTP  boxGetboxGetboxGet
 ;args
 mov rax, qword[rbp+8 * (4+1)]
                         mov rax,qword[rax]
@@ -6300,14 +6038,13 @@ Lcont89:
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS
 
-push SOB_NIL_ADDRESS 
 ;applicTP   lambda ():boxGet
 ;args
 push 0
 ;body
 ; lambda ():boxGet
 
-CREATE_EXT_ENV 3
+CREATE_EXT_ENV 2
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode101)
 jmp Lcont101
@@ -6354,29 +6091,141 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
 
-mov qword [fvar_tbl + WORD_SIZE*59], rax
+mov qword [fvar_tbl + WORD_SIZE*56], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
-push SOB_NIL_ADDRESS 
-;applic   lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,boxGet Pair:
-mov rax, const_tbl+140
-push rax
-push 1
-; lambdaOpt ):seq:   set  VarParam:x to box  VarParam:x,boxGet
+;applic   varfree:map lambda (x):seq:   set  VarParam:x to box  VarParam:x,applicTP   varfree:applyboxGet Pair:applic   lambda ():applicTP   varfree:cons lambda (a):seq:   set  VarParam:a to box  VarParam:a, number 1,1applic   varfree:cons lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   lambda ():applicTP   varfree:cons lambda (a):seq:   set  VarParam:a to box  VarParam:a, number 1,1applic   varfree:cons lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+push 0
+; lambda ():applicTP   varfree:cons lambda (a):seq:   set  VarParam:a to box  VarParam:a, number 1,1applic   varfree:cons lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
 
-CREATE_EXT_ENV 1
+CREATE_EXT_ENV 0
 mov rcx, rax
 MAKE_CLOSURE(rax, rcx, Lcode102)
 jmp Lcont102
 Lcode102:
-FIX_LAMBDA_OPT_STACK 0
 push rbp
 mov rbp, rsp
-;seq:   set  VarParam:x to box  VarParam:x,boxGet
+;applicTP   varfree:cons lambda (a):seq:   set  VarParam:a to box  VarParam:a, number 1,1applic   varfree:cons lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;args
+;applic   varfree:cons lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+;applic   varfree:cons lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1nil|bool
+mov rax, const_tbl+1
+push rax
+; lambda (z):seq:   set  VarParam:z to box  VarParam:z, number 26,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode103)
+jmp Lcont103
+Lcode103:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:z to box  VarParam:z, number 26,1
+;box  VarParam:z,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+510
+leave
+ret
+Lcont103:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (y):seq:   set  VarParam:y to box  VarParam:y, number 25,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode104)
+jmp Lcont104
+Lcode104:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:y to box  VarParam:y, number 25,1
+;box  VarParam:y,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+493
+leave
+ret
+Lcont104:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (x):seq:   set  VarParam:x to box  VarParam:x, number 24,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode105)
+jmp Lcont105
+Lcode105:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:x to box  VarParam:x, number 24,1
 ;box  VarParam:x,
 mov rax, qword[rbp+8 * (4+0)]
 push rax
@@ -6386,9 +6235,920 @@ pop qword[rax]
                                               mov qword[rbp+8*(4+0)],rax
                                               mov rax, SOB_VOID_ADDRESS
 
+mov rax, const_tbl+476
+leave
+ret
+Lcont105:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (w):seq:   set  VarParam:w to box  VarParam:w, number 23,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode106)
+jmp Lcont106
+Lcode106:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:w to box  VarParam:w, number 23,1
+;box  VarParam:w,
 mov rax, qword[rbp+8 * (4+0)]
-                        mov rax,qword[rax]
-                        
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+459
+leave
+ret
+Lcont106:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (v):seq:   set  VarParam:v to box  VarParam:v, number 22,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode107)
+jmp Lcont107
+Lcode107:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:v to box  VarParam:v, number 22,1
+;box  VarParam:v,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+442
+leave
+ret
+Lcont107:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (u):seq:   set  VarParam:u to box  VarParam:u, number 21,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode108)
+jmp Lcont108
+Lcode108:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:u to box  VarParam:u, number 21,1
+;box  VarParam:u,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+425
+leave
+ret
+Lcont108:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (t):seq:   set  VarParam:t to box  VarParam:t, number 20,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode109)
+jmp Lcont109
+Lcode109:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:t to box  VarParam:t, number 20,1
+;box  VarParam:t,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+408
+leave
+ret
+Lcont109:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (s):seq:   set  VarParam:s to box  VarParam:s, number 19,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode110)
+jmp Lcont110
+Lcode110:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:s to box  VarParam:s, number 19,1
+;box  VarParam:s,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+391
+leave
+ret
+Lcont110:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (r):seq:   set  VarParam:r to box  VarParam:r, number 18,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode111)
+jmp Lcont111
+Lcode111:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:r to box  VarParam:r, number 18,1
+;box  VarParam:r,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+374
+leave
+ret
+Lcont111:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (q):seq:   set  VarParam:q to box  VarParam:q, number 17,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode112)
+jmp Lcont112
+Lcode112:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:q to box  VarParam:q, number 17,1
+;box  VarParam:q,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+357
+leave
+ret
+Lcont112:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (p):seq:   set  VarParam:p to box  VarParam:p, number 16,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode113)
+jmp Lcont113
+Lcode113:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:p to box  VarParam:p, number 16,1
+;box  VarParam:p,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+340
+leave
+ret
+Lcont113:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (o):seq:   set  VarParam:o to box  VarParam:o, number 15,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode114)
+jmp Lcont114
+Lcode114:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:o to box  VarParam:o, number 15,1
+;box  VarParam:o,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+323
+leave
+ret
+Lcont114:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (n):seq:   set  VarParam:n to box  VarParam:n, number 14,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode115)
+jmp Lcont115
+Lcode115:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:n to box  VarParam:n, number 14,1
+;box  VarParam:n,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+306
+leave
+ret
+Lcont115:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (m):seq:   set  VarParam:m to box  VarParam:m, number 13,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode116)
+jmp Lcont116
+Lcode116:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:m to box  VarParam:m, number 13,1
+;box  VarParam:m,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+289
+leave
+ret
+Lcont116:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (l):seq:   set  VarParam:l to box  VarParam:l, number 12,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode117)
+jmp Lcont117
+Lcode117:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:l to box  VarParam:l, number 12,1
+;box  VarParam:l,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+272
+leave
+ret
+Lcont117:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (k):seq:   set  VarParam:k to box  VarParam:k, number 11,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode118)
+jmp Lcont118
+Lcode118:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:k to box  VarParam:k, number 11,1
+;box  VarParam:k,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+255
+leave
+ret
+Lcont118:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (j):seq:   set  VarParam:j to box  VarParam:j, number 10,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode119)
+jmp Lcont119
+Lcode119:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:j to box  VarParam:j, number 10,1
+;box  VarParam:j,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+238
+leave
+ret
+Lcont119:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (i):seq:   set  VarParam:i to box  VarParam:i, number 9,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode120)
+jmp Lcont120
+Lcode120:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:i to box  VarParam:i, number 9,1
+;box  VarParam:i,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+221
+leave
+ret
+Lcont120:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (h):seq:   set  VarParam:h to box  VarParam:h, number 8,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode121)
+jmp Lcont121
+Lcode121:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:h to box  VarParam:h, number 8,1
+;box  VarParam:h,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+204
+leave
+ret
+Lcont121:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (g):seq:   set  VarParam:g to box  VarParam:g, number 7,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode122)
+jmp Lcont122
+Lcode122:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:g to box  VarParam:g, number 7,1
+;box  VarParam:g,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+187
+leave
+ret
+Lcont122:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (f):seq:   set  VarParam:f to box  VarParam:f, number 6,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode123)
+jmp Lcont123
+Lcode123:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:f to box  VarParam:f, number 6,1
+;box  VarParam:f,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+170
+leave
+ret
+Lcont123:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (e):seq:   set  VarParam:e to box  VarParam:e, number 5,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode124)
+jmp Lcont124
+Lcode124:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:e to box  VarParam:e, number 5,1
+;box  VarParam:e,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+153
+leave
+ret
+Lcont124:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (d):seq:   set  VarParam:d to box  VarParam:d, number 4,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode125)
+jmp Lcont125
+Lcode125:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:d to box  VarParam:d, number 4,1
+;box  VarParam:d,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+136
+leave
+ret
+Lcont125:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (c):seq:   set  VarParam:c to box  VarParam:c, number 3,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode126)
+jmp Lcont126
+Lcode126:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:c to box  VarParam:c, number 3,1
+;box  VarParam:c,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+119
+leave
+ret
+Lcont126:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (b):seq:   set  VarParam:b to box  VarParam:b, number 2,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode127)
+jmp Lcont127
+Lcode127:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:b to box  VarParam:b, number 2,1
+;box  VarParam:b,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+102
+leave
+ret
+Lcont127:
+
+push rax
+push 2
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
+
+push rax
+; lambda (a):seq:   set  VarParam:a to box  VarParam:a, number 1,1
+
+CREATE_EXT_ENV 1
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode128)
+jmp Lcont128
+Lcode128:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:a to box  VarParam:a, number 1,1
+;box  VarParam:a,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+mov rax, const_tbl+51
+leave
+ret
+Lcont128:
+
+push rax
+push 2
+;body
+; varfree:cons
+mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
+CLOSURE_ENV rbx, rax
+push rbx
+push qword[rbp+8*1]   ;old ret addr
+FIX_APPLICTP_STACK 5
+CLOSURE_CODE rbx, rax
+jmp rbx
+
 leave
 ret
 Lcont102:
@@ -6402,7 +7162,63 @@ add rsp, 8*1 ;pop env
 pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
-pop rbx
+
+push rax
+; lambda (x):seq:   set  VarParam:x to box  VarParam:x,applicTP   varfree:applyboxGet Pair:
+
+CREATE_EXT_ENV 0
+mov rcx, rax
+MAKE_CLOSURE(rax, rcx, Lcode129)
+jmp Lcont129
+Lcode129:
+push rbp
+mov rbp, rsp
+;seq:   set  VarParam:x to box  VarParam:x,applicTP   varfree:applyboxGet Pair:
+;box  VarParam:x,
+mov rax, qword[rbp+8 * (4+0)]
+push rax
+MALLOC rax, 8
+pop qword[rax]
+
+                                              mov qword[rbp+8*(4+0)],rax
+                                              mov rax, SOB_VOID_ADDRESS
+
+;applicTP   varfree:applyboxGet Pair:
+;args
+mov rax, const_tbl+85
+push rax
+mov rax, qword[rbp+8 * (4+0)]
+                        mov rax,qword[rax]
+                        
+push rax
+push 2
+;body
+; varfree:apply
+mov rax, qword[fvar_tbl + WORD_SIZE*31 ]
+CLOSURE_ENV rbx, rax
+push rbx
+push qword[rbp+8*1]   ;old ret addr
+FIX_APPLICTP_STACK 5
+CLOSURE_CODE rbx, rax
+jmp rbx
+
+leave
+ret
+Lcont129:
+
+push rax
+push 2
+; varfree:map
+mov rax, qword[fvar_tbl + WORD_SIZE*68 ]
+mov rbx, rax
+CLOSURE_ENV rax, rbx
+push rax
+CLOSURE_CODE rax, rbx
+call rax
+add rsp, 8*1 ;pop env
+pop rbx      ;pop arg count
+shl rbx, 3   ;rbx = rbx*8
+add rsp, rbx ;pop args
 
 	call write_sob_if_not_void;;; Clean up the dummy frame, set the exit status to 0 ("success"), 
    ;;; and return from main
@@ -7004,7 +7820,6 @@ gcd:
     mov rax, PVAR(rax)          ; rax = last arg = list
     xor rdx, rdx                ; rdx = list_size
 
-    push SOB_NIL_ADDRESS
     push_args:
         cmp byte[rax], T_NIL
         je end_push_args

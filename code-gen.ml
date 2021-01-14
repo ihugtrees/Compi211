@@ -77,8 +77,6 @@ let get_fvar_index sexp fvars =
 let (_,index) = List.find (fun ((sexpr, index)) -> sexp=sexpr) fvars in
     (string_of_int index);;
 
-
-
 let get_constant_offset sexp consts =
 let (_,(off,_)) = List.find (fun ((sexpr, (offset, str))) -> const_eq sexp sexpr) consts in
     (string_of_int off);;
@@ -201,7 +199,7 @@ let rec asm_from_expr consts fvars e depth =
 
   | If'(test,dit,dif) -> let index = string_of_int (get_index ()) in
                     (asm_from_expr consts fvars test depth)^"\n cmp rax, SOB_FALSE_ADDRESS\n je Lelse"^index^"\n
-                    "^(asm_from_expr consts fvars dit depth)^"\n  jmp Lexit"^index^"\n Lelse"^index^":
+                    "^(asm_from_expr consts fvars dit depth)^"\n jmp Lexit"^index^"\n Lelse"^index^":
                     "^(asm_from_expr consts fvars dif depth)^"\n Lexit"^index^":"
 
   | BoxGet'(v) -> (asm_from_expr consts fvars (Var'(v)) depth)^"
@@ -228,7 +226,7 @@ let rec asm_from_expr consts fvars e depth =
   | LambdaSimple'(params, body) ->
     let index = string_of_int (get_index ()) in
       ";"^(expr_to_string (LambdaSimple'(params, body)))^"\n"^
-      "\n"^"CREATE_EXT_ENV "^(string_of_int (depth+1))^"\n"^
+      "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
       "mov rcx, rax"^"\n"^
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
@@ -241,7 +239,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | Applic'(body, args) ->
-    "push SOB_NIL_ADDRESS "^"\n"^
+    (* "push SOB_NIL_ADDRESS "^"\n"^ *)
     ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
@@ -254,19 +252,19 @@ let rec asm_from_expr consts fvars e depth =
     "add rsp, 8*1 ;pop env"^"\n"^
     "pop rbx      ;pop arg count"^"\n"^
     "shl rbx, 3   ;rbx = rbx*8"^"\n"^
-    "add rsp, rbx ;pop args"^"\n"^
-    "pop rbx"^"\n"
+    "add rsp, rbx ;pop args"^"\n"
+    (* "pop rbx"^"\n" *)
 
   | LambdaOpt'(params, opt, body) ->
     let index = string_of_int (get_index ()) in
         ";"^(expr_to_string (LambdaOpt'(params, opt, body)))^"\n"^
 
-      "\n"^"CREATE_EXT_ENV "^(string_of_int (depth+1))^"\n"^
+      "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
       "mov rcx, rax"^"\n"^
       "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
       "Lcode"^index^":"^"\n"^
-      "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params)))^"\n"^
+      "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params)+1))^"\n"^
       "push rbp"^"\n"^
       "mov rbp, rsp"^"\n"^
       (asm_from_expr consts fvars body (depth+1))^"\n"^
@@ -275,7 +273,7 @@ let rec asm_from_expr consts fvars e depth =
       "Lcont"^index^":"^"\n"
 
   | ApplicTP'(body, args) ->
-    "push SOB_NIL_ADDRESS "^"\n"^
+    (* "push SOB_NIL_ADDRESS "^"\n"^ *)
     ";"^(expr_to_string (ApplicTP'(body, args) ))^"\n"^
     ";args\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
@@ -287,9 +285,8 @@ let rec asm_from_expr consts fvars e depth =
     "push qword[rbp+8*1]   ;old ret addr"^"\n"^
     "FIX_APPLICTP_STACK "^(string_of_int(3 + (List.length args)))^"\n"^
     "CLOSURE_CODE rbx, rax"^"\n"^
-    (* "mov rbx,qword [rax+9]\n"^ *)
     "jmp rbx"^"\n"
-  
+
   | _ -> ""
   ;;
 
@@ -328,7 +325,7 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "((lambda x x) '())"));;
+                              (Reader.read_sexprs "(+ 9 12 100 10000 99999999999)"));;
 
 (* Code_Gen.make_consts_tbl ast;; *)
 (*
