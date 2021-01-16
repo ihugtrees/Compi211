@@ -12,7 +12,7 @@ def run_compiler(filename):
     os.system('./executables/{0} > ./outputs/{0}'.format(fname))
 
 def run_chez(filename):
-    os.system("chezscheme9.5 < ./inputs/"+filename+" >& ./expected_outputs/" + filename[:-4])
+    os.system("chezscheme9.5 --quiet < ./inputs/{} >& ./expected_outputs/{}".format(filename, filename[:-4]))
 
 def compare(filename):
     output_name = filename[:-4]
@@ -35,14 +35,14 @@ if __name__ == "__main__":
         tests_total += 1
         run_compiler(test)
         run_chez(test)
-        # line_diff = []
-        # for line in compare(test):
-        #     line_diff.append(line)
-        # if line_diff == []:
-        #     report[test] = "passed"
-        #     tests_passed += 1
-        # else:
-        #     report[test] = "failed: \n" + " ".join(line_diff)
+        line_diff = []
+        for line in compare(test):
+            line_diff.append(line)
+        if line_diff == []:
+            report[test] = "passed"
+            tests_passed += 1
+        else:
+            report[test] = "failed: \n" + " ".join(line_diff)
     if tests_passed != tests_total:
         print("passed {}/{} tests".format(tests_passed,tests_total))
         print(report)

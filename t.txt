@@ -1,0 +1,7 @@
+> - wtf
+cons and lists
+
+test 20 - probably semantic
+test 23 - no apply?
+test 31 - + opt ???
+test 39
