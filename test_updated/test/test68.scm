@@ -1,0 +1,6 @@
+(let ((q 1))
+  (let ((a 2) (z 3))
+    (let ((w 4) (s 5) (x 6))
+      (let ((e 7) (d 8))
+(let ((c 9))
+ (list q a z w s x e d c))))))

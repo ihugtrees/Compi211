@@ -155,9 +155,9 @@ db %1
 %macro MAKE_LITERAL_STRING 1
 	db T_STRING
 	dq (%%end_str - %%str)
-%%str:
-	db %1
-%%end_str:
+	%%str:
+		db %1
+	%%end_str:
 %endmacro
 
 ;;; Macros and routines for printing Scheme OBjects to STDOUT

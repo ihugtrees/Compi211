@@ -1,6 +1,7 @@
 > - wtf
 cons and lists
 
+test 16 - my god
 test 20 - probably semantic
 test 23 - no apply?
 test 31 - + opt ???

@@ -99,7 +99,7 @@ let sexpr_to_const_entry sexpr const_tbl curr_off =
       | Sexpr(Char(char)) -> ((Sexpr(Char(char)), (curr_off, "MAKE_LITERAL_CHAR(" ^ (string_of_int (Char.code char)) ^ ")")), curr_off + 2)
       | Sexpr(Number(Fraction(num, denum))) -> ((Sexpr(Number(Fraction(num, denum))), (curr_off , "MAKE_LITERAL_RATIONAL(" ^ (string_of_int num) ^ "," ^ (string_of_int denum) ^ ")")), curr_off + 17)
       | Sexpr(Number(Float(num))) -> ((Sexpr(Number(Float(num))), (curr_off, "MAKE_LITERAL_FLOAT(" ^ (string_of_float num) ^ ")")), curr_off + 9)
-      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING \"" ^ str ^"\"")), curr_off + 9 + (String.length str))
+      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING(\"" ^ str ^"\")")), curr_off + 9 + (String.length str))
       | Sexpr(Symbol(sym)) -> ((Sexpr(Symbol(sym)), (curr_off, "MAKE_LITERAL_SYMBOL(const_tbl+" ^ (get_constant_offset (Sexpr(String(sym))) const_tbl) ^ ")")), curr_off + 9)
       | Sexpr(Pair(car, cdr)) -> ((Sexpr(Pair(car,cdr)), (curr_off, "MAKE_LITERAL_PAIR(const_tbl+" ^ (get_constant_offset (Sexpr(car)) const_tbl) ^ ",const_tbl+" ^ (get_constant_offset (Sexpr(cdr)) const_tbl) ^")")), curr_off + 17)
 
@@ -180,11 +180,11 @@ let rec asm_from_expr consts fvars e depth =
                                                   mov qword[rbx+8*"^(string_of_int minor)^"],rax
                                                   mov rax, SOB_VOID_ADDRESS\n"
 
-  | Var'(VarFree(v)) -> ";"^(expr_to_string (Var'(VarFree(v))))^"\n"^"mov rax, qword[fvar_tbl + WORD_SIZE*"^(get_fvar_index v fvars)^" ]"
+  | Var'(VarFree(v)) -> ";"^(expr_to_string (Var'(VarFree(v))))^"\n"^"mov rax, qword[fvar_tbl+WORD_SIZE*"^(get_fvar_index v fvars)^" ]"
 
   | Set'((VarFree(v)),expr) -> ";"^(expr_to_string (Set'((VarFree(v)),expr)))^"\n"
                                     ^(asm_from_expr consts fvars expr depth)^"
-                                    mov qword[fvar_tbl + WORD_SIZE*"^ (get_fvar_index  v fvars)^"], rax
+                                    mov qword[fvar_tbl+WORD_SIZE*"^ (get_fvar_index v fvars)^"], rax
                                     mov rax, SOB_VOID_ADDRESS\n"
   | Def'((VarFree(v)), expr) ->  ";"^(expr_to_string (Def'((VarFree(v)), expr)))^"\n"
               ^(asm_from_expr consts fvars expr depth)^"\n"^
@@ -203,26 +203,20 @@ let rec asm_from_expr consts fvars e depth =
                     "^(asm_from_expr consts fvars dif depth)^"\n Lexit"^index^":"
 
   | BoxGet'(v) -> (asm_from_expr consts fvars (Var'(v)) depth)^"
-                        mov rax,qword[rax]
-                        "
+                        mov rax,qword[rax]\n"
 
   | BoxSet'(v, expr) ->(asm_from_expr consts fvars expr depth)^"\n
                               push rax\n
                               "^(asm_from_expr consts fvars (Var'(v)) depth)^"
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS\n"
-                              
+
   | Box'(v) -> ";"^(expr_to_string (Box'(v)))^"\n"^
-            (asm_from_expr consts fvars (Var'(v)) depth)^
-            "\npush rax\n"^
-            "MALLOC rax, 8\n"^
-            "pop qword[rax]\n"
-          (*"
-          MALLOC rbx, WORD_SIZE\n
-          mov rcx , qword [rbp + WORD_SIZE*(4+"^(string_of_int minor)^")]\n
-          mov qword [rbx] , rcx\n
-          mov rax , rbx\n" 
-          *)
+            (asm_from_expr consts fvars (Var'(v)) depth)^"\n"^
+            (* "\npush rax\n"^ *)
+            "MALLOC rbx, WORD_SIZE\n"^
+            "mov [rbx], rax\n"^
+            "mov rax, rbx\n"
 
   | LambdaSimple'(params, body) ->
     let index = string_of_int (get_index ()) in

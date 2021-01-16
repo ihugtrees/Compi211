@@ -1,0 +1,5 @@
+(let* ((x 3)
+       (y 5))
+    (set! x 'is)
+    (set! y 'fine)
+    (cons x (cons y '())))

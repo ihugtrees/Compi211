@@ -1,0 +1,7 @@
+(define foo (lambda (x y)
+	(cons (lambda (y)
+		(set! x 5)
+		(+ x y))
+	(+ x y))))
+(let ((a (foo 1 2)))
+    (begin ((car a) 0) (cdr a)))
