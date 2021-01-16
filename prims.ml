@@ -391,7 +391,7 @@ let i_must_imblement =
     mov rbp, rsp
     mov rbx, PVAR(0)
     mov rcx, PVAR(1)
-    mov [rbx + WORD_SIZE +TYPE_SIZE], rcx
+    mov [rbx + WORD_SIZE + TYPE_SIZE], rcx
     mov rax, T_VOID
     pop rbp
     ret

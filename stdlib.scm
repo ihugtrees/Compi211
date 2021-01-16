@@ -27,6 +27,7 @@
     )
   )
 )
+
 (define fold-right
   (lambda (func acc list) 
     (if (null? list) 
