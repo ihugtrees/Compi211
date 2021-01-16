@@ -211,6 +211,7 @@ let rec asm_from_expr consts fvars e depth =
                               "^(asm_from_expr consts fvars (Var'(v)) depth)^"
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS\n"
+                              
   | Box'(v) -> ";"^(expr_to_string (Box'(v)))^"\n"^
             (asm_from_expr consts fvars (Var'(v)) depth)^
             "\npush rax\n"^
@@ -321,7 +322,8 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "(+ 9 12 100 10000 99999999999)"));;
+                              (Reader.read_sexprs "(define id 5)
+(set! id 3)"));;
 
 (* Code_Gen.make_consts_tbl ast;; *)
 (*

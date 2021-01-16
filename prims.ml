@@ -400,24 +400,24 @@ let i_must_imblement =
     push rbp
     mov rbp, rsp
 
-    mov rbx, [rbp + WORD_SIZE * 3]          ; rax = argc
-    mov r9, [rbp + WORD_SIZE * (3 + rbx)]         ; r9 = last arg = list
-    xor r8, r8                ; r8 = list_size
+    mov rbx, [rbp + WORD_SIZE * 3]
+    mov r9, [rbp + WORD_SIZE * (3 + rbx)]
+    xor r8, r8
     push_list:
-        cmp r9, SOB_NIL_ADDRESS
-        je end_push_list
-        CAR rbx, r9              ; rbx = car
-        push rbx
-        inc r8
-        CDR r9, r9              ; r9 = cdr
-        jmp push_list
+      cmp r9, SOB_NIL_ADDRESS
+      je end_push_list
+      CAR rbx, r9
+      push rbx
+      inc r8
+      CDR r9, r9
+      jmp push_list
     end_push_list:
 
-    mov r15, r8                  ; r15 = list_size backup
-    dec r8                       ; r8 = list_size -1
-    mov rdx, r8                  ; rdx = list_size
-    shr rdx, 1                   ; rdx = list_size/2
-    xor rcx, rcx                 ; i = 0
+    mov r15, r8
+    dec r8
+    mov rdx, r8
+    shr rdx, 1
+    xor rcx, rcx
     reverse:
       cmp rcx, rdx
       jae end_reverse
@@ -430,7 +430,7 @@ let i_must_imblement =
       jmp reverse
     end_reverse:
 
-    mov rcx, [rbp + WORD_SIZE * 3]      ;rax = argc
+    mov rcx, [rbp + WORD_SIZE * 3]
     sub rcx, 2
     push_args:
       cmp rcx, 0
@@ -441,7 +441,7 @@ let i_must_imblement =
       jmp push_args
     end_push_args:
 
-    push r15                  
+    push r15  ; push new argc
     mov rax, [rbp + WORD_SIZE * 4]
     CLOSURE_ENV rbx, rax
     push rbx

@@ -31,11 +31,9 @@ let rec expr'_eq e1 e2 =
   | If'(t1, th1, el1), If'(t2, th2, el2) -> (expr'_eq t1 t2) &&
                                             (expr'_eq th1 th2) &&
                                               (expr'_eq el1 el2)
-  | (Seq'(l1), Seq'(l2)
-  | Or'(l1), Or'(l2)) -> List.for_all2 expr'_eq l1 l2
-  | (Set'(var1, val1), Set'(var2, val2)
-  | Def'(var1, val1), Def'(var2, val2)) -> (expr'_eq (Var'(var1)) (Var'(var2))) &&
-                                             (expr'_eq val1 val2)
+  | (Seq'(l1), Seq'(l2) | Or'(l1), Or'(l2)) -> List.for_all2 expr'_eq l1 l2
+  | (Set'(var1, val1), Set'(var2, val2) | Def'(var1, val1), Def'(var2, val2)) -> 
+      (expr'_eq (Var'(var1)) (Var'(var2))) && (expr'_eq val1 val2)
   | LambdaSimple'(vars1, body1), LambdaSimple'(vars2, body2) ->
      (List.for_all2 String.equal vars1 vars2) &&
        (expr'_eq body1 body2)
@@ -131,7 +129,7 @@ let rec box expr =
   | Seq' (expr_lst) ->  Seq' (List.map box expr_lst)
   | Def' (var, expr) -> Def' (var, box expr)
   | Set'(var, Box'(varef)) -> Set'(var, Box'(varef))
-  | Set' (var, expr) -> BoxSet'(var,box expr)
+  | Set' (var, expr) -> BoxSet'(var, box expr)
   | Or' (expr_lst)-> Or' (List.map box expr_lst)
   | LambdaSimple' (vars, body)-> LambdaSimple'(vars, lambda_boxing vars body)
   | LambdaOpt' (vars, opt_var, body)-> LambdaOpt'(vars, opt_var, (lambda_boxing (vars@[opt_var]) body))

@@ -10,7 +10,7 @@ malloc_pointer:
 ;;; here we REServe enough Quad-words (64-bit "cells") for the free variables
 ;;; each free variable has 8 bytes reserved for a 64-bit pointer to its value
 fvar_tbl:
-    resq 72
+    resq 71
 
 section .data
 const_tbl:
@@ -24,9 +24,9 @@ MAKE_LITERAL_CHAR(0)
 MAKE_LITERAL_RATIONAL(0,1)
 MAKE_LITERAL_RATIONAL(1,1)
 MAKE_LITERAL_RATIONAL(-1,1)
-MAKE_LITERAL_RATIONAL(3,1)
-MAKE_LITERAL_RATIONAL(4,1)
 MAKE_LITERAL_RATIONAL(2,1)
+MAKE_LITERAL_PAIR(const_tbl+85,const_tbl+1)
+MAKE_LITERAL_PAIR(const_tbl+51,const_tbl+102)
 
 ;;; These macro definitions are required for the primitive
 ;;; definitions in the epilogue to work properly
@@ -829,7 +829,7 @@ push rax
 push 3
 ;body
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*51 ]
 CLOSURE_ENV rdx, rax
 push rdx
 push qword[rbp+8*1]   ;old ret addr
@@ -842,7 +842,7 @@ leave
 ret
 Lcont9:
 
-mov qword [fvar_tbl + WORD_SIZE*52], rax
+mov qword [fvar_tbl + WORD_SIZE*51], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -1856,7 +1856,7 @@ leave
 ret
 Lcont29:
 
-mov qword [fvar_tbl + WORD_SIZE*44], rax
+mov qword [fvar_tbl + WORD_SIZE*43], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -1890,7 +1890,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*39 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*51 ]
 push rax
 ; varfree:exact->inexact
 mov rax, qword[fvar_tbl + WORD_SIZE*16 ]
@@ -3332,7 +3332,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*56], rax
+mov qword [fvar_tbl + WORD_SIZE*55], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -3352,7 +3352,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*26 ]
 push rax
 ; varfree:not
-mov rax, qword[fvar_tbl + WORD_SIZE*44 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*43 ]
 push rax
 ; varfree:null?
 mov rax, qword[fvar_tbl + WORD_SIZE*4 ]
@@ -3805,7 +3805,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*43], rax
+mov qword [fvar_tbl + WORD_SIZE*42], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4288,7 +4288,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*47], rax
+mov qword [fvar_tbl + WORD_SIZE*46], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4444,7 +4444,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*48], rax
+mov qword [fvar_tbl + WORD_SIZE*47], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4568,7 +4568,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*50], rax
+mov qword [fvar_tbl + WORD_SIZE*49], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4579,7 +4579,7 @@ mov rax, SOB_VOID_ADDRESS
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
 push rax
 ; varfree:fold-left
-mov rax, qword[fvar_tbl + WORD_SIZE*52 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*51 ]
 push rax
 push 2
 ; lambda (fold-left +):seq:   set  VarParam:fold-left to box  VarParam:fold-left, set  VarParam:+ to box  VarParam:+, lambda (l):seq:   set  VarParam:l to box  VarParam:l,applicTP  boxGet lambda (acc e):seq:   set  VarParam:acc to box  VarParam:acc, set  VarParam:e to box  VarParam:e,applicTP  boxGetboxGet number 1,1 number 0,1boxGet
@@ -4723,7 +4723,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*51], rax
+mov qword [fvar_tbl + WORD_SIZE*50], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -4734,7 +4734,7 @@ mov rax, SOB_VOID_ADDRESS
 mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 push rax
 ; varfree:-
-mov rax, qword[fvar_tbl + WORD_SIZE*56 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*55 ]
 push rax
 ; varfree:<
 mov rax, qword[fvar_tbl + WORD_SIZE*22 ]
@@ -5114,7 +5114,7 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*60], rax
+mov qword [fvar_tbl + WORD_SIZE*59], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
@@ -5149,7 +5149,7 @@ push rax
 mov rax, qword[fvar_tbl + WORD_SIZE*2 ]
 push rax
 ; varfree:string->list
-mov rax, qword[fvar_tbl + WORD_SIZE*60 ]
+mov rax, qword[fvar_tbl + WORD_SIZE*59 ]
 push rax
 ; varfree:=
 mov rax, qword[fvar_tbl + WORD_SIZE*21 ]
@@ -5957,119 +5957,20 @@ pop rbx      ;pop arg count
 shl rbx, 3   ;rbx = rbx*8
 add rsp, rbx ;pop args
 
-mov qword [fvar_tbl + WORD_SIZE*58], rax
+mov qword [fvar_tbl + WORD_SIZE*57], rax
 mov rax, SOB_VOID_ADDRESS
 
 	call write_sob_if_not_void
 
-;def id
-; lambda (x):seq:   set  VarParam:x to box  VarParam:x,boxGet
-
-CREATE_EXT_ENV 1
-mov rdx, rax
-MAKE_CLOSURE(rax, rdx, Lcode102)
-jmp Lcont102
-Lcode102:
-push rbp
-mov rbp, rsp
-;seq:   set  VarParam:x to box  VarParam:x,boxGet
-;box  VarParam:x,
-mov rax, qword[rbp+8 * (4+0)]
-push rax
-MALLOC rax, 8
-pop qword[rax]
-
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-
-mov rax, qword[rbp+8 * (4+0)]
-                        mov rax,qword[rax]
-                        
-leave
-ret
-Lcont102:
-
-mov qword [fvar_tbl + WORD_SIZE*70], rax
-mov rax, SOB_VOID_ADDRESS
-
-	call write_sob_if_not_void
-
-; lambda (x y):seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,boxGet
-
-CREATE_EXT_ENV 1
-mov rdx, rax
-MAKE_CLOSURE(rax, rdx, Lcode103)
-jmp Lcont103
-Lcode103:
-push rbp
-mov rbp, rsp
-;seq:   set  VarParam:x to box  VarParam:x, set  VarParam:y to box  VarParam:y,boxGet
-;box  VarParam:x,
-mov rax, qword[rbp+8 * (4+0)]
-push rax
-MALLOC rax, 8
-pop qword[rax]
-
-                                              mov qword[rbp+8*(4+0)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-
-;box  VarParam:y,
-mov rax, qword[rbp+8 * (4+1)]
-push rax
-MALLOC rax, 8
-pop qword[rax]
-
-                                              mov qword[rbp+8*(4+1)],rax
-                                              mov rax, SOB_VOID_ADDRESS
-
-mov rax, qword[rbp+8 * (4+1)]
-                        mov rax,qword[rax]
-                        
-leave
-ret
-Lcont103:
-
-
-                              push rax
-
-                              ; varfree:id
-mov rax, qword[fvar_tbl + WORD_SIZE*70 ]
-                              pop qword [rax]
-                              mov rax, SOB_VOID_ADDRESS
-
-	call write_sob_if_not_void
-
-;applic   varfree:id number 3,1 number 4,1
-mov rax, const_tbl+102
-push rax
-mov rax, const_tbl+85
-push rax
-push 2
-; varfree:id
-mov rax, qword[fvar_tbl + WORD_SIZE*70 ]
-CLOSURE_ENV rdx, rax
-push rdx
-CLOSURE_CODE rdx, rax
-call rdx
-add rsp, 8*1 ;pop env
-pop rbx      ;pop arg count
-shl rbx, 3   ;rbx = rbx*8
-add rsp, rbx ;pop args
-
-	call write_sob_if_not_void
-
-;applic   varfree:+ number 1,1 number 2,1 number 3,1 number 4,1
-mov rax, const_tbl+102
-push rax
-mov rax, const_tbl+85
-push rax
+;applic   varfree:apply varfree:+ Pair:
 mov rax, const_tbl+119
 push rax
-mov rax, const_tbl+51
-push rax
-push 4
 ; varfree:+
 mov rax, qword[fvar_tbl + WORD_SIZE*18 ]
+push rax
+push 2
+; varfree:apply
+mov rax, qword[fvar_tbl + WORD_SIZE*31 ]
 CLOSURE_ENV rdx, rax
 push rdx
 CLOSURE_CODE rdx, rax
@@ -6675,24 +6576,24 @@ gcd:
     push rbp
     mov rbp, rsp
 
-    mov rbx, [rbp + WORD_SIZE * 3]          ; rax = argc
-    mov r9, [rbp + WORD_SIZE * (3 + rbx)]         ; r9 = last arg = list
-    xor r8, r8                ; r8 = list_size
+    mov rbx, [rbp + WORD_SIZE * 3]
+    mov r9, [rbp + WORD_SIZE * (3 + rbx)]
+    xor r8, r8
     push_list:
-        cmp r9, SOB_NIL_ADDRESS
-        je end_push_list
-        CAR rbx, r9              ; rbx = car
-        push rbx
-        inc r8
-        CDR r9, r9              ; r9 = cdr
-        jmp push_list
+      cmp r9, SOB_NIL_ADDRESS
+      je end_push_list
+      CAR rbx, r9
+      push rbx
+      inc r8
+      CDR r9, r9
+      jmp push_list
     end_push_list:
 
-    mov r15, r8                  ; r15 = list_size backup
-    dec r8                       ; r8 = list_size -1
-    mov rdx, r8                  ; rdx = list_size
-    shr rdx, 1                   ; rdx = list_size/2
-    xor rcx, rcx                 ; i = 0
+    mov r15, r8
+    dec r8
+    mov rdx, r8
+    shr rdx, 1
+    xor rcx, rcx
     reverse:
       cmp rcx, rdx
       jae end_reverse
@@ -6705,7 +6606,7 @@ gcd:
       jmp reverse
     end_reverse:
 
-    mov rcx, [rbp + WORD_SIZE * 3]      ;rax = argc
+    mov rcx, [rbp + WORD_SIZE * 3]
     sub rcx, 2
     push_args:
       cmp rcx, 0
@@ -6716,7 +6617,7 @@ gcd:
       jmp push_args
     end_push_args:
 
-    push r15                  
+    push r15  ; push new argc
     mov rax, [rbp + WORD_SIZE * 4]
     CLOSURE_ENV rbx, rax
     push rbx
