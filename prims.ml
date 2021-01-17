@@ -382,7 +382,7 @@ let i_must_imblement =
     mov rbx, PVAR(0)
     mov rcx, PVAR(1)
     mov [rbx + TYPE_SIZE], rcx
-    mov rax, T_VOID
+    mov rax, SOB_VOID_ADDRESS
     pop rbp
     ret
 
@@ -392,7 +392,7 @@ let i_must_imblement =
     mov rbx, PVAR(0)
     mov rcx, PVAR(1)
     mov [rbx + WORD_SIZE + TYPE_SIZE], rcx
-    mov rax, T_VOID
+    mov rax, SOB_VOID_ADDRESS
     pop rbp
     ret
 
@@ -400,7 +400,7 @@ let i_must_imblement =
     push rbp
     mov rbp, rsp
 
-    mov rbx, [rbp + WORD_SIZE * 3]
+    mov rbx, ARGC
     mov r9, [rbp + WORD_SIZE * (3 + rbx)]
     xor r8, r8
     push_list:
@@ -414,9 +414,9 @@ let i_must_imblement =
     end_push_list:
 
     mov r15, r8
-    dec r8
     mov rdx, r8
     shr rdx, 1
+    dec r8
     xor rcx, rcx
     reverse:
       cmp rcx, rdx
@@ -430,7 +430,7 @@ let i_must_imblement =
       jmp reverse
     end_reverse:
 
-    mov rcx, [rbp + WORD_SIZE * 3]
+    mov rcx, ARGC
     sub rcx, 2
     push_args:
       cmp rcx, 0
@@ -442,7 +442,7 @@ let i_must_imblement =
     end_push_args:
 
     push r15  ; push new argc
-    mov rax, [rbp + WORD_SIZE * 4]
+    mov rax, PVAR(0)
     CLOSURE_ENV rbx, rax
     push rbx
     push qword[rbp+8*1]   ;old ret addr

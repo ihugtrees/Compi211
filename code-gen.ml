@@ -97,9 +97,11 @@ let sexpr_to_const_entry sexpr const_tbl curr_off =
       | Sexpr(Bool(false)) -> ((Sexpr(Bool(false)), (curr_off, "db T_BOOL, 0") ), curr_off + 2)
       | Sexpr(Bool(true)) -> ((Sexpr(Bool(true)), (curr_off, "db T_BOOL, 1") ), curr_off + 2)
       | Sexpr(Char(char)) -> ((Sexpr(Char(char)), (curr_off, "MAKE_LITERAL_CHAR(" ^ (string_of_int (Char.code char)) ^ ")")), curr_off + 2)
-      | Sexpr(Number(Fraction(num, denum))) -> ((Sexpr(Number(Fraction(num, denum))), (curr_off , "MAKE_LITERAL_RATIONAL(" ^ (string_of_int num) ^ "," ^ (string_of_int denum) ^ ")")), curr_off + 17)
+      | Sexpr(Number(Fraction(num, denum))) -> ((Sexpr(Number(Fraction(num, denum))), (curr_off , "MAKE_LITERAL_RATIONAL(" ^ (string_of_int num) ^ "," ^ (string_of_int denum) ^ ")"^"  ;"^(string_of_int curr_off))), curr_off + 17)
       | Sexpr(Number(Float(num))) -> ((Sexpr(Number(Float(num))), (curr_off, "MAKE_LITERAL_FLOAT(" ^ (string_of_float num) ^ ")")), curr_off + 9)
-      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING(\"" ^ str ^"\")")), curr_off + 9 + (String.length str))
+      | Sexpr(String("")) -> ((Sexpr(String("")), (curr_off, "MAKE_LITERAL_STRING \"\"")), curr_off + 9)
+
+      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING {" ^(String.concat "," ((List.map (fun (c) -> string_of_int(Char.code c)) (string_to_list str))))^"}")), curr_off + 9 + (String.length str))
       | Sexpr(Symbol(sym)) -> ((Sexpr(Symbol(sym)), (curr_off, "MAKE_LITERAL_SYMBOL(const_tbl+" ^ (get_constant_offset (Sexpr(String(sym))) const_tbl) ^ ")")), curr_off + 9)
       | Sexpr(Pair(car, cdr)) -> ((Sexpr(Pair(car,cdr)), (curr_off, "MAKE_LITERAL_PAIR(const_tbl+" ^ (get_constant_offset (Sexpr(car)) const_tbl) ^ ",const_tbl+" ^ (get_constant_offset (Sexpr(cdr)) const_tbl) ^")")), curr_off + 17)
 
@@ -186,6 +188,7 @@ let rec asm_from_expr consts fvars e depth =
                                     ^(asm_from_expr consts fvars expr depth)^"
                                     mov qword[fvar_tbl+WORD_SIZE*"^ (get_fvar_index v fvars)^"], rax
                                     mov rax, SOB_VOID_ADDRESS\n"
+                                    
   | Def'((VarFree(v)), expr) ->  ";"^(expr_to_string (Def'((VarFree(v)), expr)))^"\n"
               ^(asm_from_expr consts fvars expr depth)^"\n"^
               "mov qword [fvar_tbl + WORD_SIZE*"^((get_fvar_index  v fvars))^"], rax"^"\n"^
@@ -316,11 +319,17 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "(define id 5)
-(set! id 3)"));;
+                              (Reader.read_sexprs "
+(let ((baf (lambda (f)
+               (lambda (n)
+                 (if (> n 0)
+                     `(* ,n ,((f f) (- n 1)))
+                     \"end\")))))
+    ((baf baf) 3))
+"));;
 
-(* Code_Gen.make_consts_tbl ast;; *)
-(*
+(* Code_Gen.make_fvars_tbl ast;;
+(* *)
 let test_collect_sexp str =
   collect_sexp (Semantics.run_semantics (List.hd (Tag_Parser.tag_parse_expressions (Reader.read_sexprs str))));;
 

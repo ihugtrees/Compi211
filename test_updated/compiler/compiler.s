@@ -155,10 +155,14 @@ db %1
 %macro MAKE_LITERAL_STRING 1
 	db T_STRING
 	dq (%%end_str - %%str)
-%%str:
-	db %1
-%%end_str:
+	%%str:
+		db %1
+	%%end_str:
 %endmacro
+
+%define ARGC qword [rbp + WORD_SIZE * 3]
+
+%define ENV qword [rbp + WORD_SIZE * 2]
 
 ;;; Macros and routines for printing Scheme OBjects to STDOUT
 %define CHAR_NUL 0
@@ -171,63 +175,66 @@ db %1
 %define CHAR_BACKSLASH 92
 
 ;;; ========= Code for extendet env and opt lambda stack correction =========
+%macro COPY_VEC 1
+	mov rdx, %1
+	mov rcx, %1
+	%%copy_vectors:
+		mov rbx, r8
+		mov r10, rcx
+		dec r10
+		shl r10, 3
+		add rbx, r10
+		mov rbx, [rbx]
+		mov [rax + WORD_SIZE * rdx], rbx
+		dec rdx
+		loop %%copy_vectors
+%endmacro
+
+%macro COPY_PARAMS 0
+	cmp r9,0
+	je %%zero_params
+	mov rcx, r9
+	%%copy_params:
+		mov r15, rcx
+		dec r15
+		mov rdx, PVAR(r15)
+		mov [rbx + WORD_SIZE * r15], rdx
+		loop %%copy_params
+	%%zero_params:
+%endmacro
 
 %macro CREATE_EXT_ENV 1
-	MALLOC rax, WORD_SIZE * %1 				; allocating external Env in size |env| + 1
-	mov r8, [rbp + WORD_SIZE * 2] ; r8 = env
-	mov r9, [rbp + WORD_SIZE * 3] ; r9 = argc
-	; for (i = 0 , j = 1 ; i < |Env| ; i++,j++)
-	; 	ExtEnv[j] = Env[i]
-	xor rcx, rcx	
-	mov rdx, 1 									; j = 1
-	%%copy_vectors:
-		cmp rcx, %1								; if i < |Env|
-		je %%end_copy_vectors
-		mov rbx, r8			; rdx = *Env
-		mov r10, rcx
-		shl r10, 3
-		add rbx, r10							; rdx = Env[i]
-		mov rbx, [rbx]							; rdx = *Env[i]
-		mov [rax + WORD_SIZE * rdx], rbx 		; *ExtEnv[j] = *Env[i]
-		inc rcx									; i++
-		inc rdx									; j++
-		jmp %%copy_vectors
-	%%end_copy_vectors:
+	MALLOC rax, WORD_SIZE * %1
+	mov r8, ENV
+	mov r9, ARGC
 
-	mov rdx, [rbp + WORD_SIZE * 3]				; rbx = argc
+	COPY_VEC %1
+
+	mov rdx, ARGC
 	shl rdx, 3
 	MALLOC rbx, rdx
-	mov [rax], rbx								; allocate Env[0] with size of argc
-	; for (i= 0 ; i<argc ; i++)
-	; 	ExtEnv[0][i] = Param_i
-	xor rcx, rcx	
-	%%copy_params:
-		cmp rcx, r9
-		je %%end_copy_params
-		mov rdx, [rbp + WORD_SIZE * (4+rcx)]
-		; mov rbx, [rax]								; rbx = *ExtEnv[0]
-		mov [rbx + WORD_SIZE * rcx], rdx		; ExtEnv[0][i] = param_i
-		inc rcx									; i++
-		jmp %%copy_params
-	%%end_copy_params:
+	mov [rax], rbx
+
+	COPY_PARAMS
+%endmacro
+
+%macro APPLITCTP_SHIFT_STACK 1
+	mov rcx, %1
+	%%shift_stack:
+		mov r8, qword [rsp+rcx*WORD_SIZE]
+		mov [rbp+rbx*WORD_SIZE], r8
+		dec rbx
+		loop %%shift_stack
+	mov r8, qword [rsp+rcx*WORD_SIZE]
+	mov [rbp+rbx*WORD_SIZE], r8
 %endmacro
 
 %macro FIX_APPLICTP_STACK 1
-	mov rbx, [rbp+3*WORD_SIZE]
+	mov rbx, PVAR(-1)
 	add rbx, 3
-	mov r9, qword [rbp] ; r9 = old rbp
-	mov rcx, %1
-	%%shift_stack:
-		cmp rcx, 0
-		je %%end_shift_stack
-		mov r8, qword [rsp+rcx*WORD_SIZE]
-		mov [rbp+rbx*WORD_SIZE], r8
-		dec rcx
-		dec rbx
-		jmp %%shift_stack
-	%%end_shift_stack:
-	mov r8, qword [rsp+rcx*WORD_SIZE]
-	mov [rbp+rbx*WORD_SIZE], r8
+	mov r9, qword [rbp]
+
+	APPLITCTP_SHIFT_STACK %1
 
 	shl rbx, 3
 	mov rsp, rbp
@@ -235,73 +242,69 @@ db %1
 	mov rbp, r9
 %endmacro
 
-%macro FIX_LAMBDA_OPT_STACK 1
-	; %1 - expected, rax-return reg, rbx-argc, rcx-counter
-	mov rbx, [rsp + 2 * WORD_SIZE] ; rbx = num of stack args
-	mov rcx , %1
-	cmp rbx, rcx
-	jb %%add_args
-
-	; for (int i=0 ; i<=diff ; i++)
-	; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
-	; r8=argc+2, r10 = argc-desired = diff, r11=the pair
+%macro LAMBDAOPT_MAKE_LIST 1
 	mov r8, rbx
 	add r8, 2
 	mov r10, rbx
 	sub r10, %1
 	mov r11, SOB_NIL_ADDRESS
-	xor rcx, rcx							
+	xor r13, r13
+	mov rcx, r10
+	inc rcx
 	%%make_list:
-		cmp rcx, r10					; if i <= diff
-		ja %%end_make_list
 		mov r9, r8
-		sub r9, rcx						; r9 = 2 + argc - i
-		mov r12, [rsp + r9 * WORD_SIZE]	; r9 = [rsp+8*(2+argc-i)]
+		sub r9, r13
+		mov r12, [rsp + r9 * WORD_SIZE]
 		MAKE_PAIR(r15, r12, r11)
 		mov r11, r15
-		inc rcx
-		jmp %%make_list
-	%%end_make_list:
-	mov [rsp + (2+%1) * WORD_SIZE], r11				; last argument = artificial pair
+		inc r13
+		loop %%make_list
+%endmacro
 
-	; for (i = 0 ; i < 3 + desired ; i++)
-	;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-	; r8=desired+2,
-	mov r8, %1+2
-	xor rcx, rcx	
+%macro LAMBDAOPT_ADJUST_STACK 1
+	xor r15, r15
+	mov rcx, %1+3
 	%%adjust_stack:
-		cmp rcx, %1+3
-		je %%end_adjust_stack
-		mov r9, r8						; r9 = 2 + desired
-		sub r9, rcx 					; r9 = 2 + desired - i
-		mov r11, [rsp + r9 * WORD_SIZE]	; rax = [rsp + 8 * (2+ desired - i)]
-		add r9, r10						; r9 = 2 + desired - i + diff
-		mov [rsp + r9 * WORD_SIZE], r11	; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-		inc rcx
-		jmp %%adjust_stack
-	%%end_adjust_stack:
+		mov r9, %1+2
+		sub r9, r15
+		mov r11, [rsp + r9 * WORD_SIZE]
+		add r9, r10
+		mov [rsp + r9 * WORD_SIZE], r11
+		inc r15
+		loop %%adjust_stack
+%endmacro
+
+%macro LAMBDAOPT_ADD_ARGS 0
+	push 0
+	xor r15, r15
+	mov rcx, rbx
+	add rcx, 3
+	%%move_stack:
+		mov r9, [rsp + WORD_SIZE * (r15+1)]
+		mov [rsp + WORD_SIZE * r15], r9
+		inc r15
+		loop %%move_stack
+%endmacro
+
+%macro FIX_LAMBDA_OPT_STACK 1
+	mov rbx, [rsp + 2 * WORD_SIZE]
+	mov rcx , %1
+	cmp rbx, rcx
+	jb %%add_args
+
+	LAMBDAOPT_MAKE_LIST %1
+	mov [rsp + (2+%1) * WORD_SIZE], r11
+
+	LAMBDAOPT_ADJUST_STACK %1
 
 	shl r10, 3
-	add rsp, r10 ; adjust rsp
+	add rsp, r10
 	mov r11, %1
-	mov [rsp + 2 * WORD_SIZE], r11 ; update argc
+	mov [rsp + 2 * WORD_SIZE], r11
 	jmp %%end_fix
 
-	;	for (i = 0 ; i < 3 + argc ; i++)	; 3 for Ret,Env,argc
-	;		stack_i = stack_(i+1)
 	%%add_args:
-		mov r8, rbx
-		add r8, 3
-		push 0
-		xor rcx, rcx
-		%%move_stack:
-			cmp rcx, r8
-			je %%end_move_stack
-			mov r9, [rsp + WORD_SIZE * (rcx+1)]
-			mov [rsp + WORD_SIZE * rcx], r9
-			inc rcx
-			jmp %%move_stack
-		%%end_move_stack:
+		LAMBDAOPT_ADD_ARGS
 
 		mov r9, SOB_NIL_ADDRESS
 		mov [rsp + WORD_SIZE * (2+%1)], r9

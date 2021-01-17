@@ -1,4 +1,4 @@
-(* 
+(*
    This module contains code to generate the low-level implementation of
    parts of the standard library procedures.
    The module works by defining a hierarchy of templates, which call each other
@@ -21,12 +21,12 @@ module Prims : PRIMS = struct
   let make_routine label body =
     label ^ ":
        push rbp
-       mov rbp, rsp 
+       mov rbp, rsp
        " ^ body ^ "
          pop rbp
          ret";;
 
-  (* Many of the low-level stdlib procedures are predicate procedures, which perform 
+  (* Many of the low-level stdlib procedures are predicate procedures, which perform
      some kind of comparison, and then return one of the constants sob_true or sob_false.
      Since this pattern repeats so often, we have a template that takes a body, and a type
      of condition to test for jump, and generates an assembly snippet that evaluated the body,
@@ -40,14 +40,14 @@ module Prims : PRIMS = struct
        mov rax, SOB_TRUE_ADDRESS
        .return:";;
 
-  (* 
-     Many of the predicates just test some kind of equality (or, equivalently, if the 
-     zero flag is set), so this is an auxiliary function dedicated to equality-testing predicates. 
+  (*
+     Many of the predicates just test some kind of equality (or, equivalently, if the
+     zero flag is set), so this is an auxiliary function dedicated to equality-testing predicates.
      Note how we make use of currying here.
    *)
   let return_boolean_eq = return_boolean "je";;
-  
-  (* 
+
+  (*
      Almost all of the stdlib function take 1 or more arguments. Since all of the variadic procedures
      are implemented in the high-level scheme library code (found in stdlib.scm), we only have to deal
      with 1,2 or 3 arguments.
@@ -57,7 +57,7 @@ module Prims : PRIMS = struct
      kind of consistency, so why not just use the standard ABI.
      See page 22 in https://raw.githubusercontent.com/wiki/hjl-tools/x86-psABI/x86-64-psABI-1.0.pdf
 
-     *** FIXME: There's a typo here: PVAR(0) should be rdi, PVAR(1) should be rsi, according to the ABI     
+     *** FIXME: There's a typo here: PVAR(0) should be rdi, PVAR(1) should be rsi, according to the ABI
    *)
   let make_unary label body = make_routine label ("mov rsi, PVAR(0)\n\t" ^ body);;
   let make_binary label body = make_unary label ("mov rdi, PVAR(1)\n\t" ^ body);;
@@ -65,14 +65,14 @@ module Prims : PRIMS = struct
 
   (* All of the type queries in scheme (e.g., null?, pair?, char?, etc.) are equality predicates
      that are implemented by comparing the first byte pointed to by PVAR(0) to the relevant type tag.
-     so the only unique bits of each of these predicates are the name of the routine (i.e., the label), 
+     so the only unique bits of each of these predicates are the name of the routine (i.e., the label),
      and the type tag we expect to find.
      The implementation of the type-queries generator is slightly more complex, since a template and a label
-     name aren't enough: we need to generate a routine for every (label * type_tag) pair (e.g., the routine 
+     name aren't enough: we need to generate a routine for every (label * type_tag) pair (e.g., the routine
      `is_boolean` should test for the T_BOOL type tag).
-     We have a list of pairs, associating each predicate label with the correct type tag, and map the templating 
-     function over this list. Note that the query template function makes use of some of the other templating 
-     functions defined above: `make_unary` (predicates take only one argument) and `return_boolean_eq` (since 
+     We have a list of pairs, associating each predicate label with the correct type tag, and map the templating
+     function over this list. Note that the query template function makes use of some of the other templating
+     functions defined above: `make_unary` (predicates take only one argument) and `return_boolean_eq` (since
      these are equality-testing predicates).
    *)
   let type_queries =
@@ -87,13 +87,13 @@ module Prims : PRIMS = struct
     String.concat "\n\n" (List.map (fun (a, b) -> single_query a b) queries_to_types);;
 
   (* The rational number artihmetic operators have to normalize the fractions they return,
-     so a GCD implementation is needed. Now there are two options: 
-     1) implement only a scheme-procedure-like GCD, and allocate rational number scheme objects for the 
+     so a GCD implementation is needed. Now there are two options:
+     1) implement only a scheme-procedure-like GCD, and allocate rational number scheme objects for the
         intermediate numerator and denominator values of the fraction to be returned, call GCD, decompose
         the returned fraction, perform the divisions, and allocate the final fraction to return
-     2) implement 2 GCDs: a low-level gcd that only implements the basic GCD loop, which is used by the rational 
+     2) implement 2 GCDs: a low-level gcd that only implements the basic GCD loop, which is used by the rational
         number arithmetic operations; and a scheme-procedure-like GCD to be wrapped by the stdlib GCD implementation.
-    
+
      The second option is more efficient, and doesn't cost much, in terms of executable file bloat: there are only 4
      routines that inline the primitive gcd_loop: add, mul, div, and gcd.
      Note that div the inline_gcd embedded in div is dead code (the instructions are never executed), so a more optimized
@@ -107,24 +107,24 @@ module Prims : PRIMS = struct
      idiv rdi
      mov rax, rdi
      mov rdi, rdx
-     jmp .gcd_loop	
+     jmp .gcd_loop
      .end_gcd_loop:";;
 
   (* The arithmetic operation implementation is multi-tiered:
-     - The low-level implementations of all operations are binary, e.g. (+ 1 2 3) and (+ 1) are not 
+     - The low-level implementations of all operations are binary, e.g. (+ 1 2 3) and (+ 1) are not
        supported in the low-level implementation.
      - The low-level implementations only support same-type operations, e.g. (+ 1 2.5) is not supported
        in the low-level implementation. This means each operation has two low-level implementations, one
        for floating-point operands, and one for fractional operands.
-     - Each pair of low-level operation implementations is wrapped by a dispatcher which decides which 
+     - Each pair of low-level operation implementations is wrapped by a dispatcher which decides which
        of the two implementations to call (by probing the types of the operands).
      - The high-level implementations (see stdlib.scm) make use of a high-level dispatcher, that is in charge
        of performing type conversions as necessary to satisfy the pre-conditions of the low-level implementations.
-     
+
      Operations on floating-point operands:
      -------------------------------------
      The implementations of binary floating point arithmetic operations contain almost identical code. The
-     differences are the name (label) of the routines, and the arithmetic instruction applied to 
+     differences are the name (label) of the routines, and the arithmetic instruction applied to
      the two arguments. Other than that, they are all the same: binary routines which load the values
      pointed at by PVAR(0) and PVAR(1) into SSE2 registers, compute the operation, create a new sob_float
      on the heap with the result, and store the address of the sob_float in rax as the return value.
@@ -135,11 +135,11 @@ module Prims : PRIMS = struct
      ----------------------------------
      The addition and multiplication operations on rational numbers are similar to each other: both load 2 arguments,
      both deconstruct the arguments into numerator and denominator, both allocate a sob_rational to store the result
-     on the heap, and both move the address of this sob_rational into rax as the return value. The only differences 
+     on the heap, and both move the address of this sob_rational into rax as the return value. The only differences
      are the routine name (label), and the implementation of the arithmetic operation itself.
      This allows us to easily abstract this code into a template that requires a label name and its matching
      arithmetic instruction (which are paired up in the op_map).
-     
+
      Unlike in the case of floating point arithmetic, rational division is treated differently, and is implemented by
      using the identity (a/b) / (c/d) == (a/b) * (d/c).
      This is done by inverting the second arg (in PVAR(1)) and tail-calling fraction multiplication (`jmp mul`).
@@ -158,7 +158,7 @@ module Prims : PRIMS = struct
        more information).
    *)
   let numeric_ops =
-    let numeric_op name flt_body rat_body body_wrapper =      
+    let numeric_op name flt_body rat_body body_wrapper =
       make_binary name
         (body_wrapper
            ("mov dl, byte [rsi]
@@ -168,16 +168,16 @@ module Prims : PRIMS = struct
              jmp .op_return
           ." ^ name ^ "_rat:
              " ^ rat_body ^ "
-          .op_return:")) in      
+          .op_return:")) in
     let arith_map = [
         "MAKE_RATIONAL(rax, rdx, rdi)
          mov PVAR(1), rax
          pop rbp
          jmp mul", "divsd", "div";
-        
+
         "imul rsi, rdi
 	 imul rcx, rdx", "mulsd", "mul";
-        
+
         "imul rsi, rdx
 	 imul rdi, rcx
 	 add rsi, rdi
@@ -185,9 +185,9 @@ module Prims : PRIMS = struct
       ] in
     let arith name flt_op rat_op =
       numeric_op name
-        ("FLOAT_VAL rsi, rsi 
+        ("FLOAT_VAL rsi, rsi
           movq xmm0, rsi
-          FLOAT_VAL rdi, rdi 
+          FLOAT_VAL rdi, rdi
           movq xmm1, rdi
 	  " ^ flt_op ^ " xmm0, xmm1
           movq rsi, xmm0
@@ -253,7 +253,7 @@ module Prims : PRIMS = struct
         (String.concat "\n\n" (List.map (fun (a, b, c, d) -> comparator a d c b) comp_map));;
 
 
-  (* The following set of operations contain fewer similarities, to the degree that it doesn't seem that 
+  (* The following set of operations contain fewer similarities, to the degree that it doesn't seem that
      creating more fine-grained templates for them is beneficial. However, since they all make use of
      some of the other templates, it is beneficial to organize them in a structure that enables
      a uniform mapping operation to join them all into the final string.*)
@@ -262,25 +262,25 @@ module Prims : PRIMS = struct
         (* string ops *)
         "STRING_LENGTH rsi, rsi
          MAKE_RATIONAL(rax, rsi, 1)", make_unary, "string_length";
-        
+
         "STRING_ELEMENTS rsi, rsi
          NUMERATOR rdi, rdi
          add rsi, rdi
          mov sil, byte [rsi]
          MAKE_CHAR(rax, sil)", make_binary, "string_ref";
-        
+
         "STRING_ELEMENTS rsi, rsi
          NUMERATOR rdi, rdi
          add rsi, rdi
          CHAR_VAL rax, rdx
          mov byte [rsi], al
          mov rax, SOB_VOID_ADDRESS", make_tertiary, "string_set";
-        
+
         "NUMERATOR rsi, rsi
          CHAR_VAL rdi, rdi
          and rdi, 255
          MAKE_STRING rax, rsi, dil", make_binary, "make_string";
-        
+
         "SYMBOL_VAL rsi, rsi
 	 STRING_LENGTH rcx, rsi
 	 STRING_ELEMENTS rdi, rsi
@@ -295,7 +295,7 @@ module Prims : PRIMS = struct
 	 push SOB_NIL_ADDRESS
 	 call make_string
 	 add rsp, 4*8
-	 STRING_ELEMENTS rsi, rax   
+	 STRING_ELEMENTS rsi, rax
 	 pop rdi
 	 pop rcx
 	 cmp rcx, 0
@@ -321,7 +321,7 @@ module Prims : PRIMS = struct
 	 MAKE_CHAR(rax, sil)", make_unary, "integer_to_char";
 
         "DENOMINATOR rdi, rsi
-	 NUMERATOR rsi, rsi 
+	 NUMERATOR rsi, rsi
 	 cvtsi2sd xmm0, rsi
 	 cvtsi2sd xmm1, rdi
 	 divsd xmm0, xmm1
@@ -346,7 +346,7 @@ module Prims : PRIMS = struct
          jge .make_result
          neg rdx
          .make_result:
-         MAKE_RATIONAL(rax, rdx, 1)", make_binary, "gcd";  
+         MAKE_RATIONAL(rax, rdx, 1)", make_binary, "gcd";
       ] in
     String.concat "\n\n" (List.map (fun (a, b, c) -> (b c a)) misc_parts);;
 
@@ -382,7 +382,7 @@ let i_must_imblement =
     mov rbx, PVAR(0)
     mov rcx, PVAR(1)
     mov [rbx + TYPE_SIZE], rcx
-    mov rax, T_VOID
+    mov rax, SOB_VOID_ADDRESS
     pop rbp
     ret
 
@@ -392,15 +392,15 @@ let i_must_imblement =
     mov rbx, PVAR(0)
     mov rcx, PVAR(1)
     mov [rbx + WORD_SIZE + TYPE_SIZE], rcx
-    mov rax, T_VOID
+    mov rax, SOB_VOID_ADDRESS
     pop rbp
     ret
 
-  apply:
+apply:
     push rbp
     mov rbp, rsp
 
-    mov rbx, [rbp + WORD_SIZE * 3]
+    mov rbx, ARGC
     mov r9, [rbp + WORD_SIZE * (3 + rbx)]
     xor r8, r8
     push_list:
@@ -414,38 +414,39 @@ let i_must_imblement =
     end_push_list:
 
     mov r15, r8
-    dec r8
+    cmp r8, 1
+    jbe end_reverse
     mov rdx, r8
     shr rdx, 1
-    xor rcx, rcx
+    dec r8
+    xor r9, r9
+    mov rcx, rdx
+
     reverse:
-      cmp rcx, rdx
-      jae end_reverse
       mov r10, [rsp + WORD_SIZE * r8]
-      mov r11, [rsp + WORD_SIZE * rcx]
-      mov [rsp + WORD_SIZE * rcx], r10
+      mov r11, [rsp + WORD_SIZE * r9]
+      mov [rsp + WORD_SIZE * r9], r10
       mov [rsp + WORD_SIZE * r8], r11
-      inc rcx
+      inc r9
       dec r8
-      jmp reverse
+      loop reverse
     end_reverse:
 
-    mov rcx, [rbp + WORD_SIZE * 3]
+    mov rcx, ARGC
     sub rcx, 2
+    cmp rcx, 0
+    je end_push_args
     push_args:
-      cmp rcx, 0
-      je end_push_args
       push qword [rbp + WORD_SIZE * (4+rcx)]
-      dec rcx
       inc r15
-      jmp push_args
+      loop push_args
     end_push_args:
 
-    push r15  ; push new argc
-    mov rax, [rbp + WORD_SIZE * 4]
+    push r15
+    mov rax, PVAR(0)
     CLOSURE_ENV rbx, rax
     push rbx
-    push qword[rbp+8*1]   ;old ret addr
+    push qword[rbp+8*1]
     add r15, 2
     FIX_APPLICTP_STACK r15
     CLOSURE_CODE rbx, rax

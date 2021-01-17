@@ -129,6 +129,7 @@ let rec box expr =
   | Seq' (expr_lst) ->  Seq' (List.map box expr_lst)
   | Def' (var, expr) -> Def' (var, box expr)
   | Set' (var, Box'(varef)) -> Set'(var, Box'(varef))
+  | Set' (VarFree(v), expr) -> Set' (VarFree(v),box expr)
   | Set' (var, expr) -> BoxSet'(var, box expr)
   | Or' (expr_lst)-> Or' (List.map box expr_lst)
   | LambdaSimple' (vars, body)-> LambdaSimple'(vars, lambda_boxing vars body)
