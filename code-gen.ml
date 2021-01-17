@@ -99,7 +99,7 @@ let sexpr_to_const_entry sexpr const_tbl curr_off =
       | Sexpr(Char(char)) -> ((Sexpr(Char(char)), (curr_off, "MAKE_LITERAL_CHAR(" ^ (string_of_int (Char.code char)) ^ ")")), curr_off + 2)
       | Sexpr(Number(Fraction(num, denum))) -> ((Sexpr(Number(Fraction(num, denum))), (curr_off , "MAKE_LITERAL_RATIONAL(" ^ (string_of_int num) ^ "," ^ (string_of_int denum) ^ ")")), curr_off + 17)
       | Sexpr(Number(Float(num))) -> ((Sexpr(Number(Float(num))), (curr_off, "MAKE_LITERAL_FLOAT(" ^ (string_of_float num) ^ ")")), curr_off + 9)
-      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING \"" ^ str ^"\"")), curr_off + 9 + (String.length str))
+      | Sexpr(String(str)) -> ((Sexpr(String(str)), (curr_off, "MAKE_LITERAL_STRING(\"" ^ str ^"\")")), curr_off + 9 + (String.length str))
       | Sexpr(Symbol(sym)) -> ((Sexpr(Symbol(sym)), (curr_off, "MAKE_LITERAL_SYMBOL(const_tbl+" ^ (get_constant_offset (Sexpr(String(sym))) const_tbl) ^ ")")), curr_off + 9)
       | Sexpr(Pair(car, cdr)) -> ((Sexpr(Pair(car,cdr)), (curr_off, "MAKE_LITERAL_PAIR(const_tbl+" ^ (get_constant_offset (Sexpr(car)) const_tbl) ^ ",const_tbl+" ^ (get_constant_offset (Sexpr(cdr)) const_tbl) ^")")), curr_off + 17)
 
@@ -180,11 +180,11 @@ let rec asm_from_expr consts fvars e depth =
                                                   mov qword[rbx+8*"^(string_of_int minor)^"],rax
                                                   mov rax, SOB_VOID_ADDRESS\n"
 
-  | Var'(VarFree(v)) -> ";"^(expr_to_string (Var'(VarFree(v))))^"\n"^"mov rax, qword[fvar_tbl + WORD_SIZE*"^(get_fvar_index v fvars)^" ]"
+  | Var'(VarFree(v)) -> ";"^(expr_to_string (Var'(VarFree(v))))^"\n"^"mov rax, qword[fvar_tbl+WORD_SIZE*"^(get_fvar_index v fvars)^" ]"
 
   | Set'((VarFree(v)),expr) -> ";"^(expr_to_string (Set'((VarFree(v)),expr)))^"\n"
                                     ^(asm_from_expr consts fvars expr depth)^"
-                                    mov qword[fvar_tbl + WORD_SIZE*"^ (get_fvar_index  v fvars)^"], rax
+                                    mov qword[fvar_tbl+WORD_SIZE*"^ (get_fvar_index v fvars)^"], rax
                                     mov rax, SOB_VOID_ADDRESS\n"
   | Def'((VarFree(v)), expr) ->  ";"^(expr_to_string (Def'((VarFree(v)), expr)))^"\n"
               ^(asm_from_expr consts fvars expr depth)^"\n"^
@@ -203,32 +203,27 @@ let rec asm_from_expr consts fvars e depth =
                     "^(asm_from_expr consts fvars dif depth)^"\n Lexit"^index^":"
 
   | BoxGet'(v) -> (asm_from_expr consts fvars (Var'(v)) depth)^"
-                        mov rax,qword[rax]
-                        "
+                        mov rax,qword[rax]\n"
 
   | BoxSet'(v, expr) ->(asm_from_expr consts fvars expr depth)^"\n
                               push rax\n
                               "^(asm_from_expr consts fvars (Var'(v)) depth)^"
                               pop qword [rax]
                               mov rax, SOB_VOID_ADDRESS\n"
+
   | Box'(v) -> ";"^(expr_to_string (Box'(v)))^"\n"^
-            (asm_from_expr consts fvars (Var'(v)) depth)^
-            "\npush rax\n"^
-            "MALLOC rax, 8\n"^
-            "pop qword[rax]\n"
-          (*"
-          MALLOC rbx, WORD_SIZE\n
-          mov rcx , qword [rbp + WORD_SIZE*(4+"^(string_of_int minor)^")]\n
-          mov qword [rbx] , rcx\n
-          mov rax , rbx\n" 
-          *)
+            (asm_from_expr consts fvars (Var'(v)) depth)^"\n"^
+            (* "\npush rax\n"^ *)
+            "MALLOC rbx, WORD_SIZE\n"^
+            "mov [rbx], rax\n"^
+            "mov rax, rbx\n"
 
   | LambdaSimple'(params, body) ->
     let index = string_of_int (get_index ()) in
       ";"^(expr_to_string (LambdaSimple'(params, body)))^"\n"^
-      "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
-      "mov rcx, rax"^"\n"^
-      "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
+      "\n"^"CREATE_EXT_ENV "^(string_of_int (depth+1))^"\n"^
+      "mov rdx, rax"^"\n"^
+      "MAKE_CLOSURE(rax, rdx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
       "Lcode"^index^":"^"\n"^
       "push rbp"^"\n"^
@@ -238,30 +233,13 @@ let rec asm_from_expr consts fvars e depth =
       "ret"^"\n"^
       "Lcont"^index^":"^"\n"
 
-  | Applic'(body, args) ->
-    (* "push SOB_NIL_ADDRESS "^"\n"^ *)
-    ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
-    (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
-    "push "^(string_of_int (List.length args))^"\n"^
-    (asm_from_expr consts fvars body depth)^"\n"^
-    "mov rbx, rax"^"\n"^
-    "CLOSURE_ENV rax, rbx"^"\n"^
-    "push rax"^"\n"^
-    "CLOSURE_CODE rax, rbx"^"\n"^
-    "call rax"^"\n"^
-    "add rsp, 8*1 ;pop env"^"\n"^
-    "pop rbx      ;pop arg count"^"\n"^
-    "shl rbx, 3   ;rbx = rbx*8"^"\n"^
-    "add rsp, rbx ;pop args"^"\n"
-    (* "pop rbx"^"\n" *)
-
   | LambdaOpt'(params, opt, body) ->
     let index = string_of_int (get_index ()) in
         ";"^(expr_to_string (LambdaOpt'(params, opt, body)))^"\n"^
 
-      "\n"^"CREATE_EXT_ENV "^(string_of_int depth)^"\n"^
-      "mov rcx, rax"^"\n"^
-      "MAKE_CLOSURE(rax, rcx, "^"Lcode"^index^")"^"\n"^
+      "\n"^"CREATE_EXT_ENV "^(string_of_int (depth+1))^"\n"^
+      "mov rdx, rax"^"\n"^
+      "MAKE_CLOSURE(rax, rdx, "^"Lcode"^index^")"^"\n"^
       "jmp "^"Lcont"^index^"\n"^
       "Lcode"^index^":"^"\n"^
       "FIX_LAMBDA_OPT_STACK "^(string_of_int ((List.length params)+1))^"\n"^
@@ -272,16 +250,29 @@ let rec asm_from_expr consts fvars e depth =
       "ret"^"\n"^
       "Lcont"^index^":"^"\n"
 
+  | Applic'(body, args) ->
+    ";"^(expr_to_string (Applic'(body, args) ))^"\n"^
+    (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
+    "push "^(string_of_int (List.length args))^"\n"^
+    (asm_from_expr consts fvars body depth)^"\n"^
+    "CLOSURE_ENV rdx, rax"^"\n"^
+    "push rdx"^"\n"^
+    "CLOSURE_CODE rdx, rax"^"\n"^
+    "call rdx"^"\n"^
+    "add rsp, 8*1 ;pop env"^"\n"^
+    "pop rbx      ;pop arg count"^"\n"^
+    "shl rbx, 3   ;rbx = rbx*8"^"\n"^
+    "add rsp, rbx ;pop args"^"\n"
+
   | ApplicTP'(body, args) ->
-    (* "push SOB_NIL_ADDRESS "^"\n"^ *)
     ";"^(expr_to_string (ApplicTP'(body, args) ))^"\n"^
     ";args\n"^
     (List.fold_right (fun arg acc -> acc^(asm_from_expr consts fvars arg depth)^"\npush rax"^"\n") args "")^
     "push "^(string_of_int (List.length args))^"\n"^
     ";body\n"^
     (asm_from_expr consts fvars body depth)^"\n"^
-    "CLOSURE_ENV rbx, rax"^"\n"^
-    "push rbx"^"\n"^    
+    "CLOSURE_ENV rdx, rax"^"\n"^
+    "push rdx"^"\n"^    
     "push qword[rbp+8*1]   ;old ret addr"^"\n"^
     "FIX_APPLICTP_STACK "^(string_of_int(2 + (List.length args)))^"\n"^
     "CLOSURE_CODE rbx, rax"^"\n"^
@@ -325,7 +316,8 @@ let generate consts fvars e = asm_from_expr consts fvars e 0;;
 end;;
 let ast =  List.map Semantics.run_semantics
                            (Tag_Parser.tag_parse_expressions
-                              (Reader.read_sexprs "(+ 9 12 100 10000 99999999999)"));;
+                              (Reader.read_sexprs "(define id 5)
+(set! id 3)"));;
 
 (* Code_Gen.make_consts_tbl ast;; *)
 (*

@@ -1,64 +1,63 @@
 apply:
-    push rbp
-    mov rbp, rsp
+	push rbp
+	mov rbp, rsp
 
-    mov rax, [rbp + 8 * 3]      ; rax = argc
-    dec rax
-    mov rax, PVAR(rax)          ; rax = last arg = list
-    xor rdx, rdx                ; rdx = list_size
+	mov rbx, [rbp + WORD_SIZE * 3]
+	mov r9, [rbp + WORD_SIZE * (3 + rbx)]
+	xor r8, r8
+	push_list:
+		cmp r9, SOB_NIL_ADDRESS
+		je end_push_list
+		CAR rbx, r9
+		push rbx
+		inc r8
+		CDR r9, r9
+		jmp push_list
+	end_push_list:
 
-    push SOB_NIL_ADDRESS
-    push_args:
-        cmp byte[rax], T_NIL
-        je end_push_args
-        CAR rbx, rax              ; rbx = car
-        push rbx
-        CDR rax, rax              ; rax = cdr
-        inc rdx
-        jmp push_args
-    end_push_args:
+	mov r15, r8
+	dec r8
+	mov rdx, r8
+	shr rdx, 1
+	xor rcx, rcx
+	reverse:
+		cmp rcx, rdx
+		jae end_reverse
+		mov r10, [rsp + WORD_SIZE * r8]
+		mov r11, [rsp + WORD_SIZE * rcx]
+		mov [rsp + WORD_SIZE * rcx], r10
+		mov [rsp + WORD_SIZE * r8], r11
+		inc rcx
+		dec r8
+		jmp reverse
+	end_reverse:
 
-    mov rsi, rdx                  ; rsi = list_size backup
-    mov rcx, 0                    ; i = 0
-    mov rbx, rdx                  ; rbx = list_size
-    shr rbx, 1                    ; rbx = list_size/2
-    dec rdx                       ; rdx = list_size -1
+	mov rcx, [rbp + WORD_SIZE * 3]
+	sub rcx, 2
+	push_args:
+		cmp rcx, 0
+		je end_push_args
+		push qword [rbp + WORD_SIZE * (4+rcx)]
+		dec rcx
+		inc r15
+		jmp push_args
+	end_push_args:
 
-    _revert_args:
-      cmp rcx, rbx
-      jae end_revert_args
-      mov rax, [rsp + 8 * (rdx)]  ; rax = [rsp + 8*(list_size - i -1)]
-      mov rdi,[rsp+8*rcx]
-      mov [rsp + 8 * rdx], rdi
-      mov [rsp + 8 * rcx],  rax
-      dec rdx
-      inc rcx
-      jmp _revert_args
-    end_revert_args:
+	push r15  ; push new argc
+	mov rax, [rbp + WORD_SIZE * 4]
+	CLOSURE_ENV rbx, rax
+	push rbx
+	push qword[rbp+8*1]   ;old ret addr
+	add r15, 2
+	FIX_APPLICTP_STACK r15
+	CLOSURE_CODE rbx, rax
+	jmp rbx
 
-    mov rax, [rbp + 8 * 3]      ;rax = argc
-    mov rdi, rax                ;rdi = index
-    add rdi, 2
-    push_objs:
-      cmp rdi, 4
-      jbe end_push_objs
-      push qword [rbp + 8 * rdi]
-      inc rsi
-      dec rdi
-      jmp push_objs
-    end_push_objs:
+	; call rbx
+	; add rsp, 8 * 1
+	; pop rbx
+	; shl rbx, 3
+	; add rsp, rbx
 
-    push rsi                    ;push number of args
-    mov rax, PVAR(0)            ;rax = closure of the procedure
-    CLOSURE_ENV rbx, rax
-    push rbx
-    CLOSURE_CODE rbx, rax
-    call rbx
-    add rsp, 8 * 1
-    pop rbx
-    shl rbx, 3
-    add rsp, rbx
-    pop rbx
-
-    pop rbp
-    ret
+	; pop rbp
+	; ret

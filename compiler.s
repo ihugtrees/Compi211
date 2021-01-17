@@ -12,15 +12,15 @@
 
 %define TYPE_SIZE 1
 %define WORD_SIZE 8
-	
+
 %define KB(n) n*1024
 %define MB(n) 1024*KB(n)
 %define GB(n) 1024*MB(n)
 
 
 %macro SKIP_TYPE_TAG 2
-	mov %1, qword [%2+TYPE_SIZE]	
-%endmacro	
+	mov %1, qword [%2+TYPE_SIZE]
+%endmacro
 
 %define NUMERATOR SKIP_TYPE_TAG
 
@@ -63,7 +63,7 @@
 	sub %1, [rsp]
 	add rsp, 8
 %endmacro
-	
+
 ; Creates a short SOB with the
 ; value %2
 ; Returns the result in register %1
@@ -107,20 +107,20 @@
 	sub %1, WORD_SIZE+TYPE_SIZE
 %endmacro
 
-;;; Creates a SOB with tag %2 
+;;; Creates a SOB with tag %2
 ;;; from two pointers %3 and %4
 ;;; Stores result in register %1
-%macro MAKE_TWO_WORDS 4 
-        MALLOC %1, TYPE_SIZE+WORD_SIZE*2
-        mov byte [%1], %2
-        mov qword [%1+TYPE_SIZE], %3
-        mov qword [%1+TYPE_SIZE+WORD_SIZE], %4
+%macro MAKE_TWO_WORDS 4
+	MALLOC %1, TYPE_SIZE+WORD_SIZE*2
+	mov byte [%1], %2
+	mov qword [%1+TYPE_SIZE], %3
+	mov qword [%1+TYPE_SIZE+WORD_SIZE], %4
 %endmacro
 
 %macro MAKE_WORDS_LIT 3
 	db %1
-        dq %2
-        dq %3
+	dq %2
+	dq %3
 %endmacro
 
 %define MAKE_RATIONAL(r, num, den) \
@@ -128,28 +128,16 @@
 
 %define MAKE_LITERAL_RATIONAL(num, den) \
 	MAKE_WORDS_LIT T_RATIONAL, num, den
-	
+
 %define MAKE_PAIR(r, car, cdr) \
-        MAKE_TWO_WORDS r, T_PAIR, car, cdr
+	MAKE_TWO_WORDS r, T_PAIR, car, cdr
 
 %define MAKE_LITERAL_PAIR(car, cdr) \
-        MAKE_WORDS_LIT T_PAIR, car, cdr
+	MAKE_WORDS_LIT T_PAIR, car, cdr
 
 %define MAKE_CLOSURE(r, env, body) \
-        MAKE_TWO_WORDS r, T_CLOSURE, env, body
+	MAKE_TWO_WORDS r, T_CLOSURE, env, body
 
-	
-;;; Macros and routines for printing Scheme OBjects to STDOUT
-%define CHAR_NUL 0
-%define CHAR_TAB 9
-%define CHAR_NEWLINE 10
-%define CHAR_PAGE 12
-%define CHAR_RETURN 13
-%define CHAR_SPACE 32
-%define CHAR_DOUBLEQUOTE 34
-%define CHAR_BACKSLASH 92
-
-;;; ========= Code for extendet env and opt lambda stack correction =========
 
 %macro MAKE_LITERAL 2
 ; Make a literal of type %1
@@ -167,52 +155,65 @@ db %1
 %macro MAKE_LITERAL_STRING 1
 	db T_STRING
 	dq (%%end_str - %%str)
-%%str:
-	db %1
-%%end_str:
+	%%str:
+		db %1
+	%%end_str:
 %endmacro
 
-%macro CREATE_EXT_ENV 1	
-	MALLOC rax, 8 * (%1 + 1) 					; allocating external Env in size |env| + 1
-	mov rcx,[rbp+8*3]							; rcx = argc
-	shl rcx,3
-	MALLOC rbx, rcx					
-	mov [rax],rbx								; allocate Env[0] with size of argc
-	
-	; for (i = 0 , j = 1 ; i<|Env| ; i++,j++)
+;;; Macros and routines for printing Scheme OBjects to STDOUT
+%define CHAR_NUL 0
+%define CHAR_TAB 9
+%define CHAR_NEWLINE 10
+%define CHAR_PAGE 12
+%define CHAR_RETURN 13
+%define CHAR_SPACE 32
+%define CHAR_DOUBLEQUOTE 34
+%define CHAR_BACKSLASH 92
+
+;;; ========= Code for extendet env and opt lambda stack correction =========
+
+%macro CREATE_EXT_ENV 1
+	MALLOC rax, WORD_SIZE * %1 				; allocating external Env in size |env| + 1
+	mov r8, [rbp + WORD_SIZE * 2] ; r8 = env
+	mov r9, [rbp + WORD_SIZE * 3] ; r9 = argc
+	; for (i = 0 , j = 1 ; i < |Env| ; i++,j++)
 	; 	ExtEnv[j] = Env[i]
-	mov rcx,0									; i = 0
-	mov rbx,1 									; j = 1
-	%%copy_minors:
-		cmp rcx,%1								; if i < |Env|
-		je %%end_copy_minors
-		mov rdx,[rbp + 8 *2]					; rdx = *Env
-		shl rcx,3
-		add rdx,rcx							; rdx = *Env[i]
-		shr rcx,3
-		mov rdx,[rdx]							; rdx = Env[i]
-		mov [rax+8*rbx],rdx 					; ExtEnv[j] = Env[i]
+	xor rcx, rcx	
+	mov rdx, 1 									; j = 1
+	%%copy_vectors:
+		cmp rcx, %1								; if i < |Env|
+		je %%end_copy_vectors
+		mov rbx, r8			; rdx = *Env
+		mov r10, rcx
+		shl r10, 3
+		add rbx, r10							; rdx = Env[i]
+		mov rbx, [rbx]							; rdx = *Env[i]
+		mov [rax + WORD_SIZE * rdx], rbx 		; *ExtEnv[j] = *Env[i]
 		inc rcx									; i++
-		inc rbx									; j++
-		jmp %%copy_minors
-	%%end_copy_minors:
-	
+		inc rdx									; j++
+		jmp %%copy_vectors
+	%%end_copy_vectors:
+
+	mov rdx, [rbp + WORD_SIZE * 3]				; rbx = argc
+	shl rdx, 3
+	MALLOC rbx, rdx
+	mov [rax], rbx								; allocate Env[0] with size of argc
 	; for (i= 0 ; i<argc ; i++)
 	; 	ExtEnv[0][i] = Param_i
-	mov rcx,0									; i = 0
+	xor rcx, rcx	
 	%%copy_params:
-		cmp rcx,[rbp+8*3]						; if i < argc
-		jae %%end_copy_params
-		mov rdx,[rbp+8*(4+rcx)]					; rdx = param_i
-		mov rbx,[rax]							; rbx = *ExtEnv[0]
-		mov [rbx+(8*rcx)],rdx						; ExtEnv[0][i] = param_i
+		cmp rcx, r9
+		je %%end_copy_params
+		mov rdx, [rbp + WORD_SIZE * (4+rcx)]
+		; mov rbx, [rax]								; rbx = *ExtEnv[0]
+		mov [rbx + WORD_SIZE * rcx], rdx		; ExtEnv[0][i] = param_i
 		inc rcx									; i++
 		jmp %%copy_params
 	%%end_copy_params:
 %endmacro
 
 %macro FIX_APPLICTP_STACK 1
-	mov rbx, [rbp+3*WORD_SIZE] ; rbx = argc
+	mov rbx, [rbp+3*WORD_SIZE]
 	add rbx, 3
 	mov r9, qword [rbp] ; r9 = old rbp
 	mov rcx, %1
@@ -235,144 +236,86 @@ db %1
 %endmacro
 
 %macro FIX_LAMBDA_OPT_STACK 1
-	mov rax, %1
-	mov rbx, [rsp+8*2]
-	cmp [rsp+8*2], rax							;if argc >= desired				
-	jb %%missing_arg
+	; %1 - expected, rax-return reg, rbx-argc, rcx-counter
+	mov rbx, [rsp + 2 * WORD_SIZE] ; rbx = num of stack args
+	mov rcx , %1
+	cmp rbx, rcx
+	jb %%add_args
 
-	%%extra_args:
-		mov rcx, [rsp+8*2]
-		sub rcx, %1								; rcx = diff = argc-desired		
-		mov rdx, SOB_NIL_ADDRESS
-		; for (int i=0 ; i<=diff ; i++)
-		; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
-		mov rbx,0								; i = 0
-		%%make_pairs:
-			cmp rbx, rcx						; if i <= diff
-			ja %%end_make_pairs
-			mov rdi, [rsp+8*2]					; rdi = argc
-			add rdi, 2							; rdi = 2 + argc
-			sub rdi, rbx						; rdi = 2 + argc - i
-			mov rdi, [rsp+8*rdi]				; rdi = [rsp+8*(2+argc-i)]      
-			MAKE_PAIR(rax, rdi, rdx)	
-			mov rdx, rax
-			inc rbx
-			jmp %%make_pairs
-		%%end_make_pairs:
-		mov [rsp+8*(2+%1)], rdx					; last argument = artificial pair
-		
-		; for (i = 0 ; i < 4 + desired ; i++)
-		;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-		mov rbx,0 								; i = 0
-		%%shift_stack_up:
-			mov rax, 4+%1
-			cmp rbx, rax			     		; if i < 4 + desired
-			jae %%end_shift_stack_up
-			mov rdx, 2+%1						; rdx = 2 + desired
-			sub rdx, rbx 						; rdx = 2 + desired - i
-			mov rax, [rsp+8*rdx]				; rax = [rsp + 8 * (2+ desired - i)]
-			add rdx, rcx						; rdx = 2 + desired - i + diff
-			mov [rsp+8*rdx], rax				; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-			inc rbx
-			jmp %%shift_stack_up
-		%%end_shift_stack_up:
+	; for (int i=0 ; i<=diff ; i++)
+	; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
+	; r8=argc+2, r10 = argc-desired = diff, r11=the pair
+	mov r8, rbx
+	add r8, 2
+	mov r10, rbx
+	sub r10, %1
+	mov r11, SOB_NIL_ADDRESS
+	xor rcx, rcx							
+	%%make_list:
+		cmp rcx, r10					; if i <= diff
+		ja %%end_make_list
+		mov r9, r8
+		sub r9, rcx						; r9 = 2 + argc - i
+		mov r12, [rsp + r9 * WORD_SIZE]	; r9 = [rsp+8*(2+argc-i)]
+		MAKE_PAIR(r15, r12, r11)
+		mov r11, r15
+		inc rcx
+		jmp %%make_list
+	%%end_make_list:
+	mov [rsp + (2+%1) * WORD_SIZE], r11				; last argument = artificial pair
 
-		shl rcx, 3								; rcx = 8 * rcx
-		add rsp, rcx							; fx stack pointer
-		mov rax, %1
-		mov [rsp+8*2], rax						; fix argc
-		jmp %%end_missing_arg
+	; for (i = 0 ; i < 3 + desired ; i++)
+	;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
+	; r8=desired+2,
+	mov r8, %1+2
+	xor rcx, rcx	
+	%%adjust_stack:
+		cmp rcx, %1+3
+		je %%end_adjust_stack
+		mov r9, r8						; r9 = 2 + desired
+		sub r9, rcx 					; r9 = 2 + desired - i
+		mov r11, [rsp + r9 * WORD_SIZE]	; rax = [rsp + 8 * (2+ desired - i)]
+		add r9, r10						; r9 = 2 + desired - i + diff
+		mov [rsp + r9 * WORD_SIZE], r11	; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
+		inc rcx
+		jmp %%adjust_stack
+	%%end_adjust_stack:
 
-	%%missing_arg:
-		;	for (i = 0 ; i < 3 + argc ; i++)	; 3 for Ret,Env,argc
-		;		stack_i = stack_(i+1)
-		mov rbx, 0								; i = 0
-		mov rcx, [rsp+8*2]						; rcx = argc
-		add rcx, 3								; rcx = argc + 3
-		push SOB_NIL_ADDRESS					; extend the stack with some value
-		%%shift_stack_down:
-			cmp rbx, rcx
-			jae %%end_shift_stack_down
-			mov rax, [rsp+8*(rbx+1)]			; rax = stack_(i+1)
-			mov [rsp+8*rbx], rax				; stack_i = stack_(i+1)
-			inc rbx
-			jmp %%shift_stack_down
-		%%end_shift_stack_down:
-		mov rax, SOB_NIL_ADDRESS
-		mov [rsp+8*(2+%1)], rax					; put () in last argument
-		mov rax, %1
-		mov [rsp+8*2], rax						; fix arg count
-	%%end_missing_arg:
+	shl r10, 3
+	add rsp, r10 ; adjust rsp
+	mov r11, %1
+	mov [rsp + 2 * WORD_SIZE], r11 ; update argc
+	jmp %%end_fix
 
-	; ; %1 - expected, rax-return reg, rbx-argc, rcx-counter
-	; mov rbx, [rsp+2*WORD_SIZE] ; rbx = num of stack args
-	; ;cmp rbx, %1
-	; ; jae %%compress ;create list if n >= %1  rbx >= %1
-	; mov rcx , %1
-	; cmp rcx, rbx
-	; ja %%end_fix
+	;	for (i = 0 ; i < 3 + argc ; i++)	; 3 for Ret,Env,argc
+	;		stack_i = stack_(i+1)
+	%%add_args:
+		mov r8, rbx
+		add r8, 3
+		push 0
+		xor rcx, rcx
+		%%move_stack:
+			cmp rcx, r8
+			je %%end_move_stack
+			mov r9, [rsp + WORD_SIZE * (rcx+1)]
+			mov [rsp + WORD_SIZE * rcx], r9
+			inc rcx
+			jmp %%move_stack
+		%%end_move_stack:
 
-	; ; ; if we need enlarge stack
-	; ; add rbx, 3
-	; ; mov r15, SOB_NIL_ADDRESS
-	; ; mov [rsp+rbx*WORD_SIZE], r15
-	; ; jmp %%end_fix
-
-	; mov r10, rbx
-	; sub r10, %1	; r10 = argc-desired = diff
-
-	; mov r11, SOB_NIL_ADDRESS
-	; ; for (int i=0 ; i<=diff ; i++)
-	; ; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
-	; ; r8=argc+2, r11=the pair
-	; mov r8, rbx	
-	; add r8, 2 ; r8 = 2 + argc
-	; mov rcx, 0							; i = 0
-	; %%make_list:
-	; 	; r9=argc+2-i
-	; 	cmp rcx, r10					; if i <= diff
-	; 	ja %%end_make_list
-	; 	mov r9, r8
-	; 	sub r9, rcx						; r9 = 2 + argc - i
-	; 	mov r9, [rsp+r9*WORD_SIZE]		; r9 = [rsp+8*(2+argc-i)]
-	; 	MAKE_PAIR(rax, r9, r11)
-	; 	mov r11, rax
-	; 	inc rcx
-	; 	jmp %%make_list
-	; %%end_make_list:
-	; mov [rsp+(2+%1)*WORD_SIZE], r11				; last argument = artificial pair
-
-	; ; for (i = 0 ; i < 3 + desired ; i++)
-	; ;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-
-	; ; r8=desired+2,
-	; mov r8, %1+2	; r8 = desired + 2
-	; mov rcx, 0
-	; %%adjust_stack:
-	; 	cmp rcx, %1+3
-	; 	jae %%end_adjust_stack
-	; 	mov r9, r8						; r9 = 2 + desired
-	; 	sub r9, rcx 					; r9 = 2 + desired - i
-	; 	mov r11, [rsp+r9*WORD_SIZE]		; rax = [rsp + 8 * (2+ desired - i)]
-	; 	add r9, r10						; r9 = 2 + desired - i + diff
-	; 	mov [rsp+r9*WORD_SIZE], r11		; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
-	; 	inc rcx
-	; 	jmp %%adjust_stack
-	; %%end_adjust_stack:
-
-	; shl r10, 3
-	; add rsp, r10 ; adjust rsp
-	; mov r11, %1
-	; mov [rsp+2*WORD_SIZE], r11 ; update argc
-	; %%end_fix:
+		mov r9, SOB_NIL_ADDRESS
+		mov [rsp + WORD_SIZE * (2+%1)], r9
+		mov r9, %1
+		mov [rsp + WORD_SIZE * 2], r9
+	%%end_fix:
 %endmacro
 
 ;;; ============================================= End =============================================
 
-	
+
 extern printf, malloc
 global write_sob, write_sob_if_not_void
-	
+
 write_sob_undefined:
 	push rbp
 	mov rbp, rsp
@@ -395,7 +338,7 @@ write_sob_rational:
 	mov rdx, rsi
 	NUMERATOR rsi, rdx
 	DENOMINATOR rdx, rdx
-	
+
 	cmp rdx, 1
 	jne .print_fraction
 
@@ -405,7 +348,7 @@ write_sob_rational:
 .print_fraction:
 	mov rdi, .frac_format_string
 
-.print:	
+.print:
 	mov rax, 0
 	call printf
 
@@ -430,7 +373,7 @@ write_sob_float:
 	;; printf-ing floats (among other things) requires the stack be 16-byte aligned
 	;; so align the stack *downwards* (take up some extra space) if needed before
 	;; calling printf for floats
-	and rsp, -16 
+	and rsp, -16
 	call printf
 
 	;; move the stack back to the way it was, cause we messed it up in order to
@@ -440,10 +383,10 @@ write_sob_float:
 	mov rsp, rbp
 	pop rbp
 	ret
-	
+
 section .data
 .float_format_string:
-	db "%f", 0		
+	db "%f", 0
 
 write_sob_char:
 	push rbp
@@ -471,7 +414,7 @@ write_sob_char:
 	jg .Lregular
 
 	mov rdi, .special
-	jmp .done	
+	jmp .done
 
 .Lnul:
 	mov rdi, .nul
@@ -540,14 +483,14 @@ write_sob_void:
 section .data
 .void:
 	db "#<void>", 0
-	
+
 write_sob_bool:
 	push rbp
 	mov rbp, rsp
 
 	cmp word [rsi], word T_BOOL
 	je .sobFalse
-	
+
 	mov rdi, .true
 	jmp .continue
 
@@ -556,12 +499,12 @@ write_sob_bool:
 
 .continue:
 	mov rax, 0
-	call printf	
+	call printf
 
 	pop rbp
 	ret
 
-section .data			
+section .data
 .false:
 	db "#f", 0
 .true:
@@ -591,7 +534,7 @@ write_sob_string:
 	mov rax, 0
 	mov rdi, .double_quote
 	call printf
-	
+
 	pop rsi
 
 	STRING_LENGTH rcx, rsi
@@ -617,26 +560,26 @@ write_sob_string:
 	je .ch_backslash
 	cmp rbx, CHAR_SPACE
 	jl .ch_hex
-	
+
 	mov rdi, .fs_simple_char
 	mov rsi, rbx
 	jmp .printf
-	
+
 .ch_hex:
 	mov rdi, .fs_hex_char
 	mov rsi, rbx
 	jmp .printf
-	
+
 .ch_tab:
 	mov rdi, .fs_tab
 	mov rsi, rbx
 	jmp .printf
-	
+
 .ch_page:
 	mov rdi, .fs_page
 	mov rsi, rbx
 	jmp .printf
-	
+
 .ch_return:
 	mov rdi, .fs_return
 	mov rsi, rbx
@@ -681,7 +624,7 @@ section .data
 .fs_simple_char:
 	db "%c", 0
 .fs_hex_char:
-	db "\x%02x;", 0	
+	db "\x%02x;", 0
 .fs_tab:
 	db "\t", 0
 .fs_page:
@@ -700,7 +643,7 @@ write_sob_pair:
 	mov rbp, rsp
 
 	push rsi
-	
+
 	mov rax, 0
 	mov rdi, .open_paren
 	call printf
@@ -713,9 +656,9 @@ write_sob_pair:
 	mov rsi, [rsp]
 	CDR rsi, rsi
 	call write_sob_pair_on_cdr
-	
+
 	add rsp, 1*8
-	
+
 	mov rdi, .close_paren
 	mov rax, 0
 	call printf
@@ -736,16 +679,16 @@ write_sob_pair_on_cdr:
 	mov bl, byte [rsi]
 	cmp bl, T_NIL
 	je .done
-	
+
 	cmp bl, T_PAIR
 	je .cdrIsPair
-	
+
 	push rsi
-	
+
 	mov rax, 0
 	mov rdi, .dot
 	call printf
-	
+
 	pop rsi
 
 	call write_sob
@@ -756,11 +699,11 @@ write_sob_pair_on_cdr:
 	push rbx
 	CAR rsi, rsi
 	push rsi
-	
+
 	mov rax, 0
 	mov rdi, .space
 	call printf
-	
+
 	pop rsi
 	call write_sob
 
@@ -782,7 +725,7 @@ write_sob_symbol:
 	mov rbp, rsp
 
 	SYMBOL_VAL rsi, rsi
-	
+
 	STRING_LENGTH rcx, rsi
 	STRING_ELEMENTS rax, rsi
 
@@ -807,7 +750,7 @@ write_sob_symbol:
 	mov rdi, .fs_simple_char
 	mov rsi, rbx
 	jmp .printf
-	
+
 .ch_hex:
 	mov rdi, .fs_hex_char
 	mov rsi, rbx
@@ -827,12 +770,12 @@ write_sob_symbol:
 .done:
 	pop rbp
 	ret
-	
+
 section .data
 .fs_simple_char:
 	db "%c", 0
 .fs_hex_char:
-	db "\x%02x;", 0	
+	db "\x%02x;", 0
 
 write_sob_closure:
 	push rbp
@@ -854,7 +797,7 @@ section .data
 section .text
 write_sob:
 	mov rbx, 0
-	mov bl, byte [rsi]	
+	mov bl, byte [rsi]
 	jmp qword [.jmp_table + rbx * 8]
 
 section .data
@@ -872,11 +815,11 @@ write_sob_if_not_void:
 	je .continue
 
 	call write_sob
-	
+
 	mov rax, 0
 	mov rdi, .newline
 	call printf
-	
+
 .continue:
 	ret
 section .data

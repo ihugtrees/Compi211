@@ -1,0 +1,1 @@
+(if (and #t #t #f) "true" "moshe")

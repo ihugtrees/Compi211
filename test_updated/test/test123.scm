@@ -1,0 +1,8 @@
+(list? '())
+(list? '(a b c))
+(list? 'a)
+(list? '(3 . 4))
+(list? 3)
+;(let ((x (list 'a 'b 'c)))
+ ; (set-cdr! (cdr (cdr x)) x)
+  ;(list? x))

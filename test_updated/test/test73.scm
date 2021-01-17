@@ -1,0 +1,5 @@
+(let* ((x 1)
+        (y 2)
+        (z 3)
+        (w 4))
+        (cons x (cons y (cons z (cons w '())))))

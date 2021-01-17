@@ -1,8 +1,10 @@
 > - wtf
 cons and lists
 
-test 20
-test 34 - FIX_LAMBDA_OPT_STACK when argc =0
+test 16 - my god
+test 20 - probably semantic
 test 23 - no apply?
 test 31 - + opt ???
 test 39
+
+my_16 - set!, + + + ++++++
