@@ -283,7 +283,7 @@ let rec asm_from_expr consts fvars e depth =
     "CLOSURE_ENV rbx, rax"^"\n"^
     "push rbx"^"\n"^    
     "push qword[rbp+8*1]   ;old ret addr"^"\n"^
-    "FIX_APPLICTP_STACK "^(string_of_int(3 + (List.length args)))^"\n"^
+    "FIX_APPLICTP_STACK "^(string_of_int(2 + (List.length args)))^"\n"^
     "CLOSURE_CODE rbx, rax"^"\n"^
     "jmp rbx"^"\n"
 

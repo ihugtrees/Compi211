@@ -173,169 +173,135 @@ db %1
 %endmacro
 
 %macro CREATE_EXT_ENV 1	
-	mov rbx, %1
-	add rbx, 1
-	MALLOC rax, WORD_SIZE * rbx 					; allocating external Env in size |env| + 1
-	mov rbx, [rbp + WORD_SIZE * 3]				; rbx = argc
-	shl rbx, 3
-
-	; for (i = 0 , j = 1 ; i < |Env| ; i++,j++)
+	MALLOC rax, 8 * (%1 + 1) 					; allocating external Env in size |env| + 1
+	mov rcx,[rbp+8*3]							; rcx = argc
+	shl rcx,3
+	MALLOC rbx, rcx					
+	mov [rax],rbx								; allocate Env[0] with size of argc
+	
+	; for (i = 0 , j = 1 ; i<|Env| ; i++,j++)
 	; 	ExtEnv[j] = Env[i]
-	mov rcx, 0									; i = 0
-	mov rbx, 1 									; j = 1
-	%%copy_vectors:
-		cmp rcx, %1								; if i < |Env|
-		je %%end_copy_vectors
-		mov rdx, [rbp + WORD_SIZE * 2]			; rdx = *Env
-		shl rcx, 3
-		add rdx, rcx							; rdx = Env[i]
-		shr rcx, 3
-		mov rdx, [rdx]							; rdx = *Env[i]
-		mov [rax + WORD_SIZE * rbx], rdx 		; *ExtEnv[j] = *Env[i]
+	mov rcx,0									; i = 0
+	mov rbx,1 									; j = 1
+	%%copy_minors:
+		cmp rcx,%1								; if i < |Env|
+		je %%end_copy_minors
+		mov rdx,[rbp + 8 *2]					; rdx = *Env
+		shl rcx,3
+		add rdx,rcx							; rdx = *Env[i]
+		shr rcx,3
+		mov rdx,[rdx]							; rdx = Env[i]
+		mov [rax+8*rbx],rdx 					; ExtEnv[j] = Env[i]
 		inc rcx									; i++
 		inc rbx									; j++
-		jmp %%copy_vectors
-	%%end_copy_vectors:
-
-	mov rdx, [rbp + WORD_SIZE * 3]				; rbx = argc
-	; add rdx, 1
-	shl rdx, 3
-	MALLOC rbx, rdx
-	mov [rax], rbx								; allocate Env[0] with size of argc
+		jmp %%copy_minors
+	%%end_copy_minors:
+	
 	; for (i= 0 ; i<argc ; i++)
 	; 	ExtEnv[0][i] = Param_i
-	mov rcx, 0									; i = 0
+	mov rcx,0									; i = 0
 	%%copy_params:
-		cmp rcx, [rbp + WORD_SIZE * 3]			; if i < argc
-		je %%end_copy_params
-		mov rdx, [rbp + WORD_SIZE * (4 + rcx)]	; rdx = param_i
-		; mov rbx, [rax]								; rbx = *ExtEnv[0]
-		mov [rbx + (WORD_SIZE * rcx)], rdx		; ExtEnv[0][i] = param_i
+		cmp rcx,[rbp+8*3]						; if i < argc
+		jae %%end_copy_params
+		mov rdx,[rbp+8*(4+rcx)]					; rdx = param_i
+		mov rbx,[rax]							; rbx = *ExtEnv[0]
+		mov [rbx+(8*rcx)],rdx						; ExtEnv[0][i] = param_i
 		inc rcx									; i++
 		jmp %%copy_params
 	%%end_copy_params:
-	; ; mov rdx, SOB_NIL_ADDRESS
-	; ; mov [rbx + (WORD_SIZE * rcx)], rdx ; adding the magic
 %endmacro
 
 %macro FIX_APPLICTP_STACK 1
-;%1 = new stack size
-	mov rsi,[rbp]								; rsi = old rbp
-	mov rbx, [rbp + 8 * 3]
-	add rbx, 4									; rbx = h1
-	mov rcx, 1									; i = 1
-	%%stack_loop:
-		cmp rcx, %1								;rcx = h2
-		ja %%end_stack_loop
-		mov rdi,rbp								; rdi = rbp
-		shl rcx,3
-		sub rdi,rcx								; rdi = rbp - (8 rcx)
-		shr rcx,3
-		mov rdx, [rdi]
-		mov rdi, rbx
-		sub rdi, rcx
-		mov [rbp + 8 * rdi], rdx
-		inc rcx
-		jmp %%stack_loop
-	%%end_stack_loop:
-	sub rbx, %1
-	shl rbx, 3
-	add rbx,rbp
-	mov rsp,rbx
-	mov rbp,rsi									; rbp = old rbp
-	
-	
-	
-	; mov rbx, [rbp+3*WORD_SIZE] ; rbx = i
-	; add rbx, 3
-	; mov r9, qword [rbp] ; r9 = old rbp
-	; mov rcx, %1
-	; %%shift_stack:
-	; 	cmp rcx, 0
-	; 	je %%end_shift_stack
-	; 	mov r8, qword [rsp+rcx*WORD_SIZE]
-	; 	mov [rbp+rbx*WORD_SIZE], r8
-	; 	dec rcx
-	; 	dec rbx
-	; 	jmp %%shift_stack
-	; %%end_shift_stack:
-	; mov r8, qword [rsp+rcx*WORD_SIZE]
-	; mov [rbp+rbx*WORD_SIZE], r8
+	mov rbx, [rbp+3*WORD_SIZE] ; rbx = argc
+	add rbx, 3
+	mov r9, qword [rbp] ; r9 = old rbp
+	mov rcx, %1
+	%%shift_stack:
+		cmp rcx, 0
+		je %%end_shift_stack
+		mov r8, qword [rsp+rcx*WORD_SIZE]
+		mov [rbp+rbx*WORD_SIZE], r8
+		dec rcx
+		dec rbx
+		jmp %%shift_stack
+	%%end_shift_stack:
+	mov r8, qword [rsp+rcx*WORD_SIZE]
+	mov [rbp+rbx*WORD_SIZE], r8
 
-	; shl rbx, 3
-	; mov rsp, rbp
-	; add rsp, rbx
-	; mov rbp, r9
+	shl rbx, 3
+	mov rsp, rbp
+	add rsp, rbx
+	mov rbp, r9
 %endmacro
 
 %macro FIX_LAMBDA_OPT_STACK 1
-	mov rax,%1
-	mov rbx,[rsp+8*2]
-	cmp [rsp+8*2],rax							;if argc >= desired				
+	mov rax, %1
+	mov rbx, [rsp+8*2]
+	cmp [rsp+8*2], rax							;if argc >= desired				
 	jb %%missing_arg
+
 	%%extra_args:
-		mov rcx,[rsp+8*2]
-		sub rcx,%1								; rcx = diff = argc-desired
-		
+		mov rcx, [rsp+8*2]
+		sub rcx, %1								; rcx = diff = argc-desired		
 		mov rdx, SOB_NIL_ADDRESS
 		; for (int i=0 ; i<=diff ; i++)
 		; 	rdx = Pair(rsp+8*(2+argc-i),rdx)
 		mov rbx,0								; i = 0
 		%%make_pairs:
-			cmp rbx,rcx							; if i <= diff
+			cmp rbx, rcx						; if i <= diff
 			ja %%end_make_pairs
-			mov rdi,[rsp+8*2]					; rdi = argc
-			add rdi,2							; rdi = 2 + argc
-			sub rdi,rbx							; rdi = 2 + argc - i
+			mov rdi, [rsp+8*2]					; rdi = argc
+			add rdi, 2							; rdi = 2 + argc
+			sub rdi, rbx						; rdi = 2 + argc - i
 			mov rdi, [rsp+8*rdi]				; rdi = [rsp+8*(2+argc-i)]      
-			MAKE_PAIR(rax,rdi,rdx)	
-			mov rdx,rax
+			MAKE_PAIR(rax, rdi, rdx)	
+			mov rdx, rax
 			inc rbx
 			jmp %%make_pairs
 		%%end_make_pairs:
-		mov [rsp+8*(2+%1)],rdx					; last argument = artificial pair
+		mov [rsp+8*(2+%1)], rdx					; last argument = artificial pair
 		
-
 		; for (i = 0 ; i < 4 + desired ; i++)
 		;	[rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
 		mov rbx,0 								; i = 0
 		%%shift_stack_up:
-			mov rax,4+%1
-			cmp rbx,rax				     		; if i < 4 + desired
+			mov rax, 4+%1
+			cmp rbx, rax			     		; if i < 4 + desired
 			jae %%end_shift_stack_up
-			mov rdx,2+%1						; rdx = 2 + desired
-			sub rdx,rbx 						; rdx = 2 + desired - i
-			mov rax,[rsp+8*rdx]					; rax = [rsp + 8 * (2+ desired - i)]
-			add rdx,rcx							; rdx = 2 + desired - i + diff
-			mov [rsp+8*rdx],rax					; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
+			mov rdx, 2+%1						; rdx = 2 + desired
+			sub rdx, rbx 						; rdx = 2 + desired - i
+			mov rax, [rsp+8*rdx]				; rax = [rsp + 8 * (2+ desired - i)]
+			add rdx, rcx						; rdx = 2 + desired - i + diff
+			mov [rsp+8*rdx], rax				; [rsp+8*(2+desired-i+diff)]  = [rsp+ 8 *(2+desired-i)]
 			inc rbx
 			jmp %%shift_stack_up
 		%%end_shift_stack_up:
 
-		shl rcx,3								; rcx = 8 * rcx
-		add rsp,rcx								; fx stack pointer
-		mov rax,%1
-		mov [rsp+8*2],rax						; fix argc
+		shl rcx, 3								; rcx = 8 * rcx
+		add rsp, rcx							; fx stack pointer
+		mov rax, %1
+		mov [rsp+8*2], rax						; fix argc
 		jmp %%end_missing_arg
+
 	%%missing_arg:
 		;	for (i = 0 ; i < 3 + argc ; i++)	; 3 for Ret,Env,argc
 		;		stack_i = stack_(i+1)
-		mov rbx,0								; i = 0
-		mov rcx,[rsp+8*2]						; rcx = argc
-		add rcx,3								; rcx = argc + 3
+		mov rbx, 0								; i = 0
+		mov rcx, [rsp+8*2]						; rcx = argc
+		add rcx, 3								; rcx = argc + 3
 		push SOB_NIL_ADDRESS					; extend the stack with some value
 		%%shift_stack_down:
-			cmp rbx,rcx
+			cmp rbx, rcx
 			jae %%end_shift_stack_down
-			mov rax,[rsp+8*(rbx+1)]					; rax = stack_(i+1)
-			mov [rsp+8*rbx],rax					; stack_i = stack_(i+1)
+			mov rax, [rsp+8*(rbx+1)]			; rax = stack_(i+1)
+			mov [rsp+8*rbx], rax				; stack_i = stack_(i+1)
 			inc rbx
 			jmp %%shift_stack_down
 		%%end_shift_stack_down:
-		mov rax,SOB_NIL_ADDRESS
-		mov [rsp+8*(2+%1)],rax					; put () in last argument
-		mov rax,%1
-		mov [rsp+8*2],rax						; fix arg count
+		mov rax, SOB_NIL_ADDRESS
+		mov [rsp+8*(2+%1)], rax					; put () in last argument
+		mov rax, %1
+		mov [rsp+8*2], rax						; fix arg count
 	%%end_missing_arg:
 
 	; ; %1 - expected, rax-return reg, rbx-argc, rcx-counter

@@ -445,7 +445,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -610,7 +610,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -688,7 +688,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -703,7 +703,7 @@ Lcont7:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -714,7 +714,7 @@ Lcont2:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -872,7 +872,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*50 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1021,7 +1021,7 @@ mov rax, qword[rbp+8 * (4+0)]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1105,7 +1105,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*26 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1176,7 +1176,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1350,7 +1350,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1370,7 +1370,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1604,7 +1604,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1652,7 +1652,7 @@ Lcont25:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1663,7 +1663,7 @@ Lcont21:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1806,7 +1806,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -1850,7 +1850,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2225,7 +2225,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2321,7 +2321,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2347,7 +2347,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2445,7 +2445,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2523,7 +2523,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2653,7 +2653,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2685,7 +2685,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -2915,7 +2915,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3000,7 +3000,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3015,7 +3015,7 @@ Lcont44:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3026,7 +3026,7 @@ Lcont40:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3157,7 +3157,7 @@ Lcont38:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3168,7 +3168,7 @@ Lcont32:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3325,7 +3325,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3392,7 +3392,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3765,7 +3765,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3854,7 +3854,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3869,7 +3869,7 @@ Lcont61:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -3880,7 +3880,7 @@ Lcont56:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4124,7 +4124,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4256,7 +4256,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4272,7 +4272,7 @@ Lcont67:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4283,7 +4283,7 @@ Lcont64:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4368,7 +4368,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4523,7 +4523,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4649,7 +4649,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4790,7 +4790,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -4809,7 +4809,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 6
+FIX_APPLICTP_STACK 5
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5098,7 +5098,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5185,7 +5185,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5196,7 +5196,7 @@ Lcont86:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5207,7 +5207,7 @@ Lcont83:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5504,7 +5504,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5582,7 +5582,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5696,7 +5696,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5874,7 +5874,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -5992,7 +5992,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -6018,7 +6018,7 @@ mov rax, qword[rbp+8*2]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -6063,7 +6063,7 @@ Lcont101:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 3
+FIX_APPLICTP_STACK 2
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -6074,7 +6074,7 @@ Lcont88:
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 4
+FIX_APPLICTP_STACK 3
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -7145,7 +7145,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*28 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -7198,7 +7198,7 @@ mov rax, qword[fvar_tbl + WORD_SIZE*31 ]
 CLOSURE_ENV rbx, rax
 push rbx
 push qword[rbp+8*1]   ;old ret addr
-FIX_APPLICTP_STACK 5
+FIX_APPLICTP_STACK 4
 CLOSURE_CODE rbx, rax
 jmp rbx
 
@@ -7821,13 +7821,13 @@ gcd:
     xor rdx, rdx                ; rdx = list_size
 
     push_args:
-        cmp byte[rax], T_NIL
-        je end_push_args
-        CAR rbx, rax              ; rbx = car
-        push rbx
-        CDR rax, rax              ; rax = cdr
-        inc rdx
-        jmp push_args
+      cmp byte[rax], T_NIL
+      je end_push_args
+      CAR rbx, rax              ; rbx = car
+      push rbx
+      CDR rax, rax              ; rax = cdr
+      inc rdx
+      jmp push_args
     end_push_args:
 
     mov rsi, rdx                  ; rsi = list_size backup
